@@ -1,0 +1,163 @@
+{
+  "_source": "eric.mann.blog via MCP (ewpa/get-posts), captured 2026-11-09 13:55 America/Los_Angeles",
+  "_note": "All post IDs, dates, titles and categories are real. Use as the acceptance scenario for the calendar, Desk and swap check. Contains no traffic numbers.",
+  "now": "2026-11-09 14:00:00",
+  "timezone": "America/Los_Angeles",
+  "categories": [
+    {
+      "id": 8,
+      "slug": "technology",
+      "name": "Technology"
+    },
+    {
+      "id": 52,
+      "slug": "business",
+      "name": "Business"
+    },
+    {
+      "id": 106,
+      "slug": "faith",
+      "name": "Faith"
+    },
+    {
+      "id": 108,
+      "slug": "journal",
+      "name": "Journal"
+    },
+    {
+      "id": 4,
+      "slug": "writing",
+      "name": "Writing"
+    },
+    {
+      "id": 14,
+      "slug": "security",
+      "name": "Security"
+    },
+    {
+      "id": 1137,
+      "slug": "opinion",
+      "name": "Opinion"
+    }
+  ],
+  "series": [
+    {
+      "slug": "the-mantle",
+      "name": "The Mantle",
+      "ttm_form": "novella",
+      "ttm_total_parts": 4,
+      "masthead_cadence": {
+        "every_weeks": 4,
+        "weekday": null,
+        "time": "06:23"
+      }
+    }
+  ],
+  "posts": [
+    {
+      "id": 12155,
+      "status": "publish",
+      "date": "2026-11-09 06:23:15",
+      "title": "The Mantle – Part 1 of 4",
+      "categories": [
+        "writing"
+      ],
+      "series": "the-mantle",
+      "part": 1
+    },
+    {
+      "id": 10193,
+      "status": "publish",
+      "date": "2026-11-09 05:47:05",
+      "title": "DailyMedToday: A Production Case Study in Semantic Search",
+      "categories": [
+        "technology",
+        "faith"
+      ]
+    },
+    {
+      "id": 12177,
+      "status": "future",
+      "date": "2026-11-11 08:00:00",
+      "title": "Nineteen Years, Four Domains, and a New Front Page",
+      "categories": [
+        "technology"
+      ]
+    },
+    {
+      "id": 10194,
+      "status": "future",
+      "date": "2026-11-12 07:37:00",
+      "title": "What the Embeddings Reveal: A Map of Meaning",
+      "categories": [
+        "faith",
+        "technology"
+      ]
+    },
+    {
+      "id": 12156,
+      "status": "future",
+      "date": "2026-12-14 06:23:23",
+      "title": "The Mantle – Part 2 of 4",
+      "categories": [
+        "writing"
+      ],
+      "series": "the-mantle",
+      "part": 2
+    },
+    {
+      "id": 12157,
+      "status": "future",
+      "date": "2027-01-11 06:20:00",
+      "title": "The Mantle – Part 3 of 4",
+      "categories": [
+        "writing"
+      ],
+      "series": "the-mantle",
+      "part": 3
+    },
+    {
+      "id": 12158,
+      "status": "future",
+      "date": "2027-02-08 06:23:33",
+      "title": "The Mantle – Part 4 of 4",
+      "categories": [
+        "writing"
+      ],
+      "series": "the-mantle",
+      "part": 4
+    },
+    {
+      "id": 10178,
+      "status": "draft",
+      "date": null,
+      "modified": "2026-10-29 21:46:13",
+      "title": "From Craftsmen to Swarms: How Software Engineering is Following the Auto Industry's Playbook",
+      "categories": [
+        "technology"
+      ],
+      "tags": [
+        "AI",
+        "developer tools"
+      ]
+    },
+    {
+      "id": 10192,
+      "status": "publish",
+      "date": "2026-10-01 07:57:00",
+      "title": "From Voice to Vectors: Building a Searchable Audio Archive in PHP",
+      "categories": [
+        "technology"
+      ]
+    },
+    {
+      "id": 10191,
+      "status": "publish",
+      "date": "2026-09-29 07:57:00",
+      "title": "RAG Over Markdown: An End-to-End Local Pipeline in Pure PHP",
+      "categories": [
+        "technology"
+      ]
+    }
+  ]
+}

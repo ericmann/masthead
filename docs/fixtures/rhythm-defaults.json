@@ -1,0 +1,9 @@
+{
+  "0": { "lane": "faith",      "label": "Faith",                  "categories": ["faith"],                  "time": "06:30" },
+  "1": { "lane": "business",   "label": "Business & leadership",  "categories": ["business"],               "time": "07:00" },
+  "2": { "lane": "technology", "label": "Technical series",       "categories": ["technology"],             "time": "07:30" },
+  "3": { "lane": "standalone", "label": "Standalone",             "categories": [],                         "time": "08:00" },
+  "4": { "lane": "technology", "label": "Technical series",       "categories": ["technology", "security"], "time": "07:30" },
+  "5": { "lane": "journal",    "label": "Journal & build log",    "categories": ["journal"],                "time": "08:00" },
+  "6": { "lane": "fiction",    "label": "Fiction serial",         "categories": ["writing"],                "time": "06:30" }
+}

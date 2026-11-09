@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Scheduled post: swap check and sharing</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;color:#1d2327;background:#f0f0f1}
+a{color:#2271b1}a:hover{color:#135e96}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="min-height: 1000px; display: flex; flex-direction: column; background: #f0f0f1">
+  <div style="height: 32px; background: #1d2327; color: #f0f0f1; display: flex; align-items: center; gap: 18px; padding: 0 12px; font-size: 13px">
+    <span>Eric Mann's Blog</span><span style="margin-left: auto; color: #c3c4c7">Howdy, Eric</span>
+  </div>
+  <div style="display: flex; flex-wrap: wrap; flex: 1">
+    <nav aria-label="Admin menu" style="flex: 0 0 160px; background: #1d2327; color: #c3c4c7; font-size: 14px; padding: 10px 0">
+      <div style="padding: 8px 12px">Dashboard</div>
+      <div style="padding: 8px 12px; background: #2271b1; color: #fff; font-weight: 600">Posts</div>
+      <div style="background: #2c3338; padding: 6px 0; font-size: 13px">
+        <div style="padding: 5px 16px">All Posts</div>
+        <div style="padding: 5px 16px; color: #fff; font-weight: 600">Calendar</div>
+      </div>
+      <div style="padding: 8px 12px">Media</div>
+      <div style="padding: 8px 12px">Jetpack</div>
+      <div style="padding: 8px 12px">Settings</div>
+    </nav>
+
+    <main style="flex: 999 1 900px; min-width: 0; padding: 20px 24px 40px; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+        <h1 style="margin: 0; font-size: 23px; font-weight: 400">Calendar</h1>
+        <span style="font-size: 13px; color: #50575e">List view · Queue health</span>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+        <section aria-label="Scheduled queue" style="flex: 1 1 420px; min-width: 0; background: #fff; border: 1px solid #dcdcde; border-radius: 4px">
+          <div style="padding: 12px 14px; border-bottom: 1px solid #f0f0f1; display: flex; align-items: center">
+            <strong style="font-size: 14px">Scheduled (5)</strong>
+            <span style="margin-left: auto; font-size: 12px; color: #50575e">Swap check runs nightly</span>
+          </div>
+          <div style="display: flex; flex-direction: column">
+            <div style="padding: 10px 14px; border-bottom: 1px solid #f0f0f1; display: flex; gap: 10px; align-items: center">
+              <span style="width: 4px; align-self: stretch; background: #2f5fd0; border-radius: 2px"></span>
+              <div style="display: flex; flex-direction: column; gap: 2px; flex: 1"><span style="font-size: 12px; color: #50575e">Wed Nov 11 · 8:00a · Technology</span><span style="font-size: 13px">Nineteen Years, Four Domains, and a New Front Page</span></div>
+              <span style="font-size: 11px; font-weight: 600; color: #1f7a52">✓ Fits</span>
+            </div>
+            <div style="padding: 10px 14px; border-bottom: 1px solid #f0f0f1; display: flex; gap: 10px; align-items: center">
+              <span style="width: 4px; align-self: stretch; background: #7a5c2e; border-radius: 2px"></span>
+              <div style="display: flex; flex-direction: column; gap: 2px; flex: 1"><span style="font-size: 12px; color: #50575e">Thu Nov 12 · 7:37a · Faith, Technology</span><span style="font-size: 13px">What the Embeddings Reveal: A Map of Meaning</span></div>
+              <span style="font-size: 11px; font-weight: 600; color: #1f7a52">✓ Fits</span>
+            </div>
+            <div style="padding: 10px 14px; border-bottom: 1px solid #f0f0f1; display: flex; gap: 10px; align-items: center; background: #f7f8fe; box-shadow: inset 3px 0 0 #3858e9">
+              <span style="width: 4px; align-self: stretch; background: #b8325a; border-radius: 2px"></span>
+              <div style="display: flex; flex-direction: column; gap: 2px; flex: 1"><span style="font-size: 12px; color: #50575e">Mon Dec 14 · 6:23a · Writing</span><span style="font-size: 13px">The Mantle – Part 2 of 4</span></div>
+              <span style="font-size: 11px; font-weight: 600; color: #8a5409">◐ Review</span>
+            </div>
+            <div style="padding: 10px 14px; border-bottom: 1px solid #f0f0f1; display: flex; gap: 10px; align-items: center">
+              <span style="width: 4px; align-self: stretch; background: #b8325a; border-radius: 2px"></span>
+              <div style="display: flex; flex-direction: column; gap: 2px; flex: 1"><span style="font-size: 12px; color: #50575e">Mon Jan 11 · 6:20a · Writing</span><span style="font-size: 13px">The Mantle – Part 3 of 4</span></div>
+              <span style="font-size: 11px; font-weight: 600; color: #8a5409">◐ Review</span>
+            </div>
+            <div style="padding: 10px 14px; display: flex; gap: 10px; align-items: center">
+              <span style="width: 4px; align-self: stretch; background: #b8325a; border-radius: 2px"></span>
+              <div style="display: flex; flex-direction: column; gap: 2px; flex: 1"><span style="font-size: 12px; color: #50575e">Mon Feb 8 · 6:23a · Writing</span><span style="font-size: 13px">The Mantle – Part 4 of 4</span></div>
+              <span style="font-size: 11px; font-weight: 600; color: #8a5409">◐ Review</span>
+            </div>
+          </div>
+        </section>
+
+        <section aria-label="Swap check: The Mantle Part 2" style="flex: 1 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+          <div style="background: #fff; border: 1px solid #dcdcde; border-radius: 4px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l1.4 3.6L13 6.5 9.4 7.9 8 11.5 6.6 7.9 3 6.5l3.6-1.4z" fill="#3858e9"></path></svg>
+              <strong style="font-size: 15px">Swap check · The Mantle – Part 2 of 4</strong>
+            </div>
+            <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #2c3338">Parts 2–4 land on <strong>Mondays</strong>, which your rhythm gives to Business. Fiction lives on Saturdays. The serial’s gap is 5 weeks to Part 2, then 4 weeks between later parts.</p>
+            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+              <div style="border: 1px solid #dcdcde; border-radius: 4px; padding: 8px"><div style="font-size: 11px; color: #50575e">Lane fit</div><div style="font-size: 14px; font-weight: 600; color: #8a5409">Mismatch</div></div>
+              <div style="border: 1px solid #dcdcde; border-radius: 4px; padding: 8px"><div style="font-size: 11px; color: #50575e">Part 1 views, 7d</div><div style="font-size: 14px; font-weight: 600">[Jetpack]</div></div>
+              <div style="border: 1px solid #dcdcde; border-radius: 4px; padding: 8px"><div style="font-size: 11px; color: #50575e">Mon vs Sat traffic</div><div style="font-size: 14px; font-weight: 600">[Jetpack]</div></div>
+            </div>
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: .05em; color: #50575e; margin-top: 4px">OPTIONS</div>
+            <div style="border: 1px solid #3858e9; border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px">
+              <strong style="font-size: 13px">Move Parts 2–4 to Saturdays: Dec 12 · Jan 9 · Feb 6</strong>
+              <span style="font-size: 12px; color: #50575e">Keeps the 4-week cadence and frees three Monday Business slots.</span>
+            </div>
+            <div style="border: 1px solid #dcdcde; border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px">
+              <strong style="font-size: 13px">Keep Mondays and mark this series as a lane exception</strong>
+              <span style="font-size: 12px; color: #50575e">The Desk stops flagging it and treats every 4th Monday as fiction.</span>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap">
+              <button type="button" style="height: 34px; border: 0; background: #2271b1; color: #fff; border-radius: 3px; padding: 0 14px; font-size: 13px; font-weight: 600; cursor: pointer">Reschedule 3 posts</button>
+              <button type="button" style="height: 34px; border: 1px solid #c3c4c7; background: #fff; border-radius: 3px; padding: 0 12px; font-size: 13px; cursor: pointer">Keep as is</button>
+            </div>
+          </div>
+
+          <div style="background: #fff; border: 1px solid #dcdcde; border-radius: 4px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M11 5.5a2 2 0 1 0-1.9-2.6L5.6 4.8a2 2 0 1 0 0 2.4l3.5 1.9A2 2 0 1 0 9.6 8L6.1 6a2 2 0 0 0 0-.3l3.5-1.9A2 2 0 0 0 11 5.5z" fill="none" stroke="#1d2327" stroke-width="1.2"></path></svg>
+              <strong style="font-size: 15px">Share again · The Mantle – Part 1 of 4</strong>
+              <span style="margin-left: auto; font-size: 12px; color: #50575e">Published Nov 9</span>
+            </div>
+            <label for="share-msg" style="font-size: 12px; color: #50575e">Message (Desk draft, editable)</label>
+            <textarea id="share-msg" rows="3" style="border: 1px solid #8c8f94; border-radius: 4px; padding: 8px; font-size: 13px; font-family: inherit; resize: vertical">A new serial starts this week: a marshal, a ship, and a Law nobody has questioned in two hundred generations. Part 1 of 4 →</textarea>
+            <div style="display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px">
+              <label style="display: inline-flex; gap: 6px; align-items: center"><input type="checkbox" checked> Mastodon</label>
+              <label style="display: inline-flex; gap: 6px; align-items: center"><input type="checkbox" checked> Bluesky</label>
+              <label style="display: inline-flex; gap: 6px; align-items: center"><input type="checkbox"> LinkedIn</label>
+              <span style="color: #646970; font-size: 12px">Connections come from Jetpack Social</span>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center">
+              <button type="button" style="height: 34px; border: 0; background: #2271b1; color: #fff; border-radius: 3px; padding: 0 14px; font-size: 13px; font-weight: 600; cursor: pointer">Share now</button>
+              <button type="button" style="height: 34px; border: 1px solid #c3c4c7; background: #fff; border-radius: 3px; padding: 0 12px; font-size: 13px; cursor: pointer">Queue for Sat Nov 14, 9:00 AM</button>
+              <span style="font-size: 12px; color: #646970">Fills an open Saturday without new writing</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

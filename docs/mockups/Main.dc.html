@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Posts › Calendar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;color:#1d2327;background:#f0f0f1}
+a{color:#2271b1}a:hover{color:#135e96}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="min-height: 1000px; display: flex; flex-direction: column; background: #f0f0f1">
+
+  <div style="height: 32px; background: #1d2327; color: #f0f0f1; display: flex; align-items: center; gap: 18px; padding: 0 12px; font-size: 13px">
+    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.5" fill="none" stroke="#c3c4c7" stroke-width="1.5"></circle><path d="M5 7l2.6 7L10 8.5 12.4 14 15 7" fill="none" stroke="#c3c4c7" stroke-width="1.4"></path></svg>
+    <span>Eric Mann's Blog</span>
+    <span style="color: #c3c4c7">+ New</span>
+    <span style="margin-left: auto; color: #c3c4c7">Howdy, Eric</span>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; flex: 1">
+    <nav aria-label="Admin menu" style="flex: 0 0 160px; background: #1d2327; color: #f0f0f1; font-size: 14px; padding: 10px 0">
+      <div style="padding: 8px 12px; color: #c3c4c7">Dashboard</div>
+      <div style="padding: 8px 12px; background: #2271b1; color: #fff; font-weight: 600">Posts</div>
+      <div style="background: #2c3338; padding: 6px 0; font-size: 13px">
+        <div style="padding: 5px 12px 5px 16px; color: #c3c4c7">All Posts</div>
+        <div style="padding: 5px 12px 5px 16px; color: #c3c4c7">Add New Post</div>
+        <div style="padding: 5px 12px 5px 16px; color: #fff; font-weight: 600">Calendar</div>
+        <div style="padding: 5px 12px 5px 16px; color: #c3c4c7">Categories</div>
+        <div style="padding: 5px 12px 5px 16px; color: #c3c4c7">Tags</div>
+      </div>
+      <div style="padding: 8px 12px; color: #c3c4c7">Media</div>
+      <div style="padding: 8px 12px; color: #c3c4c7">Pages</div>
+      <div style="padding: 8px 12px; color: #c3c4c7">Comments</div>
+      <div style="padding: 8px 12px; color: #c3c4c7">Jetpack</div>
+      <div style="padding: 8px 12px; color: #c3c4c7">Appearance</div>
+      <div style="padding: 8px 12px; color: #c3c4c7">Plugins</div>
+      <div style="padding: 8px 12px; color: #c3c4c7">Settings</div>
+    </nav>
+
+    <main style="flex: 999 1 900px; min-width: 0; padding: 20px 24px 40px; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+        <h1 style="margin: 0; font-size: 23px; font-weight: 400">Calendar</h1>
+        <a href="#" style="border: 1px solid #2271b1; color: #2271b1; border-radius: 3px; padding: 4px 10px; font-size: 13px; text-decoration: none">Add New Post</a>
+        <span style="margin-left: auto; font-size: 13px; color: #50575e">Rhythm: Mon Business · Tue/Thu Tech · Wed Standalone · Fri Journal · Sat Fiction · Sun Faith</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: #fff; border: 1px solid #dcdcde; border-radius: 4px; padding: 10px 12px">
+        <button type="button" aria-label="Previous month" style="width: 32px; height: 32px; border: 1px solid #c3c4c7; background: #fff; border-radius: 3px; cursor: pointer">‹</button>
+        <strong style="font-size: 16px; min-width: 132px; text-align: center">November 2026</strong>
+        <button type="button" aria-label="Next month" style="width: 32px; height: 32px; border: 1px solid #c3c4c7; background: #fff; border-radius: 3px; cursor: pointer">›</button>
+        <button type="button" style="height: 32px; border: 1px solid #c3c4c7; background: #f6f7f7; border-radius: 3px; padding: 0 12px; cursor: pointer">Today</button>
+        <div role="group" aria-label="View" style="display: flex; border: 1px solid #c3c4c7; border-radius: 3px; overflow: hidden; margin-left: 6px">
+          <button type="button" style="height: 30px; border: 0; background: #2271b1; color: #fff; padding: 0 12px">Month</button>
+          <button type="button" style="height: 30px; border: 0; border-left: 1px solid #c3c4c7; background: #fff; padding: 0 12px">Week</button>
+          <button type="button" style="height: 30px; border: 0; border-left: 1px solid #c3c4c7; background: #fff; padding: 0 12px">List</button>
+        </div>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-left: 8px">
+          <sc-for list="{{ legend }}" as="c" hint-placeholder-count="6">
+            <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #3c434a; padding: 3px 8px; border: 1px solid #dcdcde; border-radius: 999px"><span style="{{ c.dot }}"></span>{{ c.name }}</span>
+          </sc-for>
+        </div>
+        <button type="button" style="margin-left: auto; height: 32px; border: 0; background: #3858e9; color: #fff; border-radius: 3px; padding: 0 14px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 600">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l1.4 3.6L13 6.5 9.4 7.9 8 11.5 6.6 7.9 3 6.5l3.6-1.4z" fill="#fff"></path><path d="M13 10.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" fill="#fff"></path></svg>
+          Fill open days
+        </button>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+        <section aria-label="November 2026" style="flex: 999 1 640px; min-width: 0; background: #fff; border: 1px solid #dcdcde; border-radius: 4px; overflow: hidden">
+          <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); background: #f6f7f7; border-bottom: 1px solid #dcdcde">
+            <sc-for list="{{ dows }}" as="d" hint-placeholder-count="7">
+              <div style="padding: 8px 10px; font-size: 12px; font-weight: 600; color: #50575e">{{ d.label }} <span style="font-weight: 400; color: #646970">· {{ d.lane }}</span></div>
+            </sc-for>
+          </div>
+          <sc-for list="{{ weeks }}" as="w" hint-placeholder-count="5">
+            <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr))">
+              <sc-for list="{{ w.days }}" as="day" hint-placeholder-count="7">
+                <div style="{{ day.cell }}" onClick="{{ day.pick }}">
+                  <div style="display: flex; align-items: center; justify-content: space-between">
+                    <span style="{{ day.numStyle }}">{{ day.num }}</span>
+                    <sc-if value="{{ day.isToday }}" hint-placeholder-val="{{ false }}"><span style="font-size: 10px; font-weight: 700; color: #2271b1; letter-spacing: .04em">TODAY</span></sc-if>
+                  </div>
+                  <sc-for list="{{ day.posts }}" as="p" hint-placeholder-count="1">
+                    <div style="{{ p.chip }}" title="{{ p.title }}">
+                      <span style="font-size: 10px; opacity: .9">{{ p.meta }}</span>
+                      <span style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">{{ p.title }}</span>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ day.hasGhost }}" hint-placeholder-val="{{ false }}">
+                    <div style="{{ day.ghostStyle }}">
+                      <span style="display: flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; letter-spacing: .03em">
+                        <svg width="10" height="10" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l1.4 3.6L13 6.5 9.4 7.9 8 11.5 6.6 7.9 3 6.5l3.6-1.4z" fill="currentColor"></path></svg>{{ day.ghostKind }}</span>
+                      <span style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">{{ day.ghostText }}</span>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ day.isOpen }}" hint-placeholder-val="{{ false }}">
+                    <div style="{{ day.openStyle }}">Open · {{ day.lane }}</div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </section>
+
+        <aside aria-label="Editorial desk" style="flex: 1 1 330px; min-width: 300px; max-width: 420px; background: #fff; border: 1px solid #dcdcde; border-radius: 4px; display: flex; flex-direction: column">
+          <div style="padding: 14px 16px; border-bottom: 1px solid #f0f0f1; display: flex; align-items: center; gap: 8px">
+            <svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l1.4 3.6L13 6.5 9.4 7.9 8 11.5 6.6 7.9 3 6.5l3.6-1.4z" fill="#3858e9"></path><path d="M13 10.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" fill="#3858e9"></path></svg>
+            <strong style="font-size: 14px">Desk</strong>
+            <span style="margin-left: auto; font-size: 12px; color: #50575e">{{ selLabel }}</span>
+          </div>
+
+          <div style="padding: 12px 16px; border-bottom: 1px solid #f0f0f1; display: flex; flex-direction: column; gap: 8px">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: .05em; color: #50575e">THIS WEEK · NOV 9–15</div>
+            <div style="display: flex; gap: 4px">
+              <sc-for list="{{ weekBar }}" as="b" hint-placeholder-count="7">
+                <div style="{{ b.style }}" title="{{ b.tip }}"></div>
+              </sc-for>
+            </div>
+            <div style="font-size: 13px; color: #3c434a">3 of 7 days have a post. Next gap: <strong>Tue Nov 10</strong>.</div>
+          </div>
+
+          <div style="padding: 12px 16px; border-bottom: 1px solid #f0f0f1; display: flex; flex-direction: column; gap: 10px">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <span style="{{ selLaneDot }}"></span>
+              <strong style="font-size: 14px">{{ selTitle }}</strong>
+            </div>
+            <sc-for list="{{ sugg }}" as="s" hint-placeholder-count="3">
+              <div style="border: 1px solid #dcdcde; border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px">
+                <span style="{{ s.kindStyle }}">{{ s.kind }}</span>
+                <strong style="font-size: 13px; line-height: 1.35">{{ s.title }}</strong>
+                <span style="font-size: 12px; color: #50575e; line-height: 1.45">{{ s.why }}</span>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap">
+                  <button type="button" style="height: 30px; border: 0; background: #2271b1; color: #fff; border-radius: 3px; padding: 0 10px; font-size: 12px; cursor: pointer">{{ s.primary }}</button>
+                  <button type="button" style="height: 30px; border: 1px solid #c3c4c7; background: #fff; color: #2c3338; border-radius: 3px; padding: 0 10px; font-size: 12px; cursor: pointer">{{ s.secondary }}</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="padding: 12px 16px; display: flex; flex-direction: column; gap: 8px">
+            <label for="desk-ask" style="font-size: 11px; font-weight: 700; letter-spacing: .05em; color: #50575e">ASK THE DESK</label>
+            <input id="desk-ask" type="text" placeholder="e.g. “Plan a 4-part security series for January”" style="height: 36px; border: 1px solid #8c8f94; border-radius: 4px; padding: 0 10px; font-size: 13px">
+            <span style="font-size: 11px; color: #646970">Claude via AI Provider for Anthropic · Settings › Connectors</span>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { sel: '2026-11-18' }; }
+  renderVals() {
+    const CAT = {
+      Technology: '#2f5fd0', Business: '#8a5409', Faith: '#7a5c2e',
+      Writing: '#b8325a', Journal: '#1f7a52', Opinion: '#6d45c9', Security: '#0f6e7a'
+    };
+    const LANE = ['Faith', 'Business', 'Technology', 'Standalone', 'Technology', 'Journal', 'Writing'];
+    const LANECAT = { Standalone: 'Opinion' };
+    const LANESHORT = ['Faith', 'Business', 'Tech', 'Standalone', 'Tech', 'Journal', 'Fiction'];
+    const tint = (hex, a) => { const n = parseInt(hex.slice(1), 16); return 'rgba(' + (n >> 16 & 255) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',' + a + ')'; };
+    const posts = {
+      '2026-11-09': [
+        { t: 'The Mantle – Part 1 of 4', c: 'Writing', st: 'pub', time: '6:23a' },
+        { t: 'DailyMedToday: A Production Case Study in Semantic Search', c: 'Technology', st: 'pub', time: '5:47a' }
+      ],
+      '2026-11-11': [{ t: 'Nineteen Years, Four Domains, and a New Front Page', c: 'Technology', st: 'sched', time: '8:00a' }],
+      '2026-11-12': [{ t: 'What the Embeddings Reveal: A Map of Meaning', c: 'Faith', st: 'sched', time: '7:37a' }]
+    };
+    const ghosts = {
+      '2026-11-10': { k: 'IDEA', t: 'Semantic search series: index of all parts' },
+      '2026-11-13': { k: 'IDEA', t: 'Build log: shipping the new front page' },
+      '2026-11-14': { k: 'IDEA', t: 'Behind the story: The Mantle' },
+      '2026-11-15': { k: 'RESHARE', t: 'Resurface an evergreen Faith post' },
+      '2026-11-16': { k: 'SERIES', t: 'Lead → VP → IC, Part 1' },
+      '2026-11-17': { k: 'IDEA', t: 'Preview: post-quantum ledger keys' },
+      '2026-11-18': { k: 'DRAFT', t: 'From Craftsmen to Swarms' },
+      '2026-11-19': { k: 'IDEA', t: 'Security: auditing an MCP-exposed WordPress' }
+    };
+    const sugg = {
+      '2026-11-18': [
+        { kind: 'UNSCHEDULED DRAFT', title: 'From Craftsmen to Swarms: How Software Engineering is Following the Auto Industry’s Playbook', why: 'Wednesday is your standalone slot. This is your only finished draft not on the calendar; last edited Oct 29.', primary: 'Schedule 8:00 AM', secondary: 'Open draft' },
+        { kind: 'NEW IDEA · OPINION', title: 'Why I won’t run Google Analytics on this blog', why: 'Opinion hasn’t appeared in your last 90 days of posts, and it pairs with Wednesday’s redesign retrospective.', primary: 'Create draft + outline', secondary: 'More like this' },
+        { kind: 'LANE NUDGE · SECURITY', title: 'Something under Security', why: 'Nothing has been published under Security since Sept 17.', primary: 'Suggest topics', secondary: 'Dismiss' }
+      ],
+      '2026-11-15': [
+        { kind: 'RESHARE VIA JETPACK', title: 'An evergreen Faith post from the archive', why: 'Sunday is your Faith slot and nothing new is queued. The Desk ranks archive posts by [Jetpack] views and picks one to share again.', primary: 'Pick a post', secondary: 'Write something new' },
+        { kind: 'SERIES TEASER', title: 'James: faith with its sleeves rolled up — an introduction', why: 'The six-part James series is planned for Lent. A teaser now gives readers a reason to return.', primary: 'Create draft', secondary: 'Dismiss' }
+      ]
+    };
+    const today = '2026-11-09';
+    const weeks = [];
+    let d = new Date(2026, 10, 1);
+    for (let w = 0; w < 5; w++) {
+      const days = [];
+      for (let i = 0; i < 7; i++) {
+        const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        const inMonth = d.getMonth() === 10, dow = d.getDay(), lane = LANE[dow];
+        const laneColor = CAT[LANECAT[lane] || lane] || '#646970';
+        const ps = (posts[key] || []).map(p => ({
+          title: p.t,
+          meta: (p.st === 'pub' ? '✓ Published · ' : '◷ Scheduled · ') + p.time,
+          chip: 'margin-top: 4px; padding: 4px 6px; border-radius: 4px; font-size: 11px; line-height: 1.3; display: flex; flex-direction: column; gap: 1px; ' +
+            (p.st === 'pub' ? 'background: ' + CAT[p.c] + '; color: #fff' : 'background: #fff; color: ' + CAT[p.c] + '; border: 1.5px solid ' + CAT[p.c] + '; border-left-width: 4px')
+        }));
+        const future = key > today;
+        const g = future && inMonth && ps.length === 0 ? ghosts[key] : null;
+        const isOpen = future && inMonth && ps.length === 0 && !g;
+        const sel = this.state.sel === key;
+        days.push({
+          num: d.getDate(), isToday: key === today, posts: ps,
+          hasGhost: !!g, ghostKind: g ? g.k : '', ghostText: g ? g.t : '',
+          ghostStyle: 'margin-top: 4px; padding: 4px 6px; border-radius: 4px; font-size: 11px; line-height: 1.3; display: flex; flex-direction: column; gap: 2px; border: 1.5px dashed ' + laneColor + '; background: ' + tint(laneColor, .06) + '; color: ' + laneColor,
+          isOpen, lane: LANESHORT[dow],
+          openStyle: 'margin-top: 6px; font-size: 11px; color: #646970; border: 1px dashed #c3c4c7; border-radius: 4px; padding: 3px 6px',
+          numStyle: 'font-size: 12px; font-weight: 600; ' + (inMonth ? (key === today ? 'color: #fff; background: #2271b1; border-radius: 999px; padding: 1px 7px' : 'color: #1d2327') : 'color: #a7aaad'),
+          cell: 'min-height: 132px; padding: 6px 7px; border-right: 1px solid #f0f0f1; border-bottom: 1px solid #f0f0f1; cursor: pointer; ' +
+            (inMonth ? (key < today ? 'background: #fbfbfb' : 'background: #fff') : 'background: #f6f7f7') +
+            (sel ? '; box-shadow: inset 0 0 0 2px #3858e9' : ''),
+          pick: () => this.setState({ sel: key })
+        });
+        d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+      }
+      weeks.push({ days });
+    }
+    const sd = new Date(this.state.sel + 'T12:00:00');
+    const sdow = sd.getDay(), slane = LANE[sdow];
+    const sColor = CAT[LANECAT[slane] || slane] || '#646970';
+    const fallback = (posts[this.state.sel] ? [{ kind: 'ALREADY PLANNED', title: posts[this.state.sel].map(p => p.t).join(' · '), why: 'This day has a post. Open it to check for a better-performing swap or to share it with Jetpack Social.', primary: 'Open post', secondary: 'Swap check' }] :
+      [{ kind: 'OPEN ' + LANESHORT[sdow].toUpperCase() + ' SLOT', title: 'Nothing planned yet', why: 'The Desk suggests drafts first, then series continuations, then new ideas that fit the ' + LANESHORT[sdow] + ' lane.', primary: 'Suggest for this day', secondary: 'Leave open' }]);
+    const legendCats = ['Technology', 'Business', 'Opinion', 'Journal', 'Writing', 'Faith'];
+    const legend = legendCats.map(n => ({ name: n === 'Writing' ? 'Writing (fiction)' : n, dot: 'width: 9px; height: 9px; border-radius: 50%; background: ' + CAT[n] }));
+    const weekCats = [CAT.Writing, null, CAT.Technology, CAT.Faith, null, null, null];
+    const weekTips = ['Mon: 2 published', 'Tue: open', 'Wed: scheduled', 'Thu: scheduled', 'Fri: open', 'Sat: open', 'Sun: open'];
+    const weekBar = weekCats.map((c, i) => ({ tip: weekTips[i], style: 'flex: 1; height: 10px; border-radius: 3px; ' + (c ? 'background: ' + c : 'border: 1px dashed #a7aaad') }));
+    return {
+      weeks, legend, weekBar,
+      dows: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((l, i) => ({ label: l, lane: LANESHORT[i] })),
+      selLabel: sd.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+      selTitle: sd.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) + ' · ' + LANESHORT[sdow] + ' lane',
+      selLaneDot: 'width: 10px; height: 10px; border-radius: 50%; background: ' + sColor,
+      sugg: (sugg[this.state.sel] || fallback).map(s => ({ ...s, kindStyle: 'font-size: 10px; font-weight: 700; letter-spacing: .05em; color: ' + sColor }))
+    };
+  }
+}
+</script>
+</body>
+</html>
