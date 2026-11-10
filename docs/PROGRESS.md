@@ -26,7 +26,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-10 Abilities Registrar, category and masthead/get-plan
 - [x] P1-11 masthead/create-planned-draft ability
 - [x] P1-12 masthead/reschedule ability
-- [ ] P1-13 REST contract for running abilities
+- [x] P1-13 REST contract for running abilities
 - [ ] P1-14 wp masthead seed
 - [ ] P1-15 wp masthead plan
 - [ ] P1-16 Tune calendar.max_posts_per_range
@@ -178,3 +178,7 @@ Tests: integration CreatePlannedDraftTest(6). new CreatePlannedDraft( Slots, Ser
 ### P1-12 — 5f6c218
 
 Tests: integration Abilities\RescheduleTest(5). Abilities\Reschedule( Plan\Reschedule as PlanReschedule ), added to Registrar args in Plugin. Annotations idempotent only (POST route). Permission: current_user_can('edit_post', post_id). Output {post_id, date ISO, status}; errors pass through from Plan\Reschedule.
+
+### P1-13 — a07de3c
+
+Tests: integration RestTransportTest(5). Decision core-endpoint: no RestBridge, Plugin unchanged. Verified over rest_do_request: GET get-plan with input query param works; POST on a readonly ability -> 405; subscriber 403/401; anon 401; missing/reversed input 400; unknown ability 404; boot data `run` + `abilities` printed in the inline script match the route.
