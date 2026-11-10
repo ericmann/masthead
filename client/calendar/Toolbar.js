@@ -1,5 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
+import CategoryLegend from '../components/CategoryLegend';
+
 const VIEWS = [
 	{ id: 'month', label: __( 'Month', 'masthead' ) },
 	{ id: 'week', label: __( 'Week', 'masthead' ) },
@@ -9,13 +11,16 @@ const VIEWS = [
 /**
  * Calendar toolbar: previous, next, title, Today and the view switch.
  *
- * @param {Object}   props         Props.
- * @param {string}   props.view    month, week or list.
- * @param {string}   props.title   Range title.
- * @param {Function} props.onPrev  Previous.
- * @param {Function} props.onNext  Next.
- * @param {Function} props.onToday Today.
- * @param {Function} props.onView  Called with a view id.
+ * @param {Object}      props                  Props.
+ * @param {string}      props.view             month, week or list.
+ * @param {string}      props.title            Range title.
+ * @param {Function}    props.onPrev           Previous.
+ * @param {Function}    props.onNext           Next.
+ * @param {Function}    props.onToday          Today.
+ * @param {Function}    props.onView           Called with a view id.
+ * @param {Object[]}    props.categories       Legend categories { slug, name, color }.
+ * @param {Set<string>} props.hidden           Hidden category slugs.
+ * @param {Function}    props.onToggleCategory Called with a slug.
  * @return {Element} The toolbar.
  */
 export default function Toolbar( {
@@ -25,6 +30,9 @@ export default function Toolbar( {
 	onNext,
 	onToday,
 	onView,
+	categories = [],
+	hidden = new Set(),
+	onToggleCategory = () => {},
 } ) {
 	const labels = {
 		month: [
@@ -75,6 +83,13 @@ export default function Toolbar( {
 					</button>
 				) ) }
 			</div>
+			{ categories.length > 0 ? (
+				<CategoryLegend
+					categories={ categories }
+					hidden={ hidden }
+					onToggle={ onToggleCategory }
+				/>
+			) : null }
 		</div>
 	);
 }

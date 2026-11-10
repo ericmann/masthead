@@ -124,8 +124,40 @@
 	gap: 16px;
 }
 
-.masthead-rail:empty {
-	display: none;
+.masthead-tray {
+	padding: 8px;
+	border: 1px solid #dcdcde;
+	background: #fff;
+
+	h2 {
+		margin: 0 0 8px;
+		font-size: 14px;
+	}
+
+	&__rows {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	&__row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 4px 8px;
+		padding: 6px 0;
+		border-top: 1px solid #f0f0f1;
+	}
+
+	&__title {
+		flex: 1 1 100%;
+		font-weight: 600;
+	}
+
+	&__edited {
+		color: #50575e;
+		font-size: 12px;
+	}
 }
 
 .masthead-grid {

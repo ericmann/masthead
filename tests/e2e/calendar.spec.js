@@ -115,3 +115,45 @@ test.describe( 'calendar week and list views', () => {
 		}
 	} );
 } );
+
+test.describe( 'draft tray and legend', () => {
+	test.beforeAll( () => {
+		seedCalendar();
+	} );
+
+	test.beforeEach( async ( { page } ) => {
+		await page.goto( CALENDAR );
+		await page.waitForSelector( '.masthead-grid [data-date]' );
+	} );
+
+	test( 'the Draft tray holds post 10178 and it is not on the grid', async ( {
+		page,
+	} ) => {
+		await expect(
+			page.getByRole( 'heading', { name: 'Unscheduled drafts (1)' } )
+		).toBeVisible();
+		await expect(
+			page.locator( '.masthead-tray [data-post-id="10178"]' )
+		).toHaveCount( 1 );
+		await expect(
+			page.locator( '.masthead-grid [data-post-id="10178"]' )
+		).toHaveCount( 0 );
+	} );
+
+	test( 'toggling Technology hides the Nov 11 chip and toggling again shows it', async ( {
+		page,
+	} ) => {
+		const chip = page.locator(
+			'[data-date="2026-11-11"] [data-post-id="12177"]'
+		);
+		await expect( chip ).toHaveCount( 1 );
+		const toggle = page.getByRole( 'button', {
+			name: 'Technology',
+			exact: true,
+		} );
+		await toggle.click();
+		await expect( chip ).toHaveCount( 0 );
+		await toggle.click();
+		await expect( chip ).toHaveCount( 1 );
+	} );
+} );

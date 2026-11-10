@@ -152,3 +152,13 @@ export function rangeLabel( from, to ) {
 		new Date( parse( to ) )
 	) }`;
 }
+
+/**
+ * Short month and day, localised.
+ *
+ * @param {string} ymd Date.
+ * @return {string} Label such as "Oct 29".
+ */
+export function monthDayLabel( ymd ) {
+	return gmdateI18n( 'M j', new Date( parse( ymd ) ) );
+}

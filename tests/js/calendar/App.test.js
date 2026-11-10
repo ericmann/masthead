@@ -87,6 +87,49 @@ describe( 'calendar App', () => {
 		).toBeTruthy();
 	} );
 
+	it( 'toggling a legend category hides its chips', async () => {
+		window.mastheadBoot.categories = [
+			{ slug: 'technology', name: 'Technology', color: '#2f5fd0' },
+			{ slug: 'faith', name: 'Faith', color: '#7a5c2e' },
+		];
+		resetBoot();
+		const post = ( id, category ) => ( {
+			id,
+			title: `Post ${ id }`,
+			status: 'future',
+			color: '#2f5fd0',
+			date: '2026-11-11T08:00:00-08:00',
+			primary_category: category,
+		} );
+		usePlan.mockReturnValue(
+			plan( {
+				days: [
+					{
+						date: '2026-11-11',
+						lane: {
+							slug: 's',
+							label: 'Standalone',
+							categories: [],
+						},
+						posts: [ post( 1, 'technology' ), post( 2, 'faith' ) ],
+						open: false,
+					},
+				],
+			} )
+		);
+		render( <App /> );
+		expect( screen.getByText( 'Post 1' ) ).toBeTruthy();
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'Technology' } )
+		);
+		expect( screen.queryByText( 'Post 1' ) ).toBeNull();
+		expect( screen.getByText( 'Post 2' ) ).toBeTruthy();
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'Technology' } )
+		);
+		expect( screen.getByText( 'Post 1' ) ).toBeTruthy();
+	} );
+
 	it( 'Today returns the anchor to the boot date', async () => {
 		render( <App /> );
 		await userEvent.click(

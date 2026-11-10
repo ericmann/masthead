@@ -11,6 +11,7 @@ import {
 	weekRange,
 } from '../data/dates';
 import { usePlan } from '../data/usePlan';
+import DraftTray from './DraftTray';
 import ListView from './ListView';
 import MonthGrid from './MonthGrid';
 import Toolbar from './Toolbar';
@@ -51,7 +52,18 @@ export default function App() {
 	const [ view, setView ] = useState( viewFromHash );
 	const [ anchor, setAnchor ] = useState( bootToday );
 	const [ selection, setSelection ] = useState( null );
-	const [ hidden ] = useState( () => new Set() );
+	const [ hidden, setHidden ] = useState( () => new Set() );
+	const toggleCategory = useCallback( ( slug ) => {
+		setHidden( ( current ) => {
+			const next = new Set( current );
+			if ( next.has( slug ) ) {
+				next.delete( slug );
+			} else {
+				next.add( slug );
+			}
+			return next;
+		} );
+	}, [] );
 
 	useEffect( () => {
 		const onHash = () => setView( viewFromHash() );
@@ -104,6 +116,9 @@ export default function App() {
 				onNext={ () => step( 1 ) }
 				onToday={ () => setAnchor( bootToday() ) }
 				onView={ onView }
+				categories={ getBoot().categories || [] }
+				hidden={ hidden }
+				onToggleCategory={ toggleCategory }
 			/>
 			{ plan.error ? (
 				<div className="notice notice-error inline" role="alert">
@@ -167,7 +182,9 @@ export default function App() {
 				<aside
 					className="masthead-rail"
 					aria-label={ __( 'Desk', 'masthead' ) }
-				/>
+				>
+					<DraftTray unscheduled={ plan.unscheduled } />
+				</aside>
 			</div>
 		</div>
 	);
