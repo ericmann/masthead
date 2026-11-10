@@ -12,6 +12,7 @@ namespace Masthead;
 use Masthead\Admin\Assets;
 use Masthead\Admin\CalendarPage;
 use Masthead\Admin\Notices;
+use Masthead\Plan\Colors;
 use Masthead\Plan\Rhythm;
 use Masthead\Support\Clock;
 
@@ -46,6 +47,7 @@ final class Plugin {
 		add_action( 'admin_menu', array( $calendar, 'register' ) );
 		add_action( 'admin_enqueue_scripts', array( $assets, 'enqueue' ) );
 		add_action( 'admin_notices', array( $notices, 'render' ) );
+		add_action( 'init', array( Colors::class, 'register_meta' ) );
 	}
 
 	/**
