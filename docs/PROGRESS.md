@@ -64,7 +64,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-09 Desk rail
 - [x] P4-10 Day plan
 - [x] P4-11 Tune the Desk assumptions
-- [ ] P4-12 Scoring
+- [x] P4-12 Scoring
 - [ ] P4-13 SwapCheck: lane_mismatch and cadence_break with options
 - [ ] P4-14 SwapCheck: collision and better_candidate
 - [ ] P4-15 Nightly cron, masthead/swap-check ability and wp masthead swap-check
@@ -330,3 +330,7 @@ Tests: DayPlan.test.js(7), e2e dayplan.spec.js(2 x2); full npm run test:e2e = 80
 ### P4-11 — 80420fe
 
 Tuning the Desk assumptions (docs/tuning/P4-11.md); all defaults kept, Config unchanged. Measurement rows (before = after): ghost_days=14 batch 0.07 s (7: 0.06, 21: 0.11); horizon_days=21 batch 0.11 s (14: 0.07, 30: 0.17) [rule: under 3 s]; gap_days=45 -> 0 gaps among 8 categories published last year (30 and 60 also 0) [rule: not more than half]; reshare_min_age_days=90 and reshare_cooldown_days=180 -> 0 Sunday candidates, and 60/180/90/365 also 0, so keep [rule needs a looser value with at least one]; series_window_days=3 -> 7 due dates in 28 days (2: 5, 4: 9), Monday-to-Saturday target 2026-12-12 for all three; candidate_pool=50 -> 0.008 s for one date (25: 0.021, 100: 0.008) [rule: under 0.5 s]. NOT MEASURED (needs a connected Jetpack Stats site; human): reshare ages vs real traffic - the sample stats posts are all under 42 days old. Harness DeskBench.php (group tuning); integration suite and constraints still green.
+
+### P4-12 — b188be5
+
+Tests: ScoringTest(8 incl. property grid). Desk\Scoring (instance, no deps): terms( post{categories,primary_category}, date, lane, lane_exception, ?views_by_category, ?views_by_weekday ) -> {lane, category|null, weekday|null}; score( terms ) = sum(w*t)/sum(w) over non-null terms using Config swap.weights (0.0 when all weights present are zero, clamped to 0..1). Absent primary category / weekday key counts as zero views; null/zero-max maps drop the term.
