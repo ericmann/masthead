@@ -82,7 +82,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P5-09 SeriesPlanner and masthead/propose-series
 - [x] P5-10 masthead/accept-series
 - [x] P5-11 Ask the Desk
-- [ ] P5-12 Settings: Desk and AI fields, and wp masthead ai:status
+- [x] P5-12 Settings: Desk and AI fields, and wp masthead ai:status
 - [ ] P5-13 Tune the AI assumptions
 - [ ] P5-14 Phase 5 push and manual checks
 - [ ] P6-01 Synthetic fixture titles
@@ -402,3 +402,7 @@ SeriesPlanner::accept(name, parts, ?cadence, ?category) + Abilities\AcceptSeries
 ### P5-11 — 1f69a53
 
 client/calendar/AskDesk.js: text input "Ask the Desk" + Ask button + line naming Settings > Connectors (link when boot urls.connectors); runs propose-series {prompt}; proposal = series name input, lane label, per-part date input (aria-label "Part N date"), title input ("Part N title"), outline as plain li, "Remove part"; "Accept series" runs accept-series {name, category, cadence, parts[{date,title,outline}]} then calls onCreated (App passes plan.refresh) and announces "Created N planned drafts" in an aria-live region; "Discard" clears; errors (incl. masthead_ai_budget) shown as role=alert notice and keep the proposal. DeskRail renders it at the bottom when boot ai.supported && caps.promptAi, else "Ask the Desk needs an AI provider" + Connectors link. Tests: jest 140 (AskDesk 7), e2e ask.spec desktop+mobile pass (four Thursday drafts in list view; axe clean). Interpretation: cadence/category sent as proposed; no section aria-label (would duplicate the input label for getByLabel). Lesson: `wp-scripts format tests` also reformats tests/fixtures JSON - format only tests/js and tests/e2e.
+
+### P5-12 — f2c608d
+
+Settings: new DeskSettings (11 integer day/count keys, swap.min_score_delta, 3 swap weights; exports NumberField) and AiSettings now has model-id lists (comma-separated, help text), monthly cap (help "0 turns the Desk's AI off." + "N requests left this month"), context days, "Draft titles and excerpts" toggle, Last model used per tier (boot ai.models) or "The AI Client does not report which model was used." Assets gained boot settingsDefaults (Config::all restricted to settable); Plugin's ai boot provider adds models (Budget::models()); settings App overlays saved settings on settingsDefaults and only edited keys are saved (verified: only ai.monthly_request_cap stored). wp masthead ai:status prints supported, remaining, cap, models per tier. Tests: unit 295, jest 148, e2e settings.spec 9/9 desktop. Lessons: controlled number inputs need local text state or users cannot clear and retype; e2e mu fake-ai now honours option masthead_e2e_ai=0 for the no-provider state.
