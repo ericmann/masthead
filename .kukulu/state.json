@@ -74,6 +74,18 @@
       "stage": "implement",
       "round": 1,
       "at": "2026-11-10T05:07:32.449Z"
+    },
+    {
+      "event": "end",
+      "stage": "implement",
+      "round": 1,
+      "at": "2026-11-10T05:28:03.165Z"
+    },
+    {
+      "event": "start",
+      "stage": "review",
+      "round": 1,
+      "at": "2026-11-10T05:28:03.165Z"
     }
   ],
   "cleanroom": {
