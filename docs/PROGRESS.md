@@ -33,7 +33,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-17 Phase 1 push and manual checks
 - [x] P2-01 Boot data and the client data layer
 - [x] P2-02 Shared components: StatValue, LaneDot, CategoryLegend
-- [ ] P2-03 PostChip, OpenSlot and DayCell
+- [x] P2-03 PostChip, OpenSlot and DayCell
 - [ ] P2-04 Calendar app: toolbar, hash routing and MonthGrid
 - [ ] P2-05 WeekGrid and ListView
 - [ ] P2-06 Legend visibility toggles and Draft tray
@@ -206,3 +206,7 @@ Tests: AssetsTest +1, dates.test.js(6), useAbility.test.js(3), usePlan.test.js(3
 ### P2-02 — c8da0b1
 
 Tests: StatValue.test.js(4), CategoryLegend.test.js(3). Components: StatValue({numbers,name,label}) (only file reading stat values; `Label Unavailable` text when null/missing), LaneDot({color,label}), CategoryLegend({categories,hidden:Set,onToggle}) with aria-pressed buttons. SCSS: client/components/style.scss, pulled in by `@use "./components/style";` at top of client/style.scss (later tasks add partials the same way; @use must be first). BEM-ish classes masthead-stat, masthead-lane-dot, masthead-legend.
+
+### P2-03 — d6459c8
+
+Tests: PostChip.test.js(4), DayCell.test.js(5). Components: PostChip({post,onSelect}) (button, data-post-id, data-status, status styles via inline style), OpenSlot({laneLabel}) "Open · <lane>", DayCell({day,isToday,isSelected,inMonth,hidden:Set,onSelectDay,onSelectPost}) with data-date, header button aria-label per spec, TODAY marker. Interpretation: aria count uses visible posts only. SCSS partial client/calendar/style.scss added via `@use "./calendar/style" as calendar;` in client/style.scss.
