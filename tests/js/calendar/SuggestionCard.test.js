@@ -53,6 +53,20 @@ describe( 'SuggestionCard', () => {
 		);
 	} );
 
+	it( 'colours the kind label and uses compact buttons', () => {
+		renderCard( { color: '#1f7a52' } );
+		expect( screen.getByText( 'DRAFT' ).style.color ).toBe(
+			'rgb(31, 122, 82)'
+		);
+		expect(
+			screen.getByRole( 'button', { name: 'Place on this day' } )
+				.className
+		).toBe( 'button button-primary button-compact' );
+		expect(
+			screen.getByRole( 'link', { name: 'Open draft' } ).className
+		).toBe( 'button button-compact' );
+	} );
+
 	it( 'Dismiss runs dismiss-suggestion and reloads the date', async () => {
 		const onDismiss = jest.fn();
 		renderCard( { onDismiss } );

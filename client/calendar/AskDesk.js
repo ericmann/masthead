@@ -105,37 +105,45 @@ export default function AskDesk( { onCreated = () => {} } ) {
 
 	return (
 		<section className="masthead-ask">
-			<h3>{ __( 'Ask the Desk', 'masthead' ) }</h3>
+			<h3 className="masthead-desk__label">
+				{ __( 'Ask the Desk', 'masthead' ) }
+			</h3>
 			<form onSubmit={ ask }>
-				<label htmlFor="masthead-ask-prompt">
+				<label
+					htmlFor="masthead-ask-prompt"
+					className="screen-reader-text"
+				>
 					{ __( 'Ask the Desk', 'masthead' ) }
 				</label>
 				<input
 					id="masthead-ask-prompt"
+					className="masthead-ask__prompt"
 					type="text"
 					value={ prompt }
 					placeholder={ __(
-						'A 4-part security series starting in January',
+						'e.g. “A 4-part security series for January”',
 						'masthead'
 					) }
 					onChange={ ( event ) => setPrompt( event.target.value ) }
-				/>{ ' ' }
-				<label htmlFor="masthead-ask-start">
-					{ __( 'Start on', 'masthead' ) }
-				</label>{ ' ' }
-				<input
-					id="masthead-ask-start"
-					type="date"
-					value={ start }
-					onChange={ ( event ) => setStart( event.target.value ) }
-				/>{ ' ' }
-				<button
-					type="submit"
-					className="button"
-					disabled={ busy || prompt.trim() === '' }
-				>
-					{ __( 'Ask', 'masthead' ) }
-				</button>
+				/>
+				<div className="masthead-ask__row">
+					<label htmlFor="masthead-ask-start">
+						{ __( 'Start on', 'masthead' ) }
+					</label>
+					<input
+						id="masthead-ask-start"
+						type="date"
+						value={ start }
+						onChange={ ( event ) => setStart( event.target.value ) }
+					/>
+					<button
+						type="submit"
+						className="button button-compact"
+						disabled={ busy || prompt.trim() === '' }
+					>
+						{ __( 'Ask', 'masthead' ) }
+					</button>
+				</div>
 			</form>
 			<p className="description">
 				{ __( 'The AI provider is configured in', 'masthead' ) }{ ' ' }

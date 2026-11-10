@@ -104,11 +104,12 @@
 	// The status line shows first, as in the mockup.
 	// The title stays first in the DOM for screen readers.
 	&__meta {
-		overflow: hidden;
 		order: -1;
 		font-size: 10px;
+	}
+
+	&__time {
 		white-space: nowrap;
-		text-overflow: ellipsis;
 	}
 
 	&:focus-visible {
@@ -248,13 +249,22 @@
 
 .masthead-layout {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) 320px;
+	grid-template-columns: minmax(0, 1fr) 340px;
+	align-items: start;
 	gap: 16px;
 }
 
+.masthead-rail {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 0;
+}
+
 .masthead-tray {
-	padding: 8px;
+	padding: 12px 16px;
 	border: 1px solid #dcdcde;
+	border-radius: 4px;
 	background: #fff;
 
 	h2 {
@@ -273,13 +283,15 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 4px 8px;
-		padding: 6px 0;
+		padding: 8px 0;
 		border-top: 1px solid #f0f0f1;
 	}
 
 	&__title {
-		flex: 1 1 100%;
+		flex: 1 1 calc(100% - 24px);
+		min-width: 0;
 		font-weight: 600;
+		overflow-wrap: anywhere;
 	}
 
 	&__edited {
@@ -607,60 +619,122 @@
 }
 
 .masthead-desk {
-	margin-bottom: 12px;
-	padding: 8px;
 	border: 1px solid #dcdcde;
+	border-radius: 4px;
 	background: #fff;
 
-	h2 {
-		margin: 0 0 8px;
-		font-size: 14px;
+	&__head {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 14px 16px;
+		border-bottom: 1px solid #f0f0f1;
+
+		h2 {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin: 0;
+			font-size: 14px;
+		}
+
+		.masthead-sparkle {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
 	}
 
-	h3 {
-		margin: 8px 0 4px;
+	&__date {
+		margin-left: auto;
+		color: #50575e;
+		font-size: 12px;
+	}
+
+	&__section {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 12px 16px;
+		border-bottom: 1px solid #f0f0f1;
+
+		&:last-child {
+			border-bottom: 0;
+		}
+
+		> p {
+			margin: 0;
+		}
+	}
+
+	&__label {
+		margin: 0;
+		color: #50575e;
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	&__week p {
+		color: #3c434a;
 		font-size: 13px;
 	}
 
 	&__bars {
 		display: flex;
-		gap: 3px;
+		gap: 4px;
 	}
 
 	&__bar {
 		flex: 1;
-		height: 8px;
-		border-radius: 2px;
+		height: 10px;
+		border-radius: 3px;
 
 		&.is-empty {
-			border: 1px dashed #787c82;
+			border: 1px dashed #a7aaad;
 		}
+	}
+
+	&__day {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0;
+		font-size: 14px;
+	}
+
+	&__ideas .button {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
 	}
 }
 
 .masthead-suggestion {
-	margin: 8px 0;
-	padding: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 10px 12px;
 	border: 1px solid #dcdcde;
-	border-radius: 4px;
+	border-radius: 6px;
 
 	&__kind {
 		margin: 0;
-		color: #50575e;
 		font-size: 10px;
 		font-weight: 700;
-		letter-spacing: 0.06em;
+		letter-spacing: 0.05em;
 	}
 
 	&__title {
-		margin: 2px 0;
+		margin: 0;
 		font-size: 13px;
+		line-height: 1.35;
 	}
 
 	&__why {
-		margin: 4px 0;
+		margin: 0;
 		color: #50575e;
 		font-size: 12px;
+		line-height: 1.45;
 	}
 
 	&__actions {
@@ -668,6 +742,7 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 6px;
+		margin-top: 2px;
 	}
 }
 
@@ -714,22 +789,45 @@
 }
 
 .masthead-ask {
-	margin-top: 16px;
-	padding-top: 8px;
-	border-top: 1px solid #dcdcde;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 
-	h3 {
-		margin: 0 0 6px;
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	&__prompt[type="text"] {
+		width: 100%;
 		font-size: 13px;
 	}
 
-	label {
-		display: block;
-		margin-bottom: 2px;
-		font-weight: 600;
+	&__row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 6px 8px;
+
+		label {
+			color: #50575e;
+			font-size: 12px;
+		}
+
+		input[type="date"] {
+			flex: 1 1 120px;
+			min-width: 0;
+		}
 	}
 
-	input[type="text"] {
+	.description {
+		margin: 0;
+		color: #646970;
+		font-size: 11px;
+	}
+
+	&__proposal input[type="text"] {
 		max-width: 100%;
 	}
 
@@ -746,6 +844,12 @@
 	}
 
 	&__created {
+		margin: 0;
 		font-weight: 600;
 	}
+}
+
+.masthead-ask__hint {
+	color: #50575e;
+	font-size: 12px;
 }

@@ -90,6 +90,33 @@ describe( 'DeskRail', () => {
 		expect(
 			screen.getByText( 'Select a day to see its suggestions.' )
 		).toBeTruthy();
+		expect(
+			screen.getByRole( 'heading', { name: 'This week · Nov 8–14' } )
+		).toBeTruthy();
+		expect( container.querySelector( '.masthead-desk__date' ) ).toBeNull();
+	} );
+
+	it( 'tints each kind label with the lane colour', () => {
+		window.mastheadBoot = {
+			urls: { editPost: 'x%d' },
+			categories: [
+				{ slug: 'technology', name: 'Technology', color: '#2f5fd0' },
+			],
+		};
+		resetBoot();
+		renderRail( {
+			selectedDate: '2026-11-18',
+			result: {
+				...result,
+				suggestions: [
+					{ ...result.suggestions[ 0 ], category: 'technology' },
+				],
+			},
+		} );
+		// Standalone has no category, so the draft's own category colours it.
+		expect( screen.getByText( 'DRAFT' ).style.color ).toBe(
+			'rgb(47, 95, 208)'
+		);
 	} );
 
 	it( "shows the selected day's lane and suggestions", () => {
@@ -99,9 +126,10 @@ describe( 'DeskRail', () => {
 				name: 'Wednesday, Nov 18 · Standalone lane',
 			} )
 		).toBeTruthy();
-		expect(
-			screen.getByRole( 'heading', { name: 'Desk · Wednesday, Nov 18' } )
-		).toBeTruthy();
+		expect( screen.getByRole( 'heading', { name: 'Desk' } ) ).toBeTruthy();
+		expect( screen.getByText( 'Wed, Nov 18' ).className ).toBe(
+			'masthead-desk__date'
+		);
 		expect( screen.getByText( 'From Guilds to Fleets' ) ).toBeTruthy();
 		expect(
 			screen.getByText( 'Wednesday is your Standalone slot.' )
