@@ -43,7 +43,9 @@ class WpAiClient implements AiClient {
 	}
 
 	/**
-	 * Whether a provider can generate text. No network call.
+	 * Whether a provider can answer Masthead's requests: every one has a system instruction and asks for JSON that
+	 * matches a schema, so a provider whose models list neither option (OpenRouter's 1.0.0 plugin, for one) does not
+	 * count. No network call beyond the provider's own model listing.
 	 *
 	 * @return bool
 	 */
@@ -52,7 +54,10 @@ class WpAiClient implements AiClient {
 			return false;
 		}
 		try {
-			return true === ( $this->prompt_factory )( null )->is_supported_for_text_generation();
+			return true === ( $this->prompt_factory )( null )
+				->using_system_instruction( 'Masthead' )
+				->as_json_response( array( 'type' => 'object' ) )
+				->is_supported_for_text_generation();
 		} catch ( \Throwable $e ) {
 			return false;
 		}
@@ -107,10 +112,14 @@ class WpAiClient implements AiClient {
 		$tier   = 'fast' === $tier ? 'fast' : 'strong';
 		$models = array_values( array_filter( (array) Config::get( 'ai.models.' . $tier ), 'is_string' ) );
 		try {
-			$builder = ( $this->prompt_factory )( $user )
-				->using_system_instruction( $system )
-				->using_temperature( (float) Config::get( 'ai.temperature' ) );
-			$limit   = $this->max_tokens( $schema );
+			$builder = ( $this->prompt_factory )( $user )->using_system_instruction( $system );
+			// No temperature unless a site filters one in: Claude 5 models reject sampling parameters, and a
+			// required option a model does not list removes it from the SDK's candidates.
+			$temperature = Config::get( 'ai.temperature' );
+			if ( is_int( $temperature ) || is_float( $temperature ) ) {
+				$builder = $builder->using_temperature( (float) $temperature );
+			}
+			$limit = $this->max_tokens( $schema );
 			if ( $limit > 0 ) {
 				$builder = $builder->using_max_tokens( $limit );
 			}
@@ -118,7 +127,7 @@ class WpAiClient implements AiClient {
 				$builder = $builder->using_model_preference( ...$models );
 			}
 			if ( null !== $schema ) {
-				$builder = $builder->as_json_response( $schema );
+				$builder = $builder->as_json_response( Schemas::wire( $schema ) );
 			}
 			$result = $builder->generate_text_result();
 			if ( $result instanceof \WP_Error ) {

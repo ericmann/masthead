@@ -72,18 +72,45 @@ final class WpAiClientTest extends TestCase {
 		$this->assertFalse( $this->client( $builder )->supported() );
 	}
 
-	public function test_json_passes_system_models_temperature_tokens_and_schema_to_the_builder(): void {
+	public function test_supported_asks_for_a_system_instruction_and_a_json_schema(): void {
+		$builder = new StubBuilder();
+		$this->assertTrue( $this->client( $builder )->supported() );
+		$this->assertNull( $builder->prompt );
+		$this->assertSame( array( 'Masthead' ), $builder->args( 'using_system_instruction' ) );
+		$this->assertSame( array( array( 'type' => 'object' ) ), $builder->args( 'as_json_response' ) );
+		$this->assertSame( 'is_supported_for_text_generation', $builder->names()[ count( $builder->names() ) - 1 ] );
+	}
+
+	public function test_a_throwing_support_check_is_unsupported(): void {
+		$client = new WpAiClient(
+			static function () {
+				throw new \RuntimeException( 'registry down' );
+			}
+		);
+		$this->assertFalse( $client->supported() );
+	}
+
+	public function test_json_passes_system_models_tokens_and_the_wire_schema_to_the_builder(): void {
 		$builder         = new StubBuilder();
 		$builder->result = $this->result( '{"message":"Hi"}' );
-		$schema          = array( 'title' => 'share_copy' );
+		$schema          = Schemas::share_copy();
 		$data            = $this->client( $builder )->json( 'SYS', 'USER', $schema, 'fast' );
 		$this->assertSame( array( 'message' => 'Hi' ), $data );
 		$this->assertSame( 'USER', $builder->prompt );
 		$this->assertSame( array( 'SYS' ), $builder->args( 'using_system_instruction' ) );
 		$this->assertSame( array( 'claude-haiku-5-5' ), $builder->args( 'using_model_preference' ) );
-		$this->assertSame( array( 0.4 ), $builder->args( 'using_temperature' ) );
+		$this->assertNotContains( 'using_temperature', $builder->names() );
 		$this->assertSame( array( 1200 ), $builder->args( 'using_max_tokens' ) );
-		$this->assertSame( array( $schema ), $builder->args( 'as_json_response' ) );
+		$this->assertSame( array( Schemas::wire( $schema ) ), $builder->args( 'as_json_response' ) );
+		$this->assertArrayNotHasKey( 'minLength', $builder->args( 'as_json_response' )[0]['properties']['message'] );
+	}
+
+	public function test_a_filtered_temperature_is_sent(): void {
+		$this->overrides = array( 'ai.temperature' => 0.7 );
+		$builder         = new StubBuilder();
+		$builder->result = $this->result( '{}' );
+		$this->client( $builder )->json( 's', 'u', Schemas::outline(), 'strong' );
+		$this->assertSame( array( 0.7 ), $builder->args( 'using_temperature' ) );
 	}
 
 	public function test_max_tokens_follow_the_request_kind(): void {
@@ -123,7 +150,7 @@ final class WpAiClientTest extends TestCase {
 		$builder->result = $this->result( '{}' );
 		$this->client( $builder )->json( 's', 'u', Schemas::series_proposal( array( 'technology' ), 12 ), 'strong' );
 		$this->assertNotContains( 'using_max_tokens', $builder->names() );
-		$this->assertSame( array( 0.4 ), $builder->args( 'using_temperature' ) );
+		$this->assertNotContains( 'using_temperature', $builder->names() );
 	}
 
 	public function test_tier_selects_the_model_list_from_config(): void {

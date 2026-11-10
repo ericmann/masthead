@@ -100,7 +100,7 @@ final class ConfigTest extends TestCase {
 		$this->assertSame( 300, $d['ai.monthly_request_cap'] );
 		$this->assertSame( array( 'claude-haiku-5-5' ), $d['ai.models.fast'] );
 		$this->assertSame( array( 'claude-sonnet-5-5' ), $d['ai.models.strong'] );
-		$this->assertSame( 0.4, $d['ai.temperature'] );
+		$this->assertNull( $d['ai.temperature'] );
 		$this->assertSame(
 			array(
 				'ideas'           => 1200,

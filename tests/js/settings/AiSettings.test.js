@@ -12,10 +12,12 @@ describe( 'AiSettings', () => {
 				<AiSettings supported={ false } />
 			</>
 		);
-		expect( screen.getByText( 'Provider: none active' ) ).toBeTruthy();
+		expect(
+			screen.getByText( 'Provider: none Masthead can use' )
+		).toBeTruthy();
 		expect(
 			screen.getByText(
-				/No AI provider is configured, so Desk suggestions are off/
+				/No AI provider that Masthead can use is set up, so AI ideas, outlines, share copy and series proposals are off/
 			)
 		).toBeTruthy();
 		expect(

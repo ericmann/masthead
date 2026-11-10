@@ -105,7 +105,7 @@ test.describe( 'Settings › Calendar', () => {
 			await page.reload();
 			await page.waitForSelector( '.masthead-rhythm tbody tr' );
 			await expect(
-				page.getByText( 'Provider: none active' )
+				page.getByText( 'Provider: none Masthead can use' )
 			).toBeVisible();
 			await expect(
 				page.getByRole( 'link', { name: 'Set up in Connectors' } )

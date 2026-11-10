@@ -62,7 +62,7 @@ export function AiNotice( { connectorsUrl } ) {
 		<div className="notice notice-warning inline masthead-ai-notice">
 			<p>
 				{ __(
-					'No AI provider is configured, so Desk suggestions are off. The calendar, lanes and series still work.',
+					'No AI provider that Masthead can use is set up, so AI ideas, outlines, share copy and series proposals are off. The calendar, lanes, series and the rest of the Desk still work.',
 					'masthead'
 				) }
 			</p>
@@ -103,8 +103,16 @@ export default function AiSettings( {
 				<p className="masthead-ai__status">
 					{ supported
 						? __( 'Provider: available', 'masthead' )
-						: __( 'Provider: none active', 'masthead' ) }
+						: __( 'Provider: none Masthead can use', 'masthead' ) }
 				</p>
+				{ ! supported && (
+					<p className="description masthead-ai__provider-help">
+						{ __(
+							'Masthead needs a provider plugin, set up under Settings › Connectors, whose models return JSON that matches a schema. The Anthropic, OpenAI and Google provider plugins do; OpenRouter 1.0.0 does not.',
+							'masthead'
+						) }
+					</p>
+				) }
 				<p className="description masthead-ai__access">
 					{ fallbackCapability
 						? sprintf(
