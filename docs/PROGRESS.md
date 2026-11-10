@@ -22,7 +22,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-06 Slots (non-floating dated drafts)
 - [x] P1-07 Reschedule
 - [x] P1-08 PlanReader
-- [ ] P1-09 Spike — Abilities REST execution and exposure flags
+- [x] P1-09 Spike — Abilities REST execution and exposure flags
 - [ ] P1-10 Abilities Registrar, category and masthead/get-plan
 - [ ] P1-11 masthead/create-planned-draft ability
 - [ ] P1-12 masthead/reschedule ability
@@ -162,3 +162,7 @@ Tests: unit RescheduleTest(6), integration RescheduleTest(5). new Reschedule( Cl
 ### P1-08 — 76417dc
 
 Tests: unit PlanReaderTest(6), integration PlanReaderTest(3). new PlanReader( Clock, SeriesSource ). range( from, to ) -> {days:[{date, lane:{slug,label,categories}, posts, open}], unscheduled, truncated}; unscheduled(); post( id ); scheduled_between( from, to ) (future + dated drafts); public plan_post( object ). PlanPost keys: id,title,status,date,categories,primary_category,color,planned,edit_url, optional series{term_id,name,part,total}, and modified for undated. Interpretation: unscheduled() uses a temporary posts_where filter (post_date_gmt = zero) so the desk.candidate_pool bound counts undated drafts only. range() always includes unscheduled() (second get_posts call).
+
+### P1-09 — 90eec9d
+
+Spike docs/spikes/P1-09-abilities-rest.md. Decision: core-endpoint. Key facts for later tasks: route /wp-abilities/v1/abilities/<name>/run (name keeps its slash); method by annotations: readonly=>GET (input in `input` query param), destructive+idempotent=>DELETE, else POST (JSON body {input}); wrong method 405. Errors: 401/403 rest_ability_cannot_execute, 400 ability_invalid_input, 404 rest_ability_not_found; WP_Error from execute keeps its own status. meta.show_in_rest defaults to meta.public, else false; abilities the UI runs need show_in_rest true even when public is false (share-post). Registration hooks wp_abilities_api_categories_init / wp_abilities_api_init; `category` required. @wordpress/abilities is a script MODULE only, so the client uses apiFetch (nonce middleware is installed by core). Connectors screen: options-connectors.php. UNCONFIRMED: MCP adapter's own exposure key (fallback meta.public). Don't set both destructive and idempotent on reschedule (it would require DELETE).
