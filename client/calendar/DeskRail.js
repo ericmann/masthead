@@ -17,6 +17,7 @@ const DAYS_IN_WEEK = 7;
  * @param {Function}    props.onPlace      Called with a suggestion.
  * @param {Function}    props.onShare      Called with a suggestion.
  * @param {Function}    props.onDismiss    Called with a suggestion.
+ * @param {Function}    props.onPlan       Called with a suggestion ("Plan this").
  * @return {Element} The rail content.
  */
 export default function DeskRail( {
@@ -25,6 +26,7 @@ export default function DeskRail( {
 	weekStartsOn,
 	selectedDate,
 	result,
+	onPlan,
 	onPlace,
 	onShare,
 	onDismiss,
@@ -55,6 +57,7 @@ export default function DeskRail( {
 			<SuggestionCard
 				key={ suggestion.key }
 				suggestion={ suggestion }
+				onPlan={ onPlan }
 				onPlace={ onPlace }
 				onShare={ onShare }
 				onDismiss={ onDismiss }

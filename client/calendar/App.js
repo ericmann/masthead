@@ -12,6 +12,7 @@ import {
 } from '../data/dates';
 import { usePlan } from '../data/usePlan';
 import { runAbility } from '../data/useAbility';
+import DayPlan from './DayPlan';
 import DeskRail from './DeskRail';
 import DraftTray from './DraftTray';
 import SharePanel from './SharePanel';
@@ -118,6 +119,10 @@ export default function App() {
 			load( selectedDay );
 		}
 	}, [ selectedDay, load ] );
+	const [ planning, setPlanning ] = useState( null );
+	useEffect( () => {
+		setPlanning( null );
+	}, [ selectedDay ] );
 	const dismissSuggestion = async ( suggestion ) => {
 		await runAbility( 'masthead/dismiss-suggestion', {
 			date: selectedDay,
@@ -310,20 +315,48 @@ export default function App() {
 						/>
 					) : null }
 					{ selection?.type === 'post' ? null : (
-						<DeskRail
-							days={ plan.days }
-							today={ today }
-							weekStartsOn={ weekStartsOn }
-							selectedDate={ selectedDay }
-							result={
-								selectedDay
-									? suggestions.get( selectedDay )
-									: null
-							}
-							onPlace={ placeSuggestion }
-							onShare={ shareSuggestion }
-							onDismiss={ dismissSuggestion }
-						/>
+						<>
+							{ planning && selectedDay ? (
+								<DayPlan
+									key={ planning.key }
+									suggestion={ planning }
+									date={ selectedDay }
+									laneLabel={
+										plan.days.find(
+											( day ) => day.date === selectedDay
+										)?.lane.label || ''
+									}
+									others={ (
+										suggestions.get( selectedDay )
+											?.suggestions || []
+									).filter(
+										( other ) => other.key !== planning.key
+									) }
+									onPick={ setPlanning }
+									onCreated={ async () => {
+										suggestions.invalidate( selectedDay );
+										await plan.refresh();
+									} }
+									onBack={ () => setPlanning( null ) }
+								/>
+							) : (
+								<DeskRail
+									days={ plan.days }
+									today={ today }
+									weekStartsOn={ weekStartsOn }
+									selectedDate={ selectedDay }
+									result={
+										selectedDay
+											? suggestions.get( selectedDay )
+											: null
+									}
+									onPlan={ setPlanning }
+									onPlace={ placeSuggestion }
+									onShare={ shareSuggestion }
+									onDismiss={ dismissSuggestion }
+								/>
+							) }
+						</>
 					) }
 					<DraftTray
 						unscheduled={ plan.unscheduled }

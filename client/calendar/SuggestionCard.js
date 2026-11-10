@@ -18,10 +18,12 @@ const KIND_LABELS = {
  * @param {Function} props.onPlace    Called with the suggestion ("Place on this day").
  * @param {Function} props.onShare    Called with the suggestion ("Share again").
  * @param {Function} props.onDismiss  Called with the suggestion.
+ * @param {Function} props.onPlan     Called with a suggestion ("Plan this").
  * @return {Element} The card.
  */
 export default function SuggestionCard( {
 	suggestion,
+	onPlan,
 	onPlace,
 	onShare,
 	onDismiss,
@@ -51,6 +53,17 @@ export default function SuggestionCard( {
 							: __( 'Open post', 'masthead' ) }
 					</a>
 				) : null;
+			case 'create_draft':
+				return onPlan ? (
+					<button
+						key={ action }
+						type="button"
+						className="button button-primary"
+						onClick={ () => onPlan( suggestion ) }
+					>
+						{ __( 'Plan this', 'masthead' ) }
+					</button>
+				) : null;
 			case 'share':
 				return (
 					<button
@@ -74,7 +87,7 @@ export default function SuggestionCard( {
 					</button>
 				);
 			default:
-				// create_draft and suggest_topics arrive with later tasks.
+				// suggest_topics arrives with the AI phase.
 				return null;
 		}
 	};
