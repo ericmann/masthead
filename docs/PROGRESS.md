@@ -59,7 +59,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-04 Reshare candidates
 - [x] P4-05 Ranker and Dismissals
 - [x] P4-06 Reasons templates and the Suggester
-- [ ] P4-07 suggest-for-date and dismiss-suggestion abilities, wp masthead suggest
+- [x] P4-07 suggest-for-date and dismiss-suggestion abilities, wp masthead suggest
 - [ ] P4-08 Ghost cards and "Fill open days"
 - [ ] P4-09 Desk rail
 - [ ] P4-10 Day plan
@@ -310,3 +310,7 @@ Tests: RankerTest(7 incl. permutation property test over 5 candidates), Dismissa
 ### P4-06 — 31b6233
 
 Tests: ReasonsTest(5), SuggesterTest(8). Desk\Reasons( Clock )->for_candidate( candidate array, date, lane ): templates per kind exactly as spec (draft sentence for the fixture gives "Wednesday is your Standalone slot. This draft isn't on the calendar; last edited Oct 29."). Desk\Suggester( DraftMatch, SeriesNext, Reshare, CategoryGap, Ranker, Reasons, Dismissals, PlanReader, Clock ) [Clock added as 9th arg]: suggest( date, user_id, kinds = [] ) -> {date, lane{slug,label,categories}, suggestions[], ai{used:false, remaining:0}}; empty suggestions for past dates and days that already have a post (PlanReader::range for that day); sources collected draft, series, reshare, gap then Ranker; filter masthead_suggestions( list, date ); horizon_end() = today + desk.horizon_days. Suggestion = {key, kind, title, why, actions, category?, post_id?, series?, outline?}. Interpretation: removed `final` from DraftMatch, SeriesNext, Reshare, CategoryGap, Dismissals so unit tests can subclass them (Ranker stays final, tests use the real one).
+
+### P4-07 — b3b3720
+
+Tests: integration SuggestForDateTest(7), DismissSuggestionTest(5), unit SuggestCommandTest(1). Abilities\SuggestForDate( Suggester ) (readonly; permission edit_posts, plus prompt_ai when include_ideas) and Abilities\DismissSuggestion( Dismissals ) (idempotent, POST; dismisses for get_current_user_id()); Cli\SuggestCommand( Ability ) prints "kind<TAB>title<TAB>why". Plugin now builds the Desk: $dismissals, $suggester (DraftMatch, SeriesNext, Reshare( stats, share, clock ), CategoryGap, Ranker, Reasons, Dismissals, PlanReader, Clock) and registers both abilities + `suggest` command. Verified in wp-env on the fixture: `wp masthead suggest 2026-11-18` prints the draft (10178) with the SPEC sentence, then gaps Business and Journal (never published); no reshare (stats unavailable). tests/unit/stubs/WP_CLI.php gained warning() / $warnings.
