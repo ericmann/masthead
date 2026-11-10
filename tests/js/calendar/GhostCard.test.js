@@ -39,6 +39,8 @@ describe( 'GhostCard', () => {
 		);
 		const card = screen.getByRole( 'button' );
 		expect( card.style.borderColor ).toBe( 'rgb(47, 95, 208)' );
+		// The kind label and title inherit the lane colour.
+		expect( card.style.color ).toBe( 'rgb(47, 95, 208)' );
 		expect( card.className ).toContain( 'masthead-ghost' );
 	} );
 

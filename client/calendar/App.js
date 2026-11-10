@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
+import { legendCategories } from '../components/CategoryLegend';
 import { getBoot } from '../data/boot';
+import { laneColor } from '../data/colors';
 import { today as bootToday } from '../data/clock';
 import {
 	addDays,
+	monthDayLabel,
 	monthGrid,
 	monthLabel,
 	rangeLabel,
@@ -15,6 +18,7 @@ import { runAbility } from '../data/useAbility';
 import DayPlan from './DayPlan';
 import DeskRail from './DeskRail';
 import DraftTray from './DraftTray';
+import Header from './Header';
 import SharePanel from './SharePanel';
 import SwapPanel from './SwapPanel';
 import { useFindings } from './useFindings';
@@ -107,12 +111,10 @@ export default function App() {
 	plan.days.forEach( ( day ) => {
 		const first = suggestions.get( day.date )?.suggestions?.[ 0 ];
 		if ( first ) {
-			const slug = day.lane?.categories?.[ 0 ];
-			const color =
-				( boot.categories || [] ).find(
-					( category ) => category.slug === slug
-				)?.color || '#646970';
-			ghosts[ day.date ] = { suggestion: first, color };
+			ghosts[ day.date ] = {
+				suggestion: first,
+				color: laneColor( day.lane, first ),
+			};
 		}
 	} );
 	const selectedDay = selection?.type === 'day' ? selection.date : null;
@@ -148,12 +150,25 @@ export default function App() {
 				date: null,
 			},
 		} );
-	const fillOpenDays = () =>
-		suggestions.loadMany(
-			plan.days
-				.filter( ( day ) => day.open && day.date <= horizonEnd )
-				.map( ( day ) => day.date )
-		);
+	const fillDates = plan.days
+		.filter( ( day ) => day.open && day.date <= horizonEnd )
+		.map( ( day ) => day.date );
+	const fillOpenDays = () => suggestions.loadMany( fillDates );
+	let fillBlocked = '';
+	if ( ! plan.isLoading && ! suggestions.isRunning ) {
+		if ( fillDates.length === 0 ) {
+			fillBlocked = sprintf(
+				/* translators: %s: last date the Desk plans for, such as "Nov 30". */
+				__( 'No open days in view through %s.', 'masthead' ),
+				monthDayLabel( horizonEnd )
+			);
+		} else if ( fillDates.every( ( date ) => suggestions.get( date ) ) ) {
+			fillBlocked = __(
+				'Every open day in view has suggestions.',
+				'masthead'
+			);
+		}
+	}
 	const fillStatus = suggestions.isRunning
 		? sprintf(
 				/* translators: 1: number done, 2: total. */
@@ -201,10 +216,23 @@ export default function App() {
 	}, [] );
 
 	const selectedDate = selection?.type === 'day' ? selection.date : null;
+	const usedCategories = new Set(
+		[ ...plan.days.flatMap( ( day ) => day.posts ), ...plan.unscheduled ]
+			.flatMap( ( post ) => post.categories || [] )
+			.concat(
+				Object.values( boot.rhythm || {} ).flatMap(
+					( lane ) => lane?.categories || []
+				)
+			)
+	);
 
 	return (
 		<div className="masthead-calendar">
-			<h1>{ __( 'Calendar', 'masthead' ) }</h1>
+			<Header
+				newPostUrl={ boot.caps?.editPosts ? boot.urls?.newPost : '' }
+				rhythm={ boot.rhythm }
+				weekStartsOn={ weekStartsOn }
+			/>
 			<Toolbar
 				view={ view }
 				title={
@@ -216,12 +244,16 @@ export default function App() {
 				onNext={ () => step( 1 ) }
 				onToday={ () => setAnchor( bootToday() ) }
 				onView={ onView }
-				categories={ getBoot().categories || [] }
+				categories={ legendCategories(
+					boot.categories || [],
+					usedCategories
+				) }
 				hidden={ hidden }
 				onToggleCategory={ toggleCategory }
 				onFillOpenDays={ fillOpenDays }
 				fillStatus={ fillStatus }
 				filling={ suggestions.isRunning }
+				fillBlocked={ fillBlocked }
 			/>
 			{ plan.error ? (
 				<div className="notice notice-error inline" role="alert">
@@ -343,6 +375,11 @@ export default function App() {
 										plan.days.find(
 											( day ) => day.date === selectedDay
 										)?.lane.label || ''
+									}
+									lane={
+										plan.days.find(
+											( day ) => day.date === selectedDay
+										)?.lane || null
 									}
 									others={ (
 										suggestions.get( selectedDay )

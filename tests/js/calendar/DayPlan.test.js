@@ -103,6 +103,19 @@ describe( 'DayPlan', () => {
 		).toBeTruthy();
 	} );
 
+	it( 'labels each other option with its kind in the lane colour', () => {
+		renderPlan( {
+			lane: { categories: [ 'technology' ] },
+		} );
+		const kind = screen.getByText( 'GAP' );
+		expect( kind.className ).toBe( 'masthead-dayplan__kind' );
+		expect( kind.style.color ).toBe( 'rgb(47, 95, 208)' );
+		// The kind sits beside the button, so the button is still named by the title alone.
+		expect(
+			screen.getByRole( 'button', { name: 'Something under Business' } )
+		).toBeTruthy();
+	} );
+
 	it( 'a gap suggestion requires a title', async () => {
 		renderPlan( { suggestion: gap, others: [] } );
 		expect( screen.getByLabelText( 'Title' ).value ).toBe( '' );

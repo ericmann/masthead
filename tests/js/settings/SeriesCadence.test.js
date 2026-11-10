@@ -22,16 +22,16 @@ describe( 'SeriesCadence', () => {
 			screen.getByText( 'The Mantle', { selector: 'strong' } )
 		).toBeTruthy();
 		expect(
-			screen.getByLabelText( 'The Mantle: every N weeks' ).value
+			screen.getByLabelText( 'The Mantle: Every N weeks' ).value
 		).toBe( '4' );
-		expect( screen.getByLabelText( 'The Mantle: weekday' ).value ).toBe(
+		expect( screen.getByLabelText( 'The Mantle: Weekday' ).value ).toBe(
 			''
 		);
-		expect( screen.getByLabelText( 'The Mantle: time' ).value ).toBe(
+		expect( screen.getByLabelText( 'The Mantle: Time' ).value ).toBe(
 			'06:23'
 		);
 		expect(
-			screen.getByLabelText( 'The Mantle: lane exception' ).checked
+			screen.getByLabelText( 'The Mantle: Lane exception' ).checked
 		).toBe( false );
 		expect(
 			screen.getByRole( 'option', { name: 'Same as previous part' } )
@@ -52,7 +52,7 @@ describe( 'SeriesCadence', () => {
 				onChange={ onChange }
 			/>
 		);
-		const select = screen.getByLabelText( 'The Mantle: weekday' );
+		const select = screen.getByLabelText( 'The Mantle: Weekday' );
 		expect( select.value ).toBe( '6' );
 		await userEvent.selectOptions( select, '' );
 		const patch = onChange.mock.calls[ 0 ][ 1 ];
@@ -70,14 +70,14 @@ describe( 'SeriesCadence', () => {
 			<SeriesCadence terms={ [ mantle() ] } onChange={ onChange } />
 		);
 		fireEvent.change(
-			screen.getByLabelText( 'The Mantle: every N weeks' ),
+			screen.getByLabelText( 'The Mantle: Every N weeks' ),
 			{ target: { value: '2' } }
 		);
 		expect(
 			JSON.parse( onChange.mock.calls[ 0 ][ 1 ].masthead_cadence )
 				.every_weeks
 		).toBe( 2 );
-		fireEvent.change( screen.getByLabelText( 'The Mantle: time' ), {
+		fireEvent.change( screen.getByLabelText( 'The Mantle: Time' ), {
 			target: { value: '07:00' },
 		} );
 		expect(
@@ -91,7 +91,7 @@ describe( 'SeriesCadence', () => {
 			<SeriesCadence terms={ [ mantle() ] } onChange={ onChange } />
 		);
 		await userEvent.click(
-			screen.getByLabelText( 'The Mantle: lane exception' )
+			screen.getByLabelText( 'The Mantle: Lane exception' )
 		);
 		expect( onChange ).toHaveBeenCalledWith( 55, {
 			masthead_lane_exception: true,

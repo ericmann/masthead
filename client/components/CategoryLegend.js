@@ -3,6 +3,19 @@ import { __ } from '@wordpress/i18n';
 import LaneDot from './LaneDot';
 
 /**
+ * Categories for the legend: every category except the site's default one, which is kept only while it is in use.
+ *
+ * @param {Object[]}    categories Boot categories { slug, name, color, default }.
+ * @param {Set<string>} used       Slugs used by a post in view, an unscheduled draft or a rhythm lane.
+ * @return {Object[]} The categories to show.
+ */
+export function legendCategories( categories, used ) {
+	return categories.filter(
+		( category ) => ! category.default || used.has( category.slug )
+	);
+}
+
+/**
  * Legend of categories whose buttons toggle visibility.
  *
  * @param {Object}      props            Props.

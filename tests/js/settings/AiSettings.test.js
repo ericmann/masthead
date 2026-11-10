@@ -2,15 +2,15 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from '@wordpress/element';
 
-import AiSettings from '../../../client/settings/AiSettings';
+import AiSettings, { AiNotice } from '../../../client/settings/AiSettings';
 
 describe( 'AiSettings', () => {
 	it( 'shows the Connectors notice when no provider is supported', () => {
 		render(
-			<AiSettings
-				supported={ false }
-				connectorsUrl="http://example.test/wp-admin/options-connectors.php"
-			/>
+			<>
+				<AiNotice connectorsUrl="http://example.test/wp-admin/options-connectors.php" />
+				<AiSettings supported={ false } />
+			</>
 		);
 		expect( screen.getByText( 'Provider: none active' ) ).toBeTruthy();
 		expect(

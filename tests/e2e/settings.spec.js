@@ -29,8 +29,15 @@ test.describe( 'Settings › Calendar', () => {
 		await expect( page.getByLabel( 'Friday lane label' ) ).toHaveValue(
 			'Journal & build log'
 		);
+		// Categories sit in a disclosure: open Thursday's and count the ticked boxes.
+		const thursday = page.locator(
+			'.masthead-rhythm tr[data-weekday="4"]'
+		);
+		await thursday.locator( 'summary' ).click();
 		await expect(
-			page.getByLabel( 'Thursday categories' ).locator( 'option:checked' )
+			thursday
+				.getByRole( 'group', { name: 'Thursday categories' } )
+				.getByRole( 'checkbox', { checked: true } )
 		).toHaveCount( 2 );
 	} );
 

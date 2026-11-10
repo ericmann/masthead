@@ -1,3 +1,4 @@
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
 import { timeLabel } from '../data/dates';
@@ -16,7 +17,8 @@ const DRAFT_TINT_ALPHA = '24';
  */
 export default function PostChip( { post, onSelect, onMove } ) {
 	const color = post.color || '#50575e';
-	const time = timeLabel( post.date );
+	// The time never breaks across lines; the status words may.
+	const time = '<time/>';
 	const movable =
 		Boolean( onMove ) &&
 		( post.status === 'future' || post.status === 'draft' );
@@ -79,7 +81,15 @@ export default function PostChip( { post, onSelect, onMove } ) {
 				onClick={ () => onSelect( post ) }
 			>
 				<span className="masthead-chip__title">{ post.title }</span>
-				<span className="masthead-chip__meta">{ meta }</span>
+				<span className="masthead-chip__meta">
+					{ createInterpolateElement( meta, {
+						time: (
+							<span className="masthead-chip__time">
+								{ timeLabel( post.date ) }
+							</span>
+						),
+					} ) }
+				</span>
 			</button>
 			{ movable ? <MoveTo post={ post } onMove={ onMove } /> : null }
 		</>

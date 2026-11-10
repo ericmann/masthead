@@ -14,7 +14,7 @@ export default function Exposure( { values, setSetting } ) {
 			<legend className="screen-reader-text">
 				{ __( 'MCP exposure', 'masthead' ) }
 			</legend>
-			<p>
+			<p className="masthead-checkbox">
 				<label htmlFor="masthead-expose-mcp">
 					<input
 						id="masthead-expose-mcp"
@@ -33,7 +33,13 @@ export default function Exposure( { values, setSetting } ) {
 					) }
 				</label>
 			</p>
-			<p>
+			<p className="description">
+				{ __(
+					'Lets MCP clients read the plan and suggest for a date from outside wp-admin.',
+					'masthead'
+				) }
+			</p>
+			<p className="masthead-checkbox">
 				<label htmlFor="masthead-expose-share">
 					<input
 						id="masthead-expose-share"
@@ -48,6 +54,12 @@ export default function Exposure( { values, setSetting } ) {
 					/>
 					{ __( 'Also expose sharing to MCP clients', 'masthead' ) }
 				</label>
+			</p>
+			<p className="description">
+				{ __(
+					'Lets MCP clients share posts through Jetpack Social. Off unless you turn it on.',
+					'masthead'
+				) }
 			</p>
 		</fieldset>
 	);

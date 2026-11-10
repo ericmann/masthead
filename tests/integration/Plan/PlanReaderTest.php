@@ -95,4 +95,12 @@ final class PlanReaderTest extends TestCase {
 		$this->assertSame( $late, $this->reader->post( $late )['id'] );
 		$this->assertNull( $this->reader->post( 999999 ) );
 	}
+
+	public function test_category_without_stored_colour_still_gets_one(): void {
+		$term = self::factory()->category->create( array( 'slug' => 'technology' ) );
+		$id   = $this->post( 'publish', '2026-11-02 08:00:00', 'Coloured' );
+		wp_set_post_categories( $id, array( $term ) );
+		$this->assertSame( '', get_term_meta( $term, 'masthead_color', true ) );
+		$this->assertSame( '#2f5fd0', $this->reader->post( $id )['color'] );
+	}
 }

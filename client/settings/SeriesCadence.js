@@ -45,6 +45,11 @@ export default function SeriesCadence( { terms, onChange } ) {
 				const cadence = parseCadence(
 					term.meta?.masthead_cadence || ''
 				);
+				const prefix = sprintf(
+					/* translators: %s: series name. Read before each field label, such as "The Mantle: Weekday". */
+					__( '%s:', 'masthead' ),
+					term.name
+				);
 				const update = ( changes ) =>
 					onChange( term.id, {
 						masthead_cadence: JSON.stringify( {
@@ -60,13 +65,14 @@ export default function SeriesCadence( { terms, onChange } ) {
 						className="masthead-series__item"
 						data-term-id={ term.id }
 					>
-						<strong>{ term.name }</strong>
+						<strong className="masthead-series__name">
+							{ term.name }
+						</strong>
 						<label htmlFor={ `masthead-series-${ term.id }-weeks` }>
-							{ sprintf(
-								/* translators: %s: series name. */
-								__( '%s: every N weeks', 'masthead' ),
-								term.name
-							) }
+							<span className="screen-reader-text">
+								{ prefix + ' ' }
+							</span>
+							{ __( 'Every N weeks', 'masthead' ) }
 							<input
 								id={ `masthead-series-${ term.id }-weeks` }
 								type="number"
@@ -83,13 +89,13 @@ export default function SeriesCadence( { terms, onChange } ) {
 							/>
 						</label>
 						<label
+							className="masthead-series__weekday"
 							htmlFor={ `masthead-series-${ term.id }-weekday` }
 						>
-							{ sprintf(
-								/* translators: %s: series name. */
-								__( '%s: weekday', 'masthead' ),
-								term.name
-							) }
+							<span className="screen-reader-text">
+								{ prefix + ' ' }
+							</span>
+							{ __( 'Weekday', 'masthead' ) }
 							<select
 								id={ `masthead-series-${ term.id }-weekday` }
 								value={ cadence.weekday ?? '' }
@@ -116,11 +122,10 @@ export default function SeriesCadence( { terms, onChange } ) {
 							</select>
 						</label>
 						<label htmlFor={ `masthead-series-${ term.id }-time` }>
-							{ sprintf(
-								/* translators: %s: series name. */
-								__( '%s: time', 'masthead' ),
-								term.name
-							) }
+							<span className="screen-reader-text">
+								{ prefix + ' ' }
+							</span>
+							{ __( 'Time', 'masthead' ) }
 							<input
 								id={ `masthead-series-${ term.id }-time` }
 								type="time"
@@ -131,6 +136,7 @@ export default function SeriesCadence( { terms, onChange } ) {
 							/>
 						</label>
 						<label
+							className="masthead-series__exception"
 							htmlFor={ `masthead-series-${ term.id }-exception` }
 						>
 							<input
@@ -146,11 +152,10 @@ export default function SeriesCadence( { terms, onChange } ) {
 									} )
 								}
 							/>
-							{ sprintf(
-								/* translators: %s: series name. */
-								__( '%s: lane exception', 'masthead' ),
-								term.name
-							) }
+							<span className="screen-reader-text">
+								{ prefix + ' ' }
+							</span>
+							{ __( 'Lane exception', 'masthead' ) }
 						</label>
 					</li>
 				);

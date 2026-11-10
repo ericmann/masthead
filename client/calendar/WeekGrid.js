@@ -56,17 +56,26 @@ export default function WeekGrid( {
 				);
 				return (
 					<div key={ date } className="masthead-week__column">
-						<div className="masthead-week__head">
-							{ sprintf(
+						<div
+							className="masthead-week__head"
+							title={ sprintf(
 								/* translators: 1: weekday and day number, such as "Sun 15"; 2: lane label. */
 								__( '%1$s · %2$s', 'masthead' ),
 								head,
 								day.lane.label
 							) }
+						>
+							<span className="masthead-grid__dow">{ head }</span>
+							{ day.lane.label ? (
+								<span className="masthead-grid__lane">
+									{ ' · ' + day.lane.label }
+								</span>
+							) : null }
 						</div>
 						<DayCell
 							day={ day }
 							isToday={ date === today }
+							isPast={ date < today }
 							isSelected={ date === selectedDate }
 							hidden={ hidden }
 							onSelectDay={ onSelectDay }

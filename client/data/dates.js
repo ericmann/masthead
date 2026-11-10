@@ -172,3 +172,30 @@ export function monthDayLabel( ymd ) {
 export function weekdayMonthDayLabel( ymd ) {
 	return gmdateI18n( 'l, M j', new Date( parse( ymd ) ) );
 }
+
+/**
+ * Short weekday, month and day with a comma, localised.
+ *
+ * @param {string} ymd Date.
+ * @return {string} Label such as "Wed, Nov 18".
+ */
+export function shortWeekdayMonthDayLabel( ymd ) {
+	return gmdateI18n( 'D, M j', new Date( parse( ymd ) ) );
+}
+
+/**
+ * A compact span of days, localised: the month is written once when both dates share it.
+ *
+ * @param {string} from First date.
+ * @param {string} to   Last date.
+ * @return {string} Label such as "Nov 8–14" or "Nov 29 – Dec 5".
+ */
+export function spanLabel( from, to ) {
+	if ( from.slice( 0, 7 ) === to.slice( 0, 7 ) ) {
+		return `${ gmdateI18n( 'M j', new Date( parse( from ) ) ) }–${ gmdateI18n(
+			'j',
+			new Date( parse( to ) )
+		) }`;
+	}
+	return `${ monthDayLabel( from ) } – ${ monthDayLabel( to ) }`;
+}

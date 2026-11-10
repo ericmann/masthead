@@ -52,9 +52,32 @@ describe( 'MonthGrid', () => {
 
 	it( "header shows each weekday's lane label", () => {
 		renderGrid();
-		expect( screen.getByText( 'Sun · Faith' ) ).toBeTruthy();
-		expect( screen.getByText( 'Wed · Standalone' ) ).toBeTruthy();
-		expect( screen.getByText( 'Sat · Fiction serial' ) ).toBeTruthy();
+		const heads = [
+			...document.querySelectorAll( '.masthead-grid__weekday' ),
+		];
+		expect( heads[ 0 ].textContent ).toBe( 'Sun · Faith' );
+		expect( heads[ 3 ].textContent ).toBe( 'Wed · Standalone' );
+		expect( heads[ 6 ].textContent ).toBe( 'Sat · Fiction serial' );
+		// The weekday is bold and the lane muted; the full text is the tooltip when it is cut short.
+		expect(
+			heads[ 3 ].querySelector( '.masthead-grid__dow' ).textContent
+		).toBe( 'Wed' );
+		expect(
+			heads[ 3 ].querySelector( '.masthead-grid__lane' ).textContent
+		).toBe( ' · Standalone' );
+		expect( heads[ 1 ].getAttribute( 'title' ) ).toBe(
+			'Mon · Business & leadership'
+		);
+	} );
+
+	it( 'marks days before today as past', () => {
+		const { container } = renderGrid();
+		expect(
+			container.querySelector( '[data-date="2026-11-08"]' ).className
+		).toContain( 'is-past' );
+		expect(
+			container.querySelector( '[data-date="2026-11-09"]' ).className
+		).not.toContain( 'is-past' );
 	} );
 
 	it( 'honours the week start in the header', () => {

@@ -1,7 +1,16 @@
 import { __, sprintf } from '@wordpress/i18n';
 
+import LaneDot from '../components/LaneDot';
+import Sparkle from '../components/Sparkle';
 import { getBoot } from '../data/boot';
-import { shortDayLabel, weekRange, weekdayMonthDayLabel } from '../data/dates';
+import { laneColor } from '../data/colors';
+import {
+	shortDayLabel,
+	shortWeekdayMonthDayLabel,
+	spanLabel,
+	weekRange,
+	weekdayMonthDayLabel,
+} from '../data/dates';
 import AskDesk from './AskDesk';
 import SuggestionCard from './SuggestionCard';
 
@@ -62,12 +71,13 @@ export default function DeskRail( {
 		selected.posts.length === 0 ? (
 			<>
 				{ ideasLoaded ? null : (
-					<p>
+					<p className="masthead-desk__ideas">
 						<button
 							type="button"
-							className="button"
+							className="button button-compact"
 							onClick={ () => onSuggestIdeas( selectedDate ) }
 						>
+							<Sparkle size={ 14 } />
 							{ __( 'Suggest ideas', 'masthead' ) }
 						</button>
 					</p>
@@ -103,6 +113,7 @@ export default function DeskRail( {
 			<SuggestionCard
 				key={ suggestion.key }
 				suggestion={ suggestion }
+				color={ laneColor( selected?.lane, suggestion ) }
 				onPlan={ onPlan }
 				onPlace={ onPlace }
 				onShare={ onShare }
@@ -121,17 +132,28 @@ export default function DeskRail( {
 			className="masthead-desk"
 			aria-label={ __( 'Desk', 'masthead' ) }
 		>
-			<h2>
-				{ selectedDate
-					? sprintf(
-							/* translators: %s: short day label. */
-							__( 'Desk · %s', 'masthead' ),
-							weekdayMonthDayLabel( selectedDate )
+			<div className="masthead-desk__head">
+				<h2>
+					<Sparkle size={ 18 } />
+					{ __( 'Desk', 'masthead' ) }
+				</h2>
+				{ selectedDate ? (
+					<span className="masthead-desk__date">
+						{ shortWeekdayMonthDayLabel( selectedDate ) }
+					</span>
+				) : null }
+			</div>
+			<div className="masthead-desk__section masthead-desk__week">
+				<h3 className="masthead-desk__label">
+					{ sprintf(
+						/* translators: %s: span of dates, such as "Nov 8–14". */
+						__( 'This week · %s', 'masthead' ),
+						spanLabel(
+							week[ 0 ].date,
+							week[ week.length - 1 ].date
 						)
-					: __( 'Desk', 'masthead' ) }
-			</h2>
-			<div className="masthead-desk__week">
-				<h3>{ __( 'This week', 'masthead' ) }</h3>
+					) }
+				</h3>
 				<div className="masthead-desk__bars" aria-hidden="true">
 					{ week.map( ( entry ) => (
 						<span
@@ -166,33 +188,44 @@ export default function DeskRail( {
 						: __( 'No gap left this week.', 'masthead' ) }
 				</p>
 			</div>
-			{ selectedDate && selected && selected.posts.length === 0 ? (
-				<h3 className="masthead-desk__day">
-					{ sprintf(
-						/* translators: 1: day label, 2: lane label. */
-						__( '%1$s · %2$s lane', 'masthead' ),
-						weekdayMonthDayLabel( selectedDate ),
-						selected.lane.label
-					) }
-				</h3>
-			) : null }
-			{ ideasButton }
-			{ body }
-			{ canAsk ? (
-				<AskDesk onCreated={ onAskCreated } />
-			) : (
-				<p className="masthead-ask__hint">
-					{ __( 'Ask the Desk needs an AI provider', 'masthead' ) }
-					{ boot.urls?.connectors ? (
-						<>
-							{ ' ' }
-							<a href={ boot.urls.connectors }>
-								{ __( 'Settings › Connectors', 'masthead' ) }
-							</a>
-						</>
-					) : null }
-				</p>
-			) }
+			<div className="masthead-desk__section masthead-desk__suggestions">
+				{ selectedDate && selected && selected.posts.length === 0 ? (
+					<h3 className="masthead-desk__day">
+						<LaneDot color={ laneColor( selected.lane ) } />
+						{ sprintf(
+							/* translators: 1: day label, 2: lane label. */
+							__( '%1$s · %2$s lane', 'masthead' ),
+							weekdayMonthDayLabel( selectedDate ),
+							selected.lane.label
+						) }
+					</h3>
+				) : null }
+				{ ideasButton }
+				{ body }
+			</div>
+			<div className="masthead-desk__section">
+				{ canAsk ? (
+					<AskDesk onCreated={ onAskCreated } />
+				) : (
+					<p className="masthead-ask__hint">
+						{ __(
+							'Ask the Desk needs an AI provider',
+							'masthead'
+						) }
+						{ boot.urls?.connectors ? (
+							<>
+								{ ' ' }
+								<a href={ boot.urls.connectors }>
+									{ __(
+										'Settings › Connectors',
+										'masthead'
+									) }
+								</a>
+							</>
+						) : null }
+					</p>
+				) }
+			</div>
 		</section>
 	);
 }

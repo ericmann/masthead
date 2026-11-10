@@ -21,7 +21,8 @@ final class ColorsTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		Functions\when( 'sanitize_hex_color' )->alias(
-			static fn( $color ) => is_string( $color ) && 1 === preg_match( '/^#([0-9a-fA-F]{3}){1,2}$/', $color ) ? $color : null
+			// Mirrors core: '' comes back as '', invalid input as null.
+			static fn( $color ) => '' === $color ? '' : ( is_string( $color ) && 1 === preg_match( '/^#([0-9a-fA-F]{3}){1,2}$/', $color ) ? $color : null )
 		);
 	}
 
@@ -36,6 +37,12 @@ final class ColorsTest extends TestCase {
 		$this->assertSame( '#2f5fd0', Colors::for_term( 4, 'technology' ) );
 	}
 
+	public function test_no_stored_colour_falls_back_rather_than_returning_empty(): void {
+		$this->meta( '' );
+		$this->assertSame( '#2f5fd0', Colors::for_term( 4, 'technology' ) );
+		$this->assertSame( Colors::PALETTE[0], Colors::for_term( 7, 'recipes' ) );
+	}
+
 	public function test_default_by_slug(): void {
 		$this->meta( '' );
 		$this->assertSame( '#1f7a52', Colors::for_term( 99, 'journal' ) );
@@ -46,6 +53,48 @@ final class ColorsTest extends TestCase {
 		$this->meta( '' );
 		$this->assertSame( Colors::PALETTE[0], Colors::for_term( 7, 'recipes' ) );
 		$this->assertSame( Colors::PALETTE[2], Colors::for_term( 16, 'recipes' ) );
+	}
+
+	public function test_legend_marks_only_the_site_default_category(): void {
+		$this->meta( '' );
+		Functions\when( 'get_option' )->alias(
+			static fn( $name ) => 'default_category' === $name ? '1' : array()
+		);
+		Functions\when( 'get_terms' )->justReturn(
+			array(
+				(object) array(
+					'term_id' => 1,
+					'slug'    => 'uncategorized',
+					'name'    => 'Uncategorized',
+				),
+				(object) array(
+					'term_id' => 8,
+					'slug'    => 'technology',
+					'name'    => 'Technology',
+				),
+			)
+		);
+
+		$legend = Colors::legend();
+
+		$this->assertSame(
+			array(
+				'slug'    => 'uncategorized',
+				'name'    => 'Uncategorized',
+				'color'   => Colors::PALETTE[1],
+				'default' => true,
+			),
+			$legend[0]
+		);
+		$this->assertSame(
+			array(
+				'slug'    => 'technology',
+				'name'    => 'Technology',
+				'color'   => '#2f5fd0',
+				'default' => false,
+			),
+			$legend[1]
+		);
 	}
 
 	private static function luminance( string $hex ): float {

@@ -58,6 +58,20 @@ describe( 'AskDesk', () => {
 		);
 	} );
 
+	it( 'shows "Ask the Desk" once and keeps the field labelled', () => {
+		render( <AskDesk /> );
+		expect(
+			screen.getByRole( 'heading', { name: 'Ask the Desk' } )
+		).toBeTruthy();
+		const label = document.querySelector(
+			'label[for="masthead-ask-prompt"]'
+		);
+		expect( label.className ).toBe( 'screen-reader-text' );
+		expect( screen.getByLabelText( 'Ask the Desk' ).id ).toBe(
+			'masthead-ask-prompt'
+		);
+	} );
+
 	it( 'a chosen start date is sent to propose-series', async () => {
 		render( <AskDesk /> );
 		await userEvent.type(

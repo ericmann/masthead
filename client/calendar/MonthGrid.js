@@ -55,6 +55,8 @@ export default function MonthGrid( {
 		const lane = rhythm[ weekday ]?.label || '';
 		return {
 			weekday,
+			name,
+			lane,
 			text: lane
 				? sprintf(
 						/* translators: 1: short weekday name, 2: lane label. */
@@ -73,8 +75,16 @@ export default function MonthGrid( {
 					<div
 						key={ item.weekday }
 						className="masthead-grid__weekday"
+						title={ item.text }
 					>
-						{ item.text }
+						<span className="masthead-grid__dow">
+							{ item.name }
+						</span>
+						{ item.lane ? (
+							<span className="masthead-grid__lane">
+								{ ' · ' + item.lane }
+							</span>
+						) : null }
 					</div>
 				) ) }
 			</div>
@@ -92,6 +102,7 @@ export default function MonthGrid( {
 								key={ date }
 								day={ day }
 								isToday={ date === today }
+								isPast={ date < today }
 								isSelected={ date === selectedDate }
 								inMonth={ date.slice( 0, 7 ) === month }
 								hidden={ hidden }

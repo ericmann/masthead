@@ -3,39 +3,59 @@
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
-	min-height: 120px;
-	padding: 4px;
-	border: 1px solid #dcdcde;
+	min-height: 132px;
+	padding: 6px 7px;
+	border-right: 1px solid #f0f0f1;
+	border-bottom: 1px solid #f0f0f1;
 	background: #fff;
+
+	&.is-past {
+		background: #fbfbfb;
+	}
 
 	&.is-outside {
 		background: #f6f7f7;
 	}
 
-	&.is-today {
-		border-color: #2271b1;
-	}
-
 	&.is-selected {
-		box-shadow: inset 0 0 0 2px #2271b1;
+		box-shadow: inset 0 0 0 2px var(--wp-admin-theme-color, #3858e9);
 	}
 
 	&__button {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		min-height: 28px;
-		padding: 2px 4px;
+		min-height: 22px;
+		padding: 0;
 		border: 0;
 		background: transparent;
 		color: #1d2327;
+		font-size: 12px;
 		font-weight: 600;
+		text-align: left;
 		cursor: pointer;
 
 		&:focus-visible {
-			outline: 2px solid #2271b1;
+			outline: 2px solid var(--wp-admin-theme-color, #3858e9);
 			outline-offset: 1px;
 		}
+	}
+
+	&__number {
+		display: inline-block;
+		min-width: 18px;
+		line-height: 20px;
+	}
+
+	&.is-today &__number {
+		padding: 0 7px;
+		border-radius: 999px;
+		background: var(--wp-admin-theme-color, #3858e9);
+		color: #fff;
+		text-align: center;
+	}
+
+	&.is-outside &__number {
+		color: #646970;
 	}
 
 	&__meta {
@@ -46,10 +66,11 @@
 
 	&__today {
 		position: absolute;
-		top: 8px;
+		top: 9px;
 		right: 8px;
-		color: #135e96;
-		font-size: 11px;
+		color: var(--wp-admin-theme-color, #3858e9);
+		font-size: 10px;
+		font-weight: 700;
 		letter-spacing: 0.04em;
 		pointer-events: none;
 	}
@@ -58,11 +79,13 @@
 .masthead-chip {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 1px;
 	width: 100%;
 	padding: 4px 6px;
 	border: 1.5px solid transparent;
 	border-radius: 4px;
+	font-size: 11px;
+	line-height: 1.3;
 	text-align: left;
 	cursor: pointer;
 
@@ -74,65 +97,174 @@
 		display: -webkit-box;
 		overflow: hidden;
 		font-weight: 600;
-		font-size: 12px;
-		line-height: 1.3;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 	}
 
+	// The status line shows first, as in the mockup.
+	// The title stays first in the DOM for screen readers.
 	&__meta {
-		font-size: 11px;
+		order: -1;
+		font-size: 10px;
+	}
+
+	&__time {
+		white-space: nowrap;
 	}
 
 	&:focus-visible {
-		outline: 2px solid #2271b1;
+		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
 		outline-offset: 2px;
 	}
 }
 
 .masthead-open-slot {
-	padding: 6px;
-	border: 1px dashed #787c82;
+	overflow: hidden;
+	padding: 3px 6px;
+	border: 1px dashed #c3c4c7;
 	border-radius: 4px;
-	color: #50575e;
-	font-size: 12px;
+	color: #646970;
+	font-size: 11px;
+	line-height: 1.4;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.masthead-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+	margin: 0 0 14px;
+
+	.wp-heading-inline {
+		margin: 0;
+		padding: 9px 0 4px;
+	}
+
+	.page-title-action {
+		top: 0;
+		margin-left: 0;
+	}
+
+	&__rhythm {
+		margin: 0 0 0 auto;
+		color: #50575e;
+		font-size: 13px;
+	}
 }
 
 .masthead-toolbar {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 12px;
-	margin: 8px 0 12px;
+	gap: 10px;
+	margin: 0 0 16px;
+	padding: 10px 12px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
 
-	&__nav,
-	&__views {
+	&__nav {
 		display: flex;
-		gap: 4px;
+		align-items: center;
+		gap: 6px;
+	}
+
+	&__step.button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		padding: 0;
+		border-color: #c3c4c7;
+		color: #1d2327;
+
+		// Outranks core's .wp-core-ui .button.button-compact .dashicons line-height.
+		&.button-compact .dashicons {
+			width: 20px;
+			height: 20px;
+			line-height: 1;
+		}
 	}
 
 	&__title {
-		flex: 1;
+		min-width: 132px;
 		margin: 0;
-		font-size: 18px;
+		color: #1d2327;
+		font-size: 16px;
+		font-weight: 600;
+		text-align: center;
 	}
 
-	.button[aria-pressed="true"] {
-		border-color: #2271b1;
-		background: #f0f6fc;
-		color: #135e96;
+	&__today.button {
+		border-color: #c3c4c7;
+		background: #f6f7f7;
+		color: #1d2327;
+	}
+
+	&__views.button-group {
+		display: inline-flex;
+		margin-left: 6px;
+
+		> .button:not(.button-primary) {
+			border-color: #c3c4c7;
+			background: #fff;
+			color: #1d2327;
+		}
+	}
+
+	.masthead-legend {
+		flex: 1 1 240px;
+		min-width: 0;
+		margin-left: 8px;
+	}
+
+	&__fill {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin-left: auto;
+	}
+
+	&__fill-note {
+		max-width: 260px;
+		color: #50575e;
+		font-size: 12px;
+		line-height: 1.4;
+		text-align: right;
+
+		&:empty {
+			display: none;
+		}
+	}
+
+	&__fill-button.button {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font-weight: 600;
 	}
 }
 
 .masthead-layout {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) 320px;
+	grid-template-columns: minmax(0, 1fr) 340px;
+	align-items: start;
 	gap: 16px;
 }
 
+.masthead-rail {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 0;
+}
+
 .masthead-tray {
-	padding: 8px;
+	padding: 12px 16px;
 	border: 1px solid #dcdcde;
+	border-radius: 4px;
 	background: #fff;
 
 	h2 {
@@ -151,13 +283,15 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 4px 8px;
-		padding: 6px 0;
+		padding: 8px 0;
 		border-top: 1px solid #f0f0f1;
 	}
 
 	&__title {
-		flex: 1 1 100%;
+		flex: 1 1 calc(100% - 24px);
+		min-width: 0;
 		font-weight: 600;
+		overflow-wrap: anywhere;
 	}
 
 	&__edited {
@@ -167,6 +301,10 @@
 }
 
 .masthead-grid {
+	overflow: hidden;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
 
 	&__head,
 	&__week {
@@ -174,11 +312,35 @@
 		grid-template-columns: repeat(7, minmax(0, 1fr));
 	}
 
+	&__head {
+		border-bottom: 1px solid #dcdcde;
+		background: #f6f7f7;
+	}
+
 	&__weekday {
-		padding: 6px 4px;
+		overflow: hidden;
+		padding: 8px 10px;
 		color: #50575e;
 		font-size: 12px;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	&__dow {
 		font-weight: 600;
+	}
+
+	&__lane {
+		color: #646970;
+		font-weight: 400;
+	}
+
+	&__week > .masthead-day:last-child {
+		border-right: 0;
+	}
+
+	&__week:last-child > .masthead-day {
+		border-bottom: 0;
 	}
 }
 
@@ -201,6 +363,7 @@
 
 	.masthead-day {
 		min-height: 0;
+		border-right: 0;
 
 		&.is-outside {
 			display: none;
@@ -212,11 +375,29 @@
 		}
 	}
 
+	.masthead-header__rhythm {
+		flex-basis: 100%;
+		margin-left: 0;
+	}
+
 	.masthead-toolbar {
 
-		&__title {
+		&__nav {
 			flex-basis: 100%;
-			order: -1;
+		}
+
+		&__title {
+			flex: 1;
+		}
+
+		.masthead-legend {
+			flex-basis: 100%;
+			margin-left: 0;
+		}
+
+		&__fill {
+			flex-wrap: wrap;
+			justify-content: flex-end;
 		}
 	}
 
@@ -236,13 +417,38 @@
 .masthead-week {
 	display: grid;
 	grid-template-columns: repeat(7, minmax(0, 1fr));
-	gap: 4px;
+	overflow: hidden;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+
+	&__column {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		border-right: 1px solid #f0f0f1;
+
+		&:last-child {
+			border-right: 0;
+		}
+
+		> .masthead-day {
+			flex: 1;
+			min-height: 420px;
+			border-right: 0;
+			border-bottom: 0;
+		}
+	}
 
 	&__head {
-		padding: 6px 4px;
+		overflow: hidden;
+		padding: 8px 10px;
+		border-bottom: 1px solid #dcdcde;
+		background: #f6f7f7;
 		color: #50575e;
 		font-size: 12px;
-		font-weight: 600;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 }
 
@@ -303,6 +509,15 @@
 
 	.masthead-week {
 		grid-template-columns: minmax(0, 1fr);
+
+		&__column {
+			border-right: 0;
+			border-bottom: 1px solid #f0f0f1;
+
+			> .masthead-day {
+				min-height: 0;
+			}
+		}
 	}
 }
 
@@ -338,14 +553,27 @@
 }
 
 .masthead-share {
-	margin-bottom: 12px;
-	padding: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px 16px;
 	border: 1px solid #dcdcde;
+	border-radius: 4px;
 	background: #fff;
+	overflow-wrap: anywhere;
 
 	h2 {
-		margin: 0 0 4px;
+		margin: 0;
 		font-size: 14px;
+	}
+
+	p {
+		margin: 0;
+	}
+
+	textarea,
+	input[type="datetime-local"] {
+		max-width: 100%;
 	}
 
 	textarea {
@@ -353,7 +581,7 @@
 	}
 
 	fieldset {
-		margin: 8px 0;
+		margin: 0;
 		padding: 0;
 		border: 0;
 	}
@@ -376,90 +604,150 @@
 	border: 1.5px dashed #787c82;
 	border-radius: 4px;
 	background: #fff;
+	font-size: 11px;
+	line-height: 1.3;
 	text-align: left;
 	cursor: pointer;
 
 	&__kind {
+		display: flex;
+		align-items: center;
+		gap: 4px;
 		font-size: 10px;
 		font-weight: 700;
-		letter-spacing: 0.06em;
+		letter-spacing: 0.04em;
 	}
 
 	&__title {
 		display: -webkit-box;
 		overflow: hidden;
-		color: #1d2327;
-		font-size: 12px;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 	}
 
 	&:focus-visible {
-		outline: 2px solid #2271b1;
+		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
 		outline-offset: 2px;
 	}
 }
 
-.masthead-toolbar__fill {
-	display: flex;
-	align-items: center;
-}
-
 .masthead-desk {
-	margin-bottom: 12px;
-	padding: 8px;
 	border: 1px solid #dcdcde;
+	border-radius: 4px;
 	background: #fff;
 
-	h2 {
-		margin: 0 0 8px;
-		font-size: 14px;
+	&__head {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 14px 16px;
+		border-bottom: 1px solid #f0f0f1;
+
+		h2 {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin: 0;
+			font-size: 14px;
+		}
+
+		.masthead-sparkle {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
 	}
 
-	h3 {
-		margin: 8px 0 4px;
+	&__date {
+		margin-left: auto;
+		color: #50575e;
+		font-size: 12px;
+	}
+
+	&__section {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 12px 16px;
+		border-bottom: 1px solid #f0f0f1;
+
+		&:last-child {
+			border-bottom: 0;
+		}
+
+		> p {
+			margin: 0;
+		}
+	}
+
+	&__label {
+		margin: 0;
+		color: #50575e;
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	&__week p {
+		color: #3c434a;
 		font-size: 13px;
 	}
 
 	&__bars {
 		display: flex;
-		gap: 3px;
+		gap: 4px;
 	}
 
 	&__bar {
 		flex: 1;
-		height: 8px;
-		border-radius: 2px;
+		height: 10px;
+		border-radius: 3px;
 
 		&.is-empty {
-			border: 1px dashed #787c82;
+			border: 1px dashed #a7aaad;
 		}
+	}
+
+	&__day {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0;
+		font-size: 14px;
+	}
+
+	&__ideas .button {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
 	}
 }
 
 .masthead-suggestion {
-	margin: 8px 0;
-	padding: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 10px 12px;
 	border: 1px solid #dcdcde;
-	border-radius: 4px;
+	border-radius: 6px;
 
 	&__kind {
 		margin: 0;
-		color: #50575e;
 		font-size: 10px;
 		font-weight: 700;
-		letter-spacing: 0.06em;
+		letter-spacing: 0.05em;
 	}
 
 	&__title {
-		margin: 2px 0;
+		margin: 0;
 		font-size: 13px;
+		line-height: 1.35;
 	}
 
 	&__why {
-		margin: 4px 0;
+		margin: 0;
 		color: #50575e;
 		font-size: 12px;
+		line-height: 1.45;
 	}
 
 	&__actions {
@@ -467,34 +755,73 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 6px;
+		margin-top: 2px;
 	}
 }
 
 .masthead-swap {
-	margin-bottom: 12px;
-	padding: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px 16px;
 	border: 1px solid #dcdcde;
+	border-radius: 4px;
 	background: #fff;
+	overflow-wrap: anywhere;
 
 	h2 {
-		margin: 0 0 8px;
+		margin: 0;
 		font-size: 14px;
+		line-height: 1.4;
 	}
 
 	h3 {
-		margin: 8px 0 2px;
-		font-size: 13px;
+		margin: 0;
+		color: #50575e;
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	p {
+		margin: 0;
+	}
+
+	&__finding {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		padding-top: 10px;
+		border-top: 1px solid #f0f0f1;
+	}
+
+	&__choice {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 2px;
+	}
+
+	// Option labels can list several dates; they wrap inside the rail.
+	// Four classes outrank core's .wp-core-ui .button.button-compact line-height.
+	&__option.button.button-compact {
+		max-width: 100%;
+		height: auto;
+		padding: 5px 12px;
+		line-height: 1.4;
+		text-align: left;
+		white-space: normal;
 	}
 
 	&__numbers {
-		margin: 4px 0;
+		margin: 0;
 		padding: 0;
 		font-size: 12px;
 		list-style: none;
 	}
 
 	&__count {
-		margin-left: 6px;
 		color: #50575e;
 		font-size: 12px;
 	}
@@ -513,28 +840,75 @@
 }
 
 .masthead-ask {
-	margin-top: 16px;
-	padding-top: 8px;
-	border-top: 1px solid #dcdcde;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 
-	h3 {
-		margin: 0 0 6px;
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	&__prompt[type="text"] {
+		width: 100%;
 		font-size: 13px;
 	}
 
-	label {
-		display: block;
-		margin-bottom: 2px;
-		font-weight: 600;
+	&__row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 6px 8px;
+
+		label {
+			color: #50575e;
+			font-size: 12px;
+		}
+
+		input[type="date"] {
+			flex: 1 1 120px;
+			min-width: 0;
+		}
 	}
 
-	input[type="text"] {
-		max-width: 100%;
+	.description {
+		margin: 0;
+		color: #646970;
+		font-size: 11px;
+	}
+
+	&__proposal {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+
+		p {
+			margin: 0;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 2px;
+			font-weight: 600;
+		}
+
+		input[type="text"] {
+			width: 100%;
+		}
 	}
 
 	&__parts {
-		margin: 8px 0;
+		margin: 0;
 		padding-left: 20px;
+
+		> li {
+			margin-bottom: 8px;
+		}
+
+		input[type="text"] {
+			margin-top: 4px;
+		}
 
 		ul {
 			margin: 2px 0 8px;
@@ -545,6 +919,148 @@
 	}
 
 	&__created {
+		margin: 0;
 		font-weight: 600;
+	}
+}
+
+.masthead-ask__hint {
+	color: #50575e;
+	font-size: 12px;
+}
+
+.masthead-dayplan {
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+
+	&__head {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0;
+		padding: 14px 16px;
+		border-bottom: 1px solid #f0f0f1;
+		font-size: 14px;
+
+		.masthead-sparkle {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+	}
+
+	&__lane {
+		margin-left: auto;
+		color: var(--wp-admin-theme-color, #3858e9);
+		font-size: 12px;
+	}
+
+	&__section {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 12px 16px;
+		border-bottom: 1px solid #f0f0f1;
+
+		&:last-child {
+			border-bottom: 0;
+		}
+
+		p {
+			margin: 0;
+		}
+	}
+
+	&__title[type="text"] {
+		width: 100%;
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	&__category .masthead-lane-dot {
+		padding: 2px 8px;
+		border-radius: 999px;
+		background: #f0f0f1;
+		font-size: 12px;
+	}
+
+	&__outline-editor {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	&__outline {
+		margin: 0;
+		padding-left: 20px;
+
+		> li {
+			margin-bottom: 6px;
+		}
+
+		input[type="text"] {
+			width: calc(100% - 64px);
+		}
+	}
+
+	&__when {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		gap: 10px 12px;
+	}
+
+	&__field {
+		display: flex;
+		flex: 1 1 130px;
+		flex-direction: column;
+		gap: 4px;
+		min-width: 0;
+
+		label {
+			color: #50575e;
+			font-size: 12px;
+		}
+
+		input,
+		select {
+			width: 100%;
+			max-width: 100%;
+		}
+	}
+
+	&__date {
+		color: #50575e;
+		font-size: 12px;
+	}
+
+	&__error,
+	&__actions {
+		flex-basis: 100%;
+	}
+
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	&__others ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		li {
+			margin: 0 0 4px;
+		}
+	}
+
+	&__kind {
+		font-size: 10px;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+	}
+
+	&__error {
+		color: #b32d2e;
 	}
 }

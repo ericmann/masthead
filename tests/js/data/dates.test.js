@@ -7,6 +7,8 @@ import {
 	dayLabel,
 	monthLabel,
 	timeLabel,
+	shortWeekdayMonthDayLabel,
+	spanLabel,
 } from '../../../client/data/dates';
 
 describe( 'dates', () => {
@@ -55,5 +57,15 @@ describe( 'dates', () => {
 		expect( dayLabel( '2026-11-09' ) ).toBe( 'Monday, November 9' );
 		expect( timeLabel( '2026-11-11T08:00:00-08:00' ) ).toBe( '8:00 am' );
 		expect( timeLabel( null ) ).toBe( '' );
+	} );
+
+	it( 'short weekday label has a comma and spans name the month once', () => {
+		expect( shortWeekdayMonthDayLabel( '2026-11-18' ) ).toBe(
+			'Wed, Nov 18'
+		);
+		expect( spanLabel( '2026-11-08', '2026-11-14' ) ).toBe( 'Nov 8–14' );
+		expect( spanLabel( '2026-11-29', '2026-12-05' ) ).toBe(
+			'Nov 29 – Dec 5'
+		);
 	} );
 } );
