@@ -78,7 +78,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P5-05 Budget and the BudgetedAi decorator
 - [x] P5-06 Ideas and include_ideas in suggest-for-date
 - [x] P5-07 masthead/draft-outline ability and the Day plan outline
-- [ ] P5-08 masthead/draft-share-copy ability and the Share panel's AI button
+- [x] P5-08 masthead/draft-share-copy ability and the Share panel's AI button
 - [ ] P5-09 SeriesPlanner and masthead/propose-series
 - [ ] P5-10 masthead/accept-series
 - [ ] P5-11 Ask the Desk
@@ -386,3 +386,7 @@ Desk\Ideas(AiClient, PlanReader, SeriesSource, CategoryGap, Budget): status(), c
 ### P5-07 — 98604bb
 
 Ideas::outline(title, ?category slug, ?date) -> string[]|WP_Error (strong tier, Schemas::outline, context only when a date is given); Abilities\DraftOutline masthead/draft-outline (input {title, category?, date?}, output {outline}, readonly annotation, idempotent false, perm edit_posts + prompt_ai, 400 on blank title/bad date). Plugin now builds $ideas once and passes it to Suggester and DraftOutline. DayPlan: "Draft an outline" (needs boot ai.supported && caps.promptAi) -> editable lines (aria-label "Outline line N", Remove, Add line), note "Outline only. The Desk never writes body copy.", create sends the edited outline; ability error shown, form stays usable; a suggestion's own outline (series) still shows read-only until replaced. Tests: unit 277, integration DraftOutline 5, jest 129, e2e dayplan (new case) pass desktop+mobile. Interpretation: blank lines are dropped before sending.
+
+### P5-08 — 7be66ba
+
+Desk\ShareCopy(AiClient)::draft(post_id) -> message|WP_Error (masthead_not_found 404 incl. wrong post type, masthead_not_published 409 before any AI call, masthead_ai_invalid; fast tier; title + post_excerpt only) and Abilities\DraftShareCopy masthead/draft-share-copy (input {post_id}, output {message}, readonly annotation, idempotent false, edit_posts + prompt_ai). SharePanel: "Draft with AI" beside the Message label when boot ai.supported && caps.promptAi; confirm() before replacing existing text; error shown with role=alert; never shares. Tests: unit 281, integration DraftShareCopy 4, jest SharePanel 10. No e2e added (task listed none; Share panel needs a Jetpack connection which wp-env lacks).
