@@ -15,6 +15,7 @@ use Masthead\Admin\Notices;
 use Masthead\Plan\Colors;
 use Masthead\Plan\Rhythm;
 use Masthead\Plan\SeriesSource;
+use Masthead\Plan\Slots;
 use Masthead\Support\Clock;
 
 /**
@@ -52,6 +53,9 @@ final class Plugin {
 
 		$series = new SeriesSource();
 		add_action( 'init', array( $series, 'register' ), PHP_INT_MAX );
+
+		$slots = new Slots( $series );
+		add_action( 'init', array( $slots, 'register_meta' ) );
 	}
 
 	/**
