@@ -1,8 +1,8 @@
 .kukulu/implement.lock
 vendor/
 node_modules/
-build/
-dist/
+/build/
+/dist/
 test-results/
 playwright-report/
 .phpunit.result.cache
