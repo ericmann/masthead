@@ -1,0 +1,34 @@
+.masthead-settings {
+	max-width: 960px;
+
+	&__section {
+		margin: 16px 0;
+	}
+}
+
+.masthead-rhythm {
+
+	input[type="text"],
+	input[type="time"] {
+		width: 100%;
+		max-width: 260px;
+	}
+
+	select {
+		min-width: 160px;
+	}
+
+	&__any {
+		display: block;
+		color: #50575e;
+		font-size: 12px;
+	}
+}
+
+@media (max-width: 782px) {
+
+	.masthead-rhythm {
+		display: block;
+		overflow-x: auto;
+	}
+}

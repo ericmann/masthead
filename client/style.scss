@@ -1,5 +1,6 @@
 @use "./components/style";
 @use "./calendar/style" as calendar;
+@use "./settings/style" as settings;
 
 .masthead-calendar {
 	max-width: 100%;

@@ -2,6 +2,7 @@ import domReady from '@wordpress/dom-ready';
 import { createRoot } from '@wordpress/element';
 
 import CalendarApp from './calendar/App';
+import SettingsApp from './settings/App';
 import './style.scss';
 
 /**
@@ -9,6 +10,7 @@ import './style.scss';
  */
 export const ROUTES = {
 	'masthead-calendar-root': CalendarApp,
+	'masthead-settings-root': SettingsApp,
 };
 
 export function mountAll( doc = document ) {
