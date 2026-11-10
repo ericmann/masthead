@@ -1,0 +1,61 @@
+.masthead-lane-dot {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+
+	&__dot {
+		display: inline-block;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		flex: none;
+	}
+}
+
+.masthead-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	&__button {
+		display: inline-flex;
+		align-items: center;
+		min-height: 32px;
+		padding: 2px 10px;
+		border: 1px solid #c3c4c7;
+		border-radius: 16px;
+		background: #fff;
+		color: #1d2327;
+		cursor: pointer;
+
+		&[aria-pressed="false"] {
+			background: #f0f0f1;
+			color: #50575e;
+			text-decoration: line-through;
+		}
+
+		&:focus-visible {
+			outline: 2px solid #2271b1;
+			outline-offset: 2px;
+		}
+	}
+}
+
+.masthead-stat {
+
+	&__label {
+		color: #50575e;
+	}
+
+	&__value {
+		font-weight: 600;
+	}
+
+	&__source {
+		color: #50575e;
+		font-size: 12px;
+	}
+}
