@@ -1903,3 +1903,65 @@ Planner decisions (each is restated in the task that needs it):
 19. **Fixture privacy scope** (§9 question 7). SPEC asks for synthetic titles in the fixture only. The plan replaces the six non-series titles and keeps "The Mantle", which §6.3 names. `docs/mockups/` carry the same real titles plus unpublished series ideas, and git history keeps everything; both are left to the owner.
 20. **Tagging.** §8 Phase 6 ends with "tag". The plan sets the version but leaves the signed tag to a human after merge, since the tag publishes a release.
 21. **Commit signing.** §3.5 requires signed commits; `docs/kukulu.json` therefore sets `policies.signing` to `required`, so a run refuses to start rather than fall back to unsigned commits.
+
+## Review fixes (round 1)
+
+### R1-01: Make npm audit --audit-level=high pass
+
+**Goal:** SPEC §3.5 requires `npm audit --audit-level=high` to pass, and .github/workflows/ci.yml:29 runs it, but it exits 1 with 5 high advisories in transitive dev packages (minimatch, markdown-it, markdownlint-cli, isomorphic-git via @wp-playground/cli/@wordpress/env, @wordpress/scripts). Resolve them with package.json `overrides` pinning patched releases so the CI verify job can go green.
+**Files touched:** package.json, package-lock.json
+**Design constraints:** package.json `dependencies` stays `{}`; both lockfiles stay committed. Change only the `overrides` block (and devDependency versions only if an override alone cannot reach a patched release within the same major). Do not edit .github/workflows/ci.yml, docs/SPEC.md or the audit command, and do not add `--omit=dev`. If a high advisory has no patched version reachable by an override without breaking the toolchain, stop and block the task naming each advisory id so the owner can decide on a SPEC change.
+**Acceptance tests:** `npm audit --audit-level=high` exits 0 (this is the check that caught the finding). `tests/js/ci/workflows.test.js` "ci runs both audits" still passes. `npm run lint`, `npm run test:unit` and `npm run build` still pass with the overridden packages.
+**Out of scope:** Moderate and low advisories; composer dependencies; any source change under src/ or client/.
+**Verification:** `npm install`, `npm audit --audit-level=high` (exit 0), `npm run lint`, `npm run test:unit`, `npm run build`, `bash scripts/forbidden-patterns.sh`.
+**Depends on:** none
+
+### R1-02: Swap check: collision when two non-Journal posts share a date
+
+**Goal:** SPEC §6.3 raises `collision` when two non-Journal posts share a date. `SwapCheck::collisions()` currently skips the whole date when any post on it has an exempt primary category, so two Technology posts plus a Journal post produce no collision. Drop exempt posts from each date group first, raise collision only when two or more non-exempt posts remain, give one finding to each of those posts (none to the exempt post), and list only the other non-exempt titles in the why line.
+**Files touched:** src/Desk/SwapCheck.php, tests/unit/Desk/SwapCheckTest.php
+**Design constraints:** Keep reading the exempt list from `Config::get( 'swap.collision_exempt_categories' )`; no slug literal in code. Keep the finding shape, key `collision:<post_id>`, severity `review`, no options, and the `Reasons::for_collision` template. Finding order (date, post id, type) is unchanged. Desk invariants and module boundaries unchanged.
+**Acceptance tests:** New `SwapCheckTest::test_two_non_exempt_posts_collide_even_when_a_journal_post_shares_the_date` (two technology posts and one journal post on 2026-11-20: exactly two collision findings, for the two technology posts, each naming only the other technology title; none for the journal post). Existing `test_two_posts_on_one_date_collide` and `test_exempt_category_does_not_collide` still pass, as does `tests/integration/Desk/SwapCheckMantleTest.php` (exactly four Mantle findings).
+**Out of scope:** lane_mismatch, cadence_break and better_candidate; the client SwapPanel; Config defaults.
+**Verification:** `composer lint`, `composer test:unit`, `npm run test:integration`.
+**Depends on:** none
+
+### R1-03: Ideas prompt lists every category for an any-category lane
+
+**Goal:** For a lane with `categories: []` (Standalone Wednesday by default) `Ideas::ideas()` correctly allows every category in the JSON schema, but `Prompts::ideas()` renders the raw lane categories and tells the model "Allowed categories: none", contradicting SPEC §5.1/§3.3 (an empty lane accepts any category) and the schema. Pass the resolved allowed list to the prompt so the text matches the schema.
+**Files touched:** src/Desk/Ideas.php, src/Ai/Prompts.php, tests/unit/Desk/IdeasTest.php, tests/unit/Ai/PromptsTest.php
+**Design constraints:** Every slug in the prompt stays wrapped in `<untrusted-post-data>`. `Ai/` still imports only Config and Support; `Prompts` stays pure. The lane filter after validation still drops (never coerces) out-of-lane ideas. No new Config key.
+**Acceptance tests:** New `IdeasTest::test_any_category_lane_prompt_lists_every_category`: with a lane whose categories are empty and categories technology, faith, business, the user prompt passed to the AiClient contains each slug inside untrusted tags and does not contain `Allowed categories: none`. If `Prompts::ideas()` gains an argument, update `PromptsTest` accordingly; the existing lane-category assertion (technology, faith) still holds for a lane that lists categories.
+**Out of scope:** Outline, share-copy and series prompts; schema changes; the client.
+**Verification:** `composer lint`, `composer test:unit`, `npm run test:integration`.
+**Depends on:** none
+
+### R1-04: Ask the Desk: optional start date sent to propose-series
+
+**Goal:** SPEC §6.1 gives `masthead/propose-series` the input `{ prompt, start?: date }` and the Phase 5 manual check asks for a series "starting the first Thursday in January", but `AskDesk` sends only `{ prompt }`, so Masthead plans from tomorrow. Add an optional labelled date input "Start on" beside the Ask box and send `start` only when it is set.
+**Files touched:** client/calendar/AskDesk.js, tests/js/calendar/AskDesk.test.js
+**Design constraints:** Client invariants: no `Date.now()`/argument-less `new Date()` outside client/data/clock.js; talk only to the Abilities run endpoint via `runAbility`; every control is a real labelled `<input>`/`<button>` (axe clean at 1280 and 390). Dates are never inferred from the AI or from the prompt text. With the field empty, the request stays `{ prompt }` exactly.
+**Acceptance tests:** `tests/js/calendar/AskDesk.test.js`: new "a chosen start date is sent to propose-series" (fill Start on = 2027-01-07, Ask: runAbility called with { prompt, start: '2027-01-07' }) and "no start is sent when the field is empty" (called with { prompt } only). Existing AskDesk tests and `tests/e2e/ask.spec.js` still pass.
+**Out of scope:** PHP changes to propose-series or SeriesPlanner; accept-series; DeskRail layout beyond the new field.
+**Verification:** `npm run lint`, `npm run test:unit`, `npm run build`, `npm run test:e2e`.
+**Depends on:** none
+
+### R1-05: suggest-for-date is not annotated idempotent
+
+**Goal:** SPEC §6.1 annotates `masthead/suggest-for-date` as readonly only. With `include_ideas` it spends AI budget and returns new ideas each call, so `idempotent => true` is wrong and lets MCP clients retry it freely. Set idempotent to false (readonly stays true, so the REST method stays GET).
+**Files touched:** src/Abilities/SuggestForDate.php, tests/integration/Abilities/SuggestForDateTest.php
+**Design constraints:** Change only the `idempotent` annotation; `readonly` true, `destructive` false. Permission callback unchanged. Follow the Ability protocol.
+**Acceptance tests:** New `SuggestForDateTest::test_annotations_match_spec`: `wp_get_ability( 'masthead/suggest-for-date' )` meta annotations have readonly true, idempotent false, destructive false. Existing SuggestForDate integration tests and `tests/integration/RestTransportTest.php` (GET for read-only) still pass.
+**Out of scope:** Annotations of other abilities.
+**Verification:** `composer lint`, `composer test:unit`, `npm run test:integration`.
+**Depends on:** none
+
+### R1-06: Reshare: pin the min-age and cooldown boundaries
+
+**Goal:** Two mutants in src/Desk/Candidates/Reshare.php survived `ReshareTest`: line 65 `<= $min_age` changed to `< $min_age`, and line 71 `<= $cooldown` changed to `< $cooldown`. Nothing pins SPEC §4.4's "older than desk.reshare_min_age_days, not shared within desk.reshare_cooldown_days" at the boundary. Add boundary tests so both mutants are killed.
+**Files touched:** tests/unit/Desk/Candidates/ReshareTest.php
+**Design constraints:** Tests only; do not change Reshare.php unless a new test exposes a real bug, in which case keep the current documented semantics (strictly older than min age; excluded when shared within the cooldown, inclusive). Read both values from Config through the existing test filter pattern; no WordPress loaded.
+**Acceptance tests:** New `ReshareTest::test_post_exactly_min_age_days_old_is_excluded_and_one_day_older_is_included` and `ReshareTest::test_post_shared_exactly_cooldown_days_ago_is_excluded_and_one_day_earlier_is_included`. Each must fail against the corresponding `<` mutant (re-run with kukulu_mutate to confirm).
+**Out of scope:** Other Desk candidates; production code changes.
+**Verification:** `composer lint`, `composer test:unit`.
+**Depends on:** none
