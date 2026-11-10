@@ -9,7 +9,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P0-02 JS toolchain and client shell
 - [x] P0-03 Structural checks script and module boundaries test
 - [x] P0-04 Posts › Calendar page and asset loading
-- [ ] P0-05 wp-env and the integration test harness
+- [x] P0-05 wp-env and the integration test harness
 - [ ] P0-06 Playwright and axe smoke harness, e2e mu-plugin loader
 - [ ] P0-07 Release packer and LICENSE
 - [ ] P0-08 CI and release workflows
@@ -110,3 +110,7 @@ Tests: BoundariesTest (4); script self-test builds good/bad trees per check (6 c
 ### P0-04 — 65ef08d
 
 Tests: CalendarPageTest(2), AssetsTest(4), NoticesTest(1). Assets(Clock, plugin_file) with add_page_hook/is_page_hook/add_boot_data/boot_data/build_exists/enqueue; script handle = SLUG; CSS from build/style-index.css else build/index.css. Notices uses get_current_screen()->id against registered hooks. Plugin::boot builds Clock, Assets, CalendarPage, Notices and adds admin_menu/admin_enqueue_scripts/admin_notices. Codebase note: VIP sniffs forbid mkdir/file_put_contents/unlink even in tests; use committed fixtures (tests/unit/fixtures/plugin/build). Brain Monkey Filters\expectApplied needs ->zeroOrMoreTimes() when optional.
+
+### P0-05 — f01cf61
+
+Tests: PluginLoadsTest(5), AdminPagesTest(3), all pass in wp-env (WP 7.1.4, PHP 8.5.12, Jetpack 16.4; WP_TESTS_DIR=/wordpress-phpunit). PHPUnit stays 9.6.38 (accepted by WP test lib). Integration run takes ~30s warm. Integration base: Masthead\Tests\Integration\TestCase (pins masthead_now to 2026-11-09 14:00:00 and timezone LA; uses set_up()). tests/integration/bootstrap.php loads jetpack then masthead on muplugins_loaded. wp-env warns DISABLE_WP_CRON already defined (harmless). Integration tests that call do_action('admin_enqueue_scripts') need set_current_screen() first. phpcs: GlobalVariablesOverride excluded in tests/. @wordpress/env added as devDependency.
