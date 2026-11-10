@@ -52,7 +52,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P3-07 Social adapters and wp masthead social:probe
 - [x] P3-08 masthead/share-connections and masthead/share-post abilities
 - [x] P3-09 SharePanel without AI copy
-- [ ] P3-10 Phase 3 push and manual checks
+- [x] P3-10 Phase 3 push and manual checks
 - [ ] P4-01 Candidate shape and DraftMatch
 - [ ] P4-02 SeriesNext candidates
 - [ ] P4-03 CategoryGap candidates
@@ -282,3 +282,7 @@ Tests: unit SharePostTest(5), integration ShareConnectionsTest(4), SharePostTest
 ### P3-09 — 6914ce2
 
 Tests: SharePanel.test.js(6), e2e share.spec.js(2 x2); full npm run test:e2e = 62 passed, 2 skipped (3.9 min). Component SharePanel({post}) exported with withSiteOffset(local, timeZone); App renders it in the rail for a selected published post when boot caps.publishPosts. Unconnected wp-env shows "Sharing is unavailable: <reason>" with no controls; axe passes. P5-08 adds the "Draft with AI" button to this component. The panel starts with empty message, unchecked connections.
+
+### P3-10 — 453c4da
+
+Docs only: Phase 3 section appended to docs/manual-checks.md. kukulu_verify (full): green (144 PHP unit, 87 JS unit). composer audit: no advisories. npm audit --audit-level=high: still the transitive dev advisories (5 high; see P0-02). Push: pushed build/2026-11-10 to origin. Manual check: NOT VERIFIED (human).
