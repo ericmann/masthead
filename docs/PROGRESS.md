@@ -13,7 +13,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P0-06 Playwright and axe smoke harness, e2e mu-plugin loader
 - [x] P0-07 Release packer and LICENSE
 - [x] P0-08 CI and release workflows
-- [ ] P0-09 Phase 0 push and manual checks
+- [x] P0-09 Phase 0 push and manual checks
 - [ ] P1-01 Support\Dates and Support\Json
 - [ ] P1-02 Rhythm option, activation defaults and Lanes
 - [ ] P1-03 Primary category and Colors
@@ -126,3 +126,7 @@ Tests: pack.test.js (4). pack.mjs exports shouldInclude/tagMatches/checksumLine;
 ### P0-08 — 4f99318
 
 Tests: workflows.test.js (5, reads YAML as text). ci.yml: verify/integration/e2e jobs (e2e runs test:e2e:smoke; P1-14 switches it to test:e2e). release.yml checks tag then packs then gh release create. Note: `npm audit --audit-level=high` in ci will fail on the transitive dev advisories recorded in P0-02 (minimatch etc.). Manual check: NOT VERIFIED (human) - workflows never executed on GitHub.
+
+### P0-09 — 2ef7a74
+
+Docs only: docs/manual-checks.md Phase 0 section. composer audit: no advisories. npm audit --audit-level=high: fails on transitive dev advisories (minimatch, markdown-it/deepmerge; see P0-02), no non-breaking fix. Push: pushed build/2026-11-10 to origin. Manual check: NOT VERIFIED (human).
