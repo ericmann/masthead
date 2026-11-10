@@ -95,6 +95,13 @@ final class Assets {
 				'restBase' => $series->rest_base(),
 			)
 		);
+		$this->add_boot_data(
+			'exposure',
+			static fn() => array(
+				'exposeMcp'   => Config::get( 'abilities.expose_mcp' ),
+				'exposeShare' => Config::get( 'abilities.expose_share' ),
+			)
+		);
 		$this->add_boot_data( 'categories', array( Colors::class, 'legend' ) );
 		$this->add_boot_data( 'rhythm', array( Rhythm::class, 'get' ) );
 		$this->add_boot_data(

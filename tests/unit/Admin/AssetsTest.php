@@ -134,6 +134,13 @@ final class AssetsTest extends TestCase {
 			),
 			$data['series']
 		);
+		$this->assertSame(
+			array(
+				'exposeMcp'   => true,
+				'exposeShare' => false,
+			),
+			$data['exposure']
+		);
 		$this->assertSame( 'technology', $data['categories'][0]['slug'] );
 		$this->assertSame( '#2f5fd0', $data['categories'][0]['color'] );
 		$this->assertSame( 'faith', $data['rhythm'][0]['lane'] );

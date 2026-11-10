@@ -52,4 +52,50 @@ test.describe( 'Settings › Calendar', () => {
 	} ) => {
 		await expectNoSeriousViolations( page, '#masthead-settings-root' );
 	} );
+
+	test( 'The Mantle shows every 4 weeks and can be marked as a lane exception', async ( {
+		page,
+	} ) => {
+		await expect(
+			page.getByLabel( 'The Mantle: every N weeks' )
+		).toHaveValue( '4' );
+		await expect( page.getByLabel( 'The Mantle: weekday' ) ).toHaveValue(
+			''
+		);
+		const exception = page.getByLabel( 'The Mantle: lane exception' );
+		await expect( exception ).not.toBeChecked();
+		await exception.check();
+		await page.getByRole( 'button', { name: 'Save changes' } ).click();
+		await expect( page.getByText( 'Settings saved.' ) ).toBeVisible();
+		await page.reload();
+		await page.waitForSelector( '.masthead-rhythm tbody tr' );
+		await expect(
+			page.getByLabel( 'The Mantle: lane exception' )
+		).toBeChecked();
+	} );
+
+	test( 'the exposure toggles persist after reload', async ( { page } ) => {
+		const share = page.getByLabel( 'Also expose sharing to MCP clients' );
+		await expect(
+			page.getByLabel( 'Expose calendar abilities to MCP clients' )
+		).toBeChecked();
+		await expect( share ).not.toBeChecked();
+		await share.check();
+		await page.getByRole( 'button', { name: 'Save changes' } ).click();
+		await expect( page.getByText( 'Settings saved.' ) ).toBeVisible();
+		await page.reload();
+		await page.waitForSelector( '.masthead-rhythm tbody tr' );
+		await expect(
+			page.getByLabel( 'Also expose sharing to MCP clients' )
+		).toBeChecked();
+	} );
+
+	test( 'the AI section links to Connectors when no provider is configured', async ( {
+		page,
+	} ) => {
+		await expect( page.getByText( 'Provider: none active' ) ).toBeVisible();
+		await expect(
+			page.getByRole( 'link', { name: 'Set up in Connectors' } )
+		).toHaveAttribute( 'href', /options-connectors\.php$/ );
+	} );
 } );

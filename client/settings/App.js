@@ -1,12 +1,34 @@
 import { __ } from '@wordpress/i18n';
 
 import { getBoot } from '../data/boot';
+import AiSettings from './AiSettings';
+import Exposure from './Exposure';
 import RhythmTable from './RhythmTable';
+import SeriesCadence, { useSeries } from './SeriesCadence';
 import { useSettings } from './useSettings';
 
 export default function App() {
 	const boot = getBoot();
-	const { rhythm, setRhythm, save, isSaving, isSaved, error } = useSettings();
+	const {
+		rhythm,
+		settings,
+		setRhythm,
+		setSetting,
+		save,
+		isSaving,
+		isSaved,
+		error,
+	} = useSettings();
+	const series = useSeries();
+	const exposure = {
+		exposeMcp: settings.abilities?.expose_mcp ?? boot.exposure?.exposeMcp,
+		exposeShare:
+			settings.abilities?.expose_share ?? boot.exposure?.exposeShare,
+	};
+	const saveAll = async () => {
+		await save();
+		await series.saveAll();
+	};
 	const effective = rhythm || boot.rhythm || {};
 
 	return (
@@ -37,12 +59,30 @@ export default function App() {
 					setRhythm={ setRhythm }
 				/>
 			</section>
+			<section className="masthead-settings__section">
+				<h2>{ __( 'Series cadence', 'masthead' ) }</h2>
+				<SeriesCadence
+					terms={ series.terms }
+					onChange={ series.onChange }
+				/>
+			</section>
+			<section className="masthead-settings__section">
+				<h2>{ __( 'MCP exposure', 'masthead' ) }</h2>
+				<Exposure values={ exposure } setSetting={ setSetting } />
+			</section>
+			<section className="masthead-settings__section">
+				<h2>{ __( 'AI', 'masthead' ) }</h2>
+				<AiSettings
+					supported={ Boolean( boot.ai?.supported ) }
+					connectorsUrl={ boot.urls?.connectors }
+				/>
+			</section>
 			<p className="submit">
 				<button
 					type="button"
 					className="button button-primary"
 					disabled={ isSaving }
-					onClick={ save }
+					onClick={ saveAll }
 				>
 					{ __( 'Save changes', 'masthead' ) }
 				</button>
