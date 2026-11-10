@@ -50,7 +50,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P3-05 masthead/stats-summary ability and the e2e stats switch
 - [x] P3-06 Tune stats.cache_ttl
 - [x] P3-07 Social adapters and wp masthead social:probe
-- [ ] P3-08 masthead/share-connections and masthead/share-post abilities
+- [x] P3-08 masthead/share-connections and masthead/share-post abilities
 - [ ] P3-09 SharePanel without AI copy
 - [ ] P3-10 Phase 3 push and manual checks
 - [ ] P4-01 Candidate shape and DraftMatch
@@ -274,3 +274,7 @@ Tuning stats.cache_ttl (docs/tuning/P3-06.md). Measurement: before ttl=21600 -> 
 ### P3-07 — bf117c0
 
 Tests: NullShareTest(1), JetpackSocialTest(6), Social FactoryTest(1), integration JetpackSocialTest(1). API: Social\ShareSource (SPEC 6.5), NullShare, JetpackSocial(?callable dispatch) with static usable() (Jetpack class + is_connection_ready only), available() (+ route registered), connections()->[{id,service,display_name}], share_now (non-chosen ids -> skipped_connections), share_at (one /scheduled-actions POST per connection, timestamp from Dates::parse_iso), probe(), static rest_dispatch(); Factory::make(?bool usable). Result shape {status: shared|queued|unavailable|error, results:[{connection_id, ok, message}]}. Interpretation: error code -> unavailable when it matches /not_available|not_connected|missing_token|no_possible_tokens|invalid_user_permission|plan|upgrade|quota|limit|no_route/i. Plugin builds $share = SocialFactory::make() at boot (usable() is cheap, no REST server access) and registers social:probe in the WP_CLI branch; P3-08 should pass $share to the abilities. Codebase notes: the hard-coded-tunable regex flags digits in prose like "ISO 8601" inside translatable strings; the word publicize is confined to JetpackSocial.php.
+
+### P3-08 — dca037d
+
+Tests: unit SharePostTest(5), integration ShareConnectionsTest(4), SharePostTest(6). Abilities\ShareConnections( ShareSource ) (read-only, default [] input schema, {available, connections, reason?}); Abilities\SharePost( ShareSource, Clock ) refusals masthead_not_found 404 / not_published 409 / invalid_input 400 / unknown_connection 400 / invalid_date 400; unavailable -> masthead_share_unavailable 409, error -> masthead_share_failed 502; shared sets masthead_last_shared (ISO) and both shared/queued fire masthead_shared( post_id, result ). Both added to Registrar args in Plugin with $share. Registrar meta.public for share-post follows abilities.expose_share (verified: false by default, true when filtered). Test technique: to re-register an ability in an integration test, unregister then push 'wp_abilities_api_init' onto $wp_current_filter around Registrar::register().
