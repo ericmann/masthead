@@ -336,3 +336,33 @@
 	gap: 4px;
 	align-items: center;
 }
+
+.masthead-share {
+	margin-bottom: 12px;
+	padding: 8px;
+	border: 1px solid #dcdcde;
+	background: #fff;
+
+	h2 {
+		margin: 0 0 4px;
+		font-size: 14px;
+	}
+
+	textarea {
+		width: 100%;
+	}
+
+	fieldset {
+		margin: 8px 0;
+		padding: 0;
+		border: 0;
+	}
+
+	&__unavailable {
+		color: #50575e;
+	}
+
+	&__error {
+		color: #b32d2e;
+	}
+}

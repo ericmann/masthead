@@ -12,6 +12,7 @@ import {
 } from '../data/dates';
 import { usePlan } from '../data/usePlan';
 import DraftTray from './DraftTray';
+import SharePanel from './SharePanel';
 import { useReschedule } from './useReschedule';
 import ListView from './ListView';
 import MonthGrid from './MonthGrid';
@@ -218,6 +219,14 @@ export default function App() {
 					className="masthead-rail"
 					aria-label={ __( 'Desk', 'masthead' ) }
 				>
+					{ selection?.type === 'post' &&
+					selection.post.status === 'publish' &&
+					getBoot().caps?.publishPosts ? (
+						<SharePanel
+							key={ selection.post.id }
+							post={ selection.post }
+						/>
+					) : null }
 					<DraftTray
 						unscheduled={ plan.unscheduled }
 						onMove={ move }
