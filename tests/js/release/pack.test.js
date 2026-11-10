@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
 import {
 	shouldInclude,
 	tagMatches,
@@ -50,18 +53,53 @@ describe( 'release pack', () => {
 		expect( shouldInclude( 'readme.txt' ) ).toBe( true );
 		expect( shouldInclude( 'CHANGELOG.md' ) ).toBe( true );
 		expect(
-			missingDocs( '0.1.0', [ 'masthead.php', 'readme.txt' ] )
+			missingDocs( '0.1.0', [
+				'masthead.php',
+				'readme.txt',
+				'README.md',
+			] )
 		).toEqual( [ 'CHANGELOG.md' ] );
 		expect(
-			missingDocs( '0.1.0', [ 'readme.txt', 'CHANGELOG.md' ] )
+			missingDocs( '0.1.0', [
+				'readme.txt',
+				'README.md',
+				'CHANGELOG.md',
+			] )
 		).toEqual( [] );
 		expect( missingDocs( '0.1.0', [] ) ).toEqual( [
 			'readme.txt',
+			'README.md',
 			'CHANGELOG.md',
 		] );
 	} );
 
+	it( 'includes README.md in the zip', () => {
+		expect( shouldInclude( 'README.md' ) ).toBe( true );
+		expect(
+			missingDocs( '0.1.0', [ 'readme.txt', 'CHANGELOG.md' ] )
+		).toEqual( [ 'README.md' ] );
+		expect( shouldInclude( 'docs/screenshots/settings.png' ) ).toBe(
+			false
+		);
+	} );
+
 	it( 'does not require the docs for the unreleased 0.0.0', () => {
 		expect( missingDocs( '0.0.0', [] ) ).toEqual( [] );
+	} );
+
+	it( 'README.md references four non-empty screenshots', () => {
+		const readme = fs.readFileSync(
+			path.join( process.cwd(), 'README.md' ),
+			'utf8'
+		);
+		[ 'calendar-month', 'day-plan', 'swap-panel', 'settings' ].forEach(
+			( name ) => {
+				const relative = `docs/screenshots/${ name }.png`;
+				expect( readme ).toContain( relative );
+				expect(
+					fs.statSync( path.join( process.cwd(), relative ) ).size
+				).toBeGreaterThan( 0 );
+			}
+		);
 	} );
 } );

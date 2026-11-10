@@ -52,8 +52,7 @@ export function tagMatches( tag, version ) {
 	return Boolean( version ) && tag === `v${ version }`;
 }
 
-// README.md joins this list in P6-03; until then its absence is accepted.
-const REQUIRED_DOCS = [ 'readme.txt', 'CHANGELOG.md' ];
+const REQUIRED_DOCS = [ 'readme.txt', 'README.md', 'CHANGELOG.md' ];
 
 /**
  * Documentation files a release must ship.

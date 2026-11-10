@@ -11,6 +11,7 @@
     "test:integration": "npm run build && wp-env start && wp-env run tests-cli --env-cwd=wp-content/plugins/masthead vendor/bin/phpunit -c phpunit.integration.xml.dist",
     "test:e2e:smoke": "npm run build && wp-env start && wp-scripts test-playwright --config tests/e2e/playwright.config.mjs tests/e2e/smoke",
     "test:e2e": "npm run build && wp-env start && wp-env run cli wp masthead seed --fixture=wp-content/masthead-fixtures/queue-2026-11-09.json --now=\"2026-11-09 14:00:00\" --reset && wp-scripts test-playwright --config tests/e2e/playwright.config.mjs",
+    "screenshots": "npm run build && wp-env start && MASTHEAD_SCREENSHOTS=1 wp-scripts test-playwright --config tests/e2e/playwright.config.mjs tests/e2e/screenshots --project=desktop",
     "release:pack": "npm run build && node scripts/release/pack.mjs"
   },
   "devDependencies": {
