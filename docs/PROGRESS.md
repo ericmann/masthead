@@ -73,7 +73,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-18 Phase 4 push and manual checks
 - [x] P5-01 Spike — WordPress AI Client surface and model metadata
 - [x] P5-02 AiClient interface, Schemas and the schema validator
-- [ ] P5-03 Prompts
+- [x] P5-03 Prompts
 - [ ] P5-04 WpAiClient, Factory, FakeAiClient and AI fixtures
 - [ ] P5-05 Budget and the BudgetedAi decorator
 - [ ] P5-06 Ideas and include_ideas in suggest-for-date
@@ -366,3 +366,7 @@ Spike docs/spikes/P5-01-ai-client.md. Decision: model-id-exposed. Facts: wp_ai_c
 ### P5-02 — 32772e1
 
 Ai\AiClient (SPEC 6.6 interface) and Ai\Schemas (static: ideas, outline, share_copy, series_proposal, validate). Tests: SchemasTest 10, all unit 238 green, constraints ok. Interpretation: validate() returns paths like $.ideas[0].category; integer type is strict is_int (no coercion); object accepts [] (decoded {}) but not a list; enum uses strict in_array. Schemas takes count/max_parts as parameters, so callers read Config (desk.ideas_per_request, ai.series_max_parts).
+
+### P5-03 — 3df99a2
+
+Ai\Prompts (static, pure): ideas(lane,date,context,count), outline(title,category,context), share_copy(title,excerpt), series_proposal(prompt,categories,max_parts), untrusted(). Tests: PromptsTest 7; unit 245 green. Shapes: lane {label,categories[]}; context {posts:[{title,excerpt}], series:[names], gaps:[names]} (also outline context {posts}). Interpretation: untrusted() loops until no tag remains (defeats nested reassembly); lane label/categories also fenced; the day is plain. Lesson: constraint dangerous-php matches `system(`, so the shared helper is named instructions().
