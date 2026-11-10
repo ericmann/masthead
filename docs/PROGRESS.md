@@ -51,7 +51,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P3-06 Tune stats.cache_ttl
 - [x] P3-07 Social adapters and wp masthead social:probe
 - [x] P3-08 masthead/share-connections and masthead/share-post abilities
-- [ ] P3-09 SharePanel without AI copy
+- [x] P3-09 SharePanel without AI copy
 - [ ] P3-10 Phase 3 push and manual checks
 - [ ] P4-01 Candidate shape and DraftMatch
 - [ ] P4-02 SeriesNext candidates
@@ -278,3 +278,7 @@ Tests: NullShareTest(1), JetpackSocialTest(6), Social FactoryTest(1), integratio
 ### P3-08 — dca037d
 
 Tests: unit SharePostTest(5), integration ShareConnectionsTest(4), SharePostTest(6). Abilities\ShareConnections( ShareSource ) (read-only, default [] input schema, {available, connections, reason?}); Abilities\SharePost( ShareSource, Clock ) refusals masthead_not_found 404 / not_published 409 / invalid_input 400 / unknown_connection 400 / invalid_date 400; unavailable -> masthead_share_unavailable 409, error -> masthead_share_failed 502; shared sets masthead_last_shared (ISO) and both shared/queued fire masthead_shared( post_id, result ). Both added to Registrar args in Plugin with $share. Registrar meta.public for share-post follows abilities.expose_share (verified: false by default, true when filtered). Test technique: to re-register an ability in an integration test, unregister then push 'wp_abilities_api_init' onto $wp_current_filter around Registrar::register().
+
+### P3-09 — 6914ce2
+
+Tests: SharePanel.test.js(6), e2e share.spec.js(2 x2); full npm run test:e2e = 62 passed, 2 skipped (3.9 min). Component SharePanel({post}) exported with withSiteOffset(local, timeZone); App renders it in the rail for a selected published post when boot caps.publishPosts. Unconnected wp-env shows "Sharing is unavailable: <reason>" with no controls; axe passes. P5-08 adds the "Draft with AI" button to this component. The panel starts with empty message, unchecked connections.
