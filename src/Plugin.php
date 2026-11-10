@@ -12,9 +12,11 @@ namespace Masthead;
 use Masthead\Abilities\CreatePlannedDraft;
 use Masthead\Abilities\GetPlan;
 use Masthead\Abilities\Registrar;
+use Masthead\Abilities\DismissSuggestion;
 use Masthead\Abilities\Reschedule;
 use Masthead\Abilities\ShareConnections;
 use Masthead\Abilities\SharePost;
+use Masthead\Abilities\SuggestForDate;
 use Masthead\Abilities\StatsSummary;
 use Masthead\Admin\Assets;
 use Masthead\Admin\CalendarPage;
@@ -25,7 +27,16 @@ use Masthead\Cli\PlanCommand;
 use Masthead\Cli\SeedCommand;
 use Masthead\Cli\SocialProbeCommand;
 use Masthead\Cli\StatsProbeCommand;
+use Masthead\Cli\SuggestCommand;
 use Masthead\Cli\Seeder;
+use Masthead\Desk\Candidates\CategoryGap;
+use Masthead\Desk\Candidates\DraftMatch;
+use Masthead\Desk\Candidates\Reshare;
+use Masthead\Desk\Candidates\SeriesNext;
+use Masthead\Desk\Dismissals;
+use Masthead\Desk\Ranker;
+use Masthead\Desk\Reasons;
+use Masthead\Desk\Suggester;
 use Masthead\Plan\Colors;
 use Masthead\Plan\PlanReader;
 use Masthead\Plan\Reschedule as PlanReschedule;
@@ -85,13 +96,27 @@ final class Plugin {
 		$stats     = StatsFactory::make();
 		$share     = SocialFactory::make();
 		$reader    = new PlanReader( $clock, $series );
+		$dismissals = new Dismissals( $clock );
+		$suggester  = new Suggester(
+			new DraftMatch( $reader ),
+			new SeriesNext( $series ),
+			new Reshare( $stats, $share, $clock ),
+			new CategoryGap( $clock ),
+			new Ranker(),
+			new Reasons( $clock ),
+			$dismissals,
+			$reader,
+			$clock
+		);
 		$registrar = new Registrar(
 			new GetPlan( $reader ),
 			new CreatePlannedDraft( $slots, $series ),
 			new Reschedule( new PlanReschedule( $clock ) ),
 			new StatsSummary( $stats ),
 			new ShareConnections( $share ),
-			new SharePost( $share, $clock )
+			new SharePost( $share, $clock ),
+			new SuggestForDate( $suggester ),
+			new DismissSuggestion( $dismissals )
 		);
 		add_action( 'wp_abilities_api_categories_init', array( $registrar, 'register_category' ) );
 		add_action( 'wp_abilities_api_init', array( $registrar, 'register' ) );
@@ -102,6 +127,7 @@ final class Plugin {
 					'plan' => new PlanCommand( $registrar->get( 'masthead/get-plan' ), $clock ),
 					'stats:probe' => new StatsProbeCommand( $stats ),
 					'social:probe' => new SocialProbeCommand( $share ),
+					'suggest' => new SuggestCommand( $registrar->get( 'masthead/suggest-for-date' ) ),
 				)
 			);
 		}

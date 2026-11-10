@@ -12,10 +12,16 @@ namespace {
 		class WP_CLI {
 			public static array $lines  = array();
 			public static array $errors = array();
+			public static array $warnings = array();
 
 			public static function reset(): void {
 				self::$lines  = array();
 				self::$errors = array();
+				self::$warnings = array();
+			}
+
+			public static function warning( $message ) {
+				self::$warnings[] = $message;
 			}
 
 			public static function line( $text = '' ) {
