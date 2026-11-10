@@ -17,6 +17,7 @@ use Masthead\Abilities\Reschedule;
 use Masthead\Abilities\ShareConnections;
 use Masthead\Abilities\SharePost;
 use Masthead\Abilities\SuggestForDate;
+use Masthead\Abilities\SwapCheck as SwapCheckAbility;
 use Masthead\Abilities\StatsSummary;
 use Masthead\Admin\Assets;
 use Masthead\Admin\CalendarPage;
@@ -28,15 +29,19 @@ use Masthead\Cli\SeedCommand;
 use Masthead\Cli\SocialProbeCommand;
 use Masthead\Cli\StatsProbeCommand;
 use Masthead\Cli\SuggestCommand;
+use Masthead\Cli\SwapCheckCommand;
 use Masthead\Cli\Seeder;
 use Masthead\Desk\Candidates\CategoryGap;
 use Masthead\Desk\Candidates\DraftMatch;
 use Masthead\Desk\Candidates\Reshare;
 use Masthead\Desk\Candidates\SeriesNext;
 use Masthead\Desk\Dismissals;
+use Masthead\Cron\Nightly;
 use Masthead\Desk\Ranker;
 use Masthead\Desk\Reasons;
+use Masthead\Desk\Scoring;
 use Masthead\Desk\Suggester;
+use Masthead\Desk\SwapCheck as DeskSwapCheck;
 use Masthead\Plan\Colors;
 use Masthead\Plan\PlanReader;
 use Masthead\Plan\Reschedule as PlanReschedule;
@@ -97,6 +102,10 @@ final class Plugin {
 		$share     = SocialFactory::make();
 		$reader    = new PlanReader( $clock, $series );
 		$dismissals = new Dismissals( $clock );
+		$swap_check = new DeskSwapCheck( $reader, $series, new Scoring(), new Reasons( $clock ), $stats, $clock );
+		$nightly    = new Nightly( $swap_check, $stats, $clock );
+		add_action( 'init', array( $nightly, 'schedule' ) );
+		add_action( Nightly::HOOK, array( $nightly, 'run' ) );
 		$suggester  = new Suggester(
 			new DraftMatch( $reader ),
 			new SeriesNext( $series ),
@@ -116,7 +125,8 @@ final class Plugin {
 			new ShareConnections( $share ),
 			new SharePost( $share, $clock ),
 			new SuggestForDate( $suggester ),
-			new DismissSuggestion( $dismissals )
+			new DismissSuggestion( $dismissals ),
+			new SwapCheckAbility( $reader, $series )
 		);
 		add_action( 'wp_abilities_api_categories_init', array( $registrar, 'register_category' ) );
 		add_action( 'wp_abilities_api_init', array( $registrar, 'register' ) );
@@ -128,6 +138,7 @@ final class Plugin {
 					'stats:probe' => new StatsProbeCommand( $stats ),
 					'social:probe' => new SocialProbeCommand( $share ),
 					'suggest' => new SuggestCommand( $registrar->get( 'masthead/suggest-for-date' ) ),
+					'swap-check' => new SwapCheckCommand( $swap_check ),
 				)
 			);
 		}
@@ -156,5 +167,14 @@ final class Plugin {
 	 */
 	public static function activate(): void {
 		Rhythm::install_defaults();
+	}
+
+	/**
+	 * Deactivation hook: clears the nightly event.
+	 *
+	 * @return void
+	 */
+	public static function deactivate(): void {
+		Nightly::unschedule();
 	}
 }
