@@ -114,7 +114,7 @@ final class SuggestForDate implements Ability {
 		return array(
 			'readonly'    => true,
 			'destructive' => false,
-			'idempotent'  => true,
+			'idempotent'  => false,
 		);
 	}
 

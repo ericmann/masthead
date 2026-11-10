@@ -37,6 +37,13 @@ final class SuggestForDateTest extends TestCase {
 		return array_column( $result['suggestions'], 'key' );
 	}
 
+	public function test_annotations_match_spec(): void {
+		$annotations = $this->ability()->get_meta()['annotations'];
+		$this->assertTrue( $annotations['readonly'] );
+		$this->assertFalse( $annotations['idempotent'] );
+		$this->assertFalse( $annotations['destructive'] );
+	}
+
 	public function test_allowed(): void {
 		$this->assertTrue( $this->ability()->check_permissions( array( 'date' => '2026-11-18' ) ) );
 	}
