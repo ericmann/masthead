@@ -20,3 +20,13 @@ Nothing here blocks a later task. Each item is `NOT VERIFIED (human)` until some
 - [ ] Drag a scheduled post to another day with a mouse and confirm it persists after reload.
 - [ ] Operate "Move to..." with the keyboard only.
 - [ ] Compare Settings > Calendar with `docs/mockups/Settings.dc.html`.
+
+## Phase 3
+
+To be done on eric.mann.blog after deploying a pre-release build.
+
+- [ ] Run `wp masthead stats:probe` and compare the printed shapes with `docs/fixtures/stats-sample.json` and `docs/spikes/P3-01-jetpack-stats.md`.
+- [ ] Run `wp masthead social:probe` and compare with `docs/spikes/P3-03-jetpack-social.md`.
+- [ ] Share one post to one connection from the Share panel and confirm it arrives and `masthead_last_shared` is set.
+- [ ] Try "Queue for this date" and confirm it either queues or reports the plan reason.
+- [ ] Read both spike files and list every fact still marked `UNCONFIRMED`.
