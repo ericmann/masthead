@@ -2,10 +2,22 @@ import { __ } from '@wordpress/i18n';
 
 import { getBoot } from '../data/boot';
 import AiSettings from './AiSettings';
+import DeskSettings from './DeskSettings';
 import Exposure from './Exposure';
 import RhythmTable from './RhythmTable';
 import SeriesCadence, { useSeries } from './SeriesCadence';
 import { useSettings } from './useSettings';
+
+/**
+ * Reads a dotted path from a nested object.
+ *
+ * @param {Object} source Nested object.
+ * @param {string} path   Dotted path.
+ * @return {*} The value, or undefined.
+ */
+function getPath( source, path ) {
+	return path.split( '.' ).reduce( ( node, part ) => node?.[ part ], source );
+}
 
 export default function App() {
 	const boot = getBoot();
@@ -30,6 +42,8 @@ export default function App() {
 		await series.saveAll();
 	};
 	const effective = rhythm || boot.rhythm || {};
+	const get = ( key ) =>
+		getPath( settings, key ) ?? boot.settingsDefaults?.[ key ];
 
 	return (
 		<div className="masthead-settings">
@@ -71,10 +85,18 @@ export default function App() {
 				<Exposure values={ exposure } setSetting={ setSetting } />
 			</section>
 			<section className="masthead-settings__section">
+				<h2>{ __( 'Desk', 'masthead' ) }</h2>
+				<DeskSettings get={ get } setSetting={ setSetting } />
+			</section>
+			<section className="masthead-settings__section">
 				<h2>{ __( 'AI', 'masthead' ) }</h2>
 				<AiSettings
 					supported={ Boolean( boot.ai?.supported ) }
 					connectorsUrl={ boot.urls?.connectors }
+					get={ get }
+					setSetting={ setSetting }
+					remaining={ boot.ai?.remaining ?? null }
+					models={ boot.ai?.models || {} }
 				/>
 			</section>
 			<p className="submit">

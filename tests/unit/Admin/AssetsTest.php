@@ -141,6 +141,18 @@ final class AssetsTest extends TestCase {
 			),
 			$data['exposure']
 		);
+		$this->assertSame( 21, $data['settingsDefaults']['desk.horizon_days'] );
+		$this->assertSame(
+			array(
+				'lane' => 0.5,
+				'category' => 0.3,
+				'weekday' => 0.2,
+			),
+			$data['settingsDefaults']['swap.weights'] 
+		);
+		$this->assertSame( array( 'claude-haiku-5-5' ), $data['settingsDefaults']['ai.models.fast'] );
+		$this->assertArrayNotHasKey( 'calendar.max_range_days', $data['settingsDefaults'] );
+		$this->assertArrayNotHasKey( 'ai.temperature', $data['settingsDefaults'] );
 		$this->assertSame( 'technology', $data['categories'][0]['slug'] );
 		$this->assertSame( '#2f5fd0', $data['categories'][0]['color'] );
 		$this->assertSame( 'faith', $data['rhythm'][0]['lane'] );

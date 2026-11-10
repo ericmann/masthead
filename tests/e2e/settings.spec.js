@@ -93,9 +93,74 @@ test.describe( 'Settings › Calendar', () => {
 	test( 'the AI section links to Connectors when no provider is configured', async ( {
 		page,
 	} ) => {
-		await expect( page.getByText( 'Provider: none active' ) ).toBeVisible();
+		wpCli( [ 'option', 'update', 'masthead_e2e_ai', '0' ] );
+		try {
+			await page.reload();
+			await page.waitForSelector( '.masthead-rhythm tbody tr' );
+			await expect(
+				page.getByText( 'Provider: none active' )
+			).toBeVisible();
+			await expect(
+				page.getByRole( 'link', { name: 'Set up in Connectors' } )
+			).toHaveAttribute( 'href', /options-connectors\.php$/ );
+		} finally {
+			wpCli( [ 'option', 'delete', 'masthead_e2e_ai' ] );
+		}
+	} );
+
+	test( 'the AI section shows the provider, the budget and the model message', async ( {
+		page,
+	} ) => {
+		await expect( page.getByText( 'Provider: available' ) ).toBeVisible();
 		await expect(
-			page.getByRole( 'link', { name: 'Set up in Connectors' } )
-		).toHaveAttribute( 'href', /options-connectors\.php$/ );
+			page.getByText( /requests left this month/ )
+		).toBeVisible();
+		await expect(
+			page.getByText(
+				'The AI Client does not report which model was used.'
+			)
+		).toBeVisible();
+		await expect(
+			page.getByLabel( 'Draft titles and excerpts' )
+		).toBeChecked();
+	} );
+
+	test( 'changing the monthly request cap persists after reload', async ( {
+		page,
+	} ) => {
+		const cap = page.getByLabel( 'Monthly AI request cap' );
+		await expect( cap ).toHaveValue( '300' );
+		await cap.fill( '150' );
+		await page.getByRole( 'button', { name: 'Save changes' } ).click();
+		await expect( page.getByText( 'Settings saved.' ) ).toBeVisible();
+		await page.reload();
+		await page.waitForSelector( '.masthead-rhythm tbody tr' );
+		await expect( page.getByLabel( 'Monthly AI request cap' ) ).toHaveValue(
+			'150'
+		);
+		await expect(
+			page.getByText( '150 requests left this month' )
+		).toBeVisible();
+		// Only the changed key is stored.
+		const stored = JSON.parse(
+			wpCli( [ 'option', 'get', 'masthead_settings', '--format=json' ] )
+		);
+		expect( stored.ai.monthly_request_cap ).toBe( 150 );
+		expect( stored.desk ).toBeUndefined();
+	} );
+
+	test( 'Desk settings show the defaults and have no serious or critical axe violations', async ( {
+		page,
+	} ) => {
+		await expect(
+			page.getByLabel( 'Planning horizon (days)' )
+		).toHaveValue( '21' );
+		await expect( page.getByLabel( 'Category gap (days)' ) ).toHaveValue(
+			'45'
+		);
+		await expect(
+			page.getByLabel( 'Swap weight: lane (0 to 1)' )
+		).toHaveValue( '0.5' );
+		await expectNoSeriousViolations( page, '.masthead-desk-settings' );
 	} );
 } );

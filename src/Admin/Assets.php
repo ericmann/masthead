@@ -102,6 +102,10 @@ final class Assets {
 				'exposeShare' => Config::get( 'abilities.expose_share' ),
 			)
 		);
+		$this->add_boot_data(
+			'settingsDefaults',
+			static fn() => array_intersect_key( Config::all(), array_flip( Config::settable() ) )
+		);
 		$this->add_boot_data( 'categories', array( Colors::class, 'legend' ) );
 		$this->add_boot_data( 'rhythm', array( Rhythm::class, 'get' ) );
 		$this->add_boot_data(

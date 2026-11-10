@@ -58,3 +58,16 @@
 		}
 	}
 }
+
+.masthead-desk-settings,
+.masthead-ai {
+
+	input[type="number"] {
+		width: 90px;
+	}
+
+	input[type="text"] {
+		width: 100%;
+		max-width: 320px;
+	}
+}

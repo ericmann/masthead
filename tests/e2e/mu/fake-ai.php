@@ -8,6 +8,10 @@
 add_filter(
 	'masthead_ai_client',
 	static function ( $client ) {
+		// Option masthead_e2e_ai = 0 leaves the real client in place, so specs can see the "no provider" state.
+		if ( '0' === (string) get_option( 'masthead_e2e_ai' ) ) {
+			return $client;
+		}
 		$file = WP_PLUGIN_DIR . '/masthead/tests/support/FakeAiClient.php';
 		if ( ! class_exists( 'Masthead\Tests\Support\FakeAiClient' ) && is_readable( $file ) ) {
 			require_once $file;

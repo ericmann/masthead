@@ -28,6 +28,7 @@ use Masthead\Admin\Assets;
 use Masthead\Admin\CalendarPage;
 use Masthead\Admin\Notices;
 use Masthead\Admin\SettingsPage;
+use Masthead\Cli\AiStatusCommand;
 use Masthead\Cli\Commands;
 use Masthead\Cli\PlanCommand;
 use Masthead\Cli\SeedCommand;
@@ -159,6 +160,7 @@ final class Plugin {
 					'social:probe' => new SocialProbeCommand( $share ),
 					'suggest' => new SuggestCommand( $registrar->get( 'masthead/suggest-for-date' ) ),
 					'swap-check' => new SwapCheckCommand( $swap_check ),
+					'ai:status' => new AiStatusCommand( $ideas ),
 				)
 			);
 		}
@@ -168,6 +170,7 @@ final class Plugin {
 			static fn() => array(
 				'supported' => $ai->supported(),
 				'remaining' => $budget->remaining(),
+				'models'    => $budget->models(),
 			)
 		);
 		$assets->add_boot_data( 'abilities', array( $registrar, 'describe' ) );
