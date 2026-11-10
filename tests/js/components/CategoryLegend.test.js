@@ -1,7 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import CategoryLegend from '../../../client/components/CategoryLegend';
+import CategoryLegend, {
+	legendCategories,
+} from '../../../client/components/CategoryLegend';
 
 const categories = [
 	{ slug: 'technology', name: 'Technology', color: '#2f5fd0' },
@@ -57,5 +59,39 @@ describe( 'CategoryLegend', () => {
 				.getByRole( 'button', { name: 'Technology' } )
 				.getAttribute( 'aria-pressed' )
 		).toBe( 'true' );
+	} );
+} );
+
+describe( 'legendCategories', () => {
+	const all = [
+		{
+			slug: 'uncategorized',
+			name: 'Uncategorized',
+			color: '#8a5409',
+			default: true,
+		},
+		{
+			slug: 'technology',
+			name: 'Technology',
+			color: '#2f5fd0',
+			default: false,
+		},
+		{ slug: 'faith', name: 'Faith', color: '#7a5c2e' },
+	];
+
+	it( 'hides the default category while nothing uses it', () => {
+		expect(
+			legendCategories( all, new Set( [ 'technology' ] ) ).map(
+				( category ) => category.slug
+			)
+		).toEqual( [ 'technology', 'faith' ] );
+	} );
+
+	it( 'keeps the default category once something uses it', () => {
+		expect(
+			legendCategories( all, new Set( [ 'uncategorized' ] ) ).map(
+				( category ) => category.slug
+			)
+		).toEqual( [ 'uncategorized', 'technology', 'faith' ] );
 	} );
 } );

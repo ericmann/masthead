@@ -139,6 +139,43 @@ describe( 'calendar App', () => {
 		expect( screen.getByText( 'Post 1' ) ).toBeTruthy();
 	} );
 
+	it( 'the legend leaves out the default category until a post or lane uses it', () => {
+		window.mastheadBoot.categories = [
+			{
+				slug: 'uncategorized',
+				name: 'Uncategorized',
+				color: '#8a5409',
+				default: true,
+			},
+			{ slug: 'technology', name: 'Technology', color: '#2f5fd0' },
+		];
+		resetBoot();
+		const { unmount } = render( <App /> );
+		expect(
+			screen.queryByRole( 'button', { name: 'Uncategorized' } )
+		).toBeNull();
+		expect(
+			screen.getByRole( 'button', { name: 'Technology' } )
+		).toBeTruthy();
+		unmount();
+		usePlan.mockReturnValue(
+			plan( {
+				unscheduled: [
+					{
+						id: 9,
+						title: 'Loose draft',
+						status: 'draft',
+						categories: [ 'uncategorized' ],
+					},
+				],
+			} )
+		);
+		render( <App /> );
+		expect(
+			screen.getByRole( 'button', { name: 'Uncategorized' } )
+		).toBeTruthy();
+	} );
+
 	it( 'Today returns the anchor to the boot date', async () => {
 		render( <App /> );
 		await userEvent.click(

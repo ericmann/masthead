@@ -55,6 +55,48 @@ final class ColorsTest extends TestCase {
 		$this->assertSame( Colors::PALETTE[2], Colors::for_term( 16, 'recipes' ) );
 	}
 
+	public function test_legend_marks_only_the_site_default_category(): void {
+		$this->meta( '' );
+		Functions\when( 'get_option' )->alias(
+			static fn( $name ) => 'default_category' === $name ? '1' : array()
+		);
+		Functions\when( 'get_terms' )->justReturn(
+			array(
+				(object) array(
+					'term_id' => 1,
+					'slug'    => 'uncategorized',
+					'name'    => 'Uncategorized',
+				),
+				(object) array(
+					'term_id' => 8,
+					'slug'    => 'technology',
+					'name'    => 'Technology',
+				),
+			)
+		);
+
+		$legend = Colors::legend();
+
+		$this->assertSame(
+			array(
+				'slug'    => 'uncategorized',
+				'name'    => 'Uncategorized',
+				'color'   => Colors::PALETTE[1],
+				'default' => true,
+			),
+			$legend[0]
+		);
+		$this->assertSame(
+			array(
+				'slug'    => 'technology',
+				'name'    => 'Technology',
+				'color'   => '#2f5fd0',
+				'default' => false,
+			),
+			$legend[1]
+		);
+	}
+
 	private static function luminance( string $hex ): float {
 		$channels = array_map(
 			static function ( $pair ) {

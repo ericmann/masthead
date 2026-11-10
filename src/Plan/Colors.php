@@ -88,17 +88,20 @@ final class Colors {
 	}
 
 	/**
-	 * Legend entries for every category.
+	 * Legend entries for every category. `default` marks the site's default category,
+	 * which the calendar legend shows only while something on screen or in the rhythm uses it.
 	 *
-	 * @return array<int,array{slug:string,name:string,color:string}>
+	 * @return array<int,array{slug:string,name:string,color:string,default:bool}>
 	 */
 	public static function legend(): array {
-		$legend = array();
+		$default = (int) get_option( 'default_category' );
+		$legend  = array();
 		foreach ( Categories::all() as $category ) {
 			$legend[] = array(
-				'slug'  => $category['slug'],
-				'name'  => $category['name'],
-				'color' => self::for_term( $category['term_id'], $category['slug'] ),
+				'slug'    => $category['slug'],
+				'name'    => $category['name'],
+				'color'   => self::for_term( $category['term_id'], $category['slug'] ),
+				'default' => $category['term_id'] === $default,
 			);
 		}
 		return $legend;

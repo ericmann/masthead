@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
+import { legendCategories } from '../components/CategoryLegend';
 import { getBoot } from '../data/boot';
 import { today as bootToday } from '../data/clock';
 import {
@@ -215,6 +216,18 @@ export default function App() {
 	}, [] );
 
 	const selectedDate = selection?.type === 'day' ? selection.date : null;
+	const usedCategories = new Set(
+		[
+			...plan.days.flatMap( ( day ) => day.posts ),
+			...plan.unscheduled,
+		]
+			.flatMap( ( post ) => post.categories || [] )
+			.concat(
+				Object.values( boot.rhythm || {} ).flatMap(
+					( lane ) => lane?.categories || []
+				)
+			)
+	);
 
 	return (
 		<div className="masthead-calendar">
@@ -230,7 +243,10 @@ export default function App() {
 				onNext={ () => step( 1 ) }
 				onToday={ () => setAnchor( bootToday() ) }
 				onView={ onView }
-				categories={ getBoot().categories || [] }
+				categories={ legendCategories(
+					boot.categories || [],
+					usedCategories
+				) }
 				hidden={ hidden }
 				onToggleCategory={ toggleCategory }
 				onFillOpenDays={ fillOpenDays }
