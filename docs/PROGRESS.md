@@ -71,7 +71,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-16 Swap panel and queue verdicts
 - [x] P4-17 Tune the swap assumptions
 - [x] P4-18 Phase 4 push and manual checks
-- [ ] P5-01 Spike — WordPress AI Client surface and model metadata
+- [x] P5-01 Spike — WordPress AI Client surface and model metadata
 - [ ] P5-02 AiClient interface, Schemas and the schema validator
 - [ ] P5-03 Prompts
 - [ ] P5-04 WpAiClient, Factory, FakeAiClient and AI fixtures
@@ -358,3 +358,7 @@ Tuning the swap assumptions (docs/tuning/P4-17.md); all defaults kept, Config un
 ### P4-18 — cc28f18
 
 Docs only: Phase 4 section appended to docs/manual-checks.md. kukulu_verify (full): green (228 PHP unit, 122 JS unit). composer audit: no advisories. npm audit --audit-level=high: still transitive dev advisories (5 high; see P0-02). Push: pushed build/2026-11-10 to origin. Manual check: NOT VERIFIED (human).
+
+### P5-01 — 43d1e75
+
+Spike docs/spikes/P5-01-ai-client.md. Decision: model-id-exposed. Facts: wp_ai_client_prompt( $prompt = null ) (ai-client.php:60) returns WP_AI_Client_Prompt_Builder; snake_case methods via __call: using_system_instruction( string ), using_model_preference( ...ids ) (variadic; strings, instances or [provider, model] tuples), using_temperature( float ), using_max_tokens( int ), as_json_response( ?array schema ), is_supported_for_text_generation() (no network; false with no provider), generate_text(): string|WP_Error, generate_text_result(): GenerativeAiResult|WP_Error -> ->toText() and ->getModelMetadata()->getId() (model id), getProviderMetadata(). Errors are WP_Error with codes prompt_prevented 503, prompt_network_error 503, prompt_client_error, prompt_upstream_server_error, prompt_token_limit_reached 400, prompt_invalid_argument 400 (observed "No models found that support text_generation..." with no provider), prompt_builder_error 500. IMPORTANT: capability `prompt_ai` is NOT defined by core 7.1.4 and NO default role (not even administrator) holds it, so on a stock site every AI ability that requires it is denied; e2e fake grants it via user_has_cap; flagged for HANDOFF/readme (site owner must grant it, or a later task maps it). UNCONFIRMED: real JSON-constrained response shape. Use generate_text_result() in WpAiClient to report the model id.
