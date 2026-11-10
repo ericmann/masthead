@@ -81,7 +81,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P5-08 masthead/draft-share-copy ability and the Share panel's AI button
 - [x] P5-09 SeriesPlanner and masthead/propose-series
 - [x] P5-10 masthead/accept-series
-- [ ] P5-11 Ask the Desk
+- [x] P5-11 Ask the Desk
 - [ ] P5-12 Settings: Desk and AI fields, and wp masthead ai:status
 - [ ] P5-13 Tune the AI assumptions
 - [ ] P5-14 Phase 5 push and manual checks
@@ -398,3 +398,7 @@ Desk\SeriesPlanner(AiClient, ?Clock)::propose(prompt, ?start) and Abilities\Prop
 ### P5-10 — d79e414
 
 SeriesPlanner::accept(name, parts, ?cadence, ?category) + Abilities\AcceptSeries masthead/accept-series (input {name, parts[{date,title,outline?}], cadence?, category?}; output {term_id, post_ids}; readonly=false destructive=false idempotent=false; edit_posts, no prompt_ai). SeriesPlanner ctor is now (AiClient, Clock, Slots, SeriesSource); Plugin builds one $planner for ProposeSeries and AcceptSeries. Validates everything first (name, 1..ai.series_max_parts parts, real non-past dates, titles, category exists, cadence via Cadence::sanitize, name not taken -> masthead_series_exists 409); category defaults to the first part's lane category else masthead_invalid_input; then wp_insert_term, masthead_cadence + total-parts term meta, Slots::create per part with series {term_id, part n}; any failure deletes the created drafts (Slots::delete) and the term. Tests: unit 293, integration full suite 126 green (AcceptSeries 5). Interpretation: part time = cadence.time when cadence given, else lane time; cadence optional.
+
+### P5-11 — 1f69a53
+
+client/calendar/AskDesk.js: text input "Ask the Desk" + Ask button + line naming Settings > Connectors (link when boot urls.connectors); runs propose-series {prompt}; proposal = series name input, lane label, per-part date input (aria-label "Part N date"), title input ("Part N title"), outline as plain li, "Remove part"; "Accept series" runs accept-series {name, category, cadence, parts[{date,title,outline}]} then calls onCreated (App passes plan.refresh) and announces "Created N planned drafts" in an aria-live region; "Discard" clears; errors (incl. masthead_ai_budget) shown as role=alert notice and keep the proposal. DeskRail renders it at the bottom when boot ai.supported && caps.promptAi, else "Ask the Desk needs an AI provider" + Connectors link. Tests: jest 140 (AskDesk 7), e2e ask.spec desktop+mobile pass (four Thursday drafts in list view; axe clean). Interpretation: cadence/category sent as proposed; no section aria-label (would duplicate the input label for getByLabel). Lesson: `wp-scripts format tests` also reformats tests/fixtures JSON - format only tests/js and tests/e2e.
