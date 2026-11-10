@@ -1,0 +1,339 @@
+{
+  "_synthetic": true,
+  "_note": "Sample numbers for the demo site (demo/README.md), keyed to the post IDs in demo/site/fixture.json. Same shapes as docs/fixtures/stats-sample.json. Every number is invented.",
+  "fetched_at": "2026-11-10T08:00:00-08:00",
+  "payloads": {
+    "get_visits": {
+      "date": "2026-11-10",
+      "unit": "day",
+      "fields": [
+        "period",
+        "views",
+        "visitors"
+      ],
+      "data": [
+        [
+          "2026-10-12",
+          118,
+          92
+        ],
+        [
+          "2026-10-13",
+          148,
+          115
+        ],
+        [
+          "2026-10-14",
+          167,
+          130
+        ],
+        [
+          "2026-10-15",
+          158,
+          123
+        ],
+        [
+          "2026-10-16",
+          159,
+          124
+        ],
+        [
+          "2026-10-17",
+          131,
+          102
+        ],
+        [
+          "2026-10-18",
+          102,
+          80
+        ],
+        [
+          "2026-10-19",
+          123,
+          96
+        ],
+        [
+          "2026-10-20",
+          136,
+          106
+        ],
+        [
+          "2026-10-21",
+          179,
+          140
+        ],
+        [
+          "2026-10-22",
+          146,
+          114
+        ],
+        [
+          "2026-10-23",
+          168,
+          131
+        ],
+        [
+          "2026-10-24",
+          123,
+          96
+        ],
+        [
+          "2026-10-25",
+          111,
+          87
+        ],
+        [
+          "2026-10-26",
+          117,
+          91
+        ],
+        [
+          "2026-10-27",
+          142,
+          111
+        ],
+        [
+          "2026-10-28",
+          177,
+          138
+        ],
+        [
+          "2026-10-29",
+          145,
+          113
+        ],
+        [
+          "2026-10-30",
+          175,
+          136
+        ],
+        [
+          "2026-10-31",
+          121,
+          94
+        ],
+        [
+          "2026-11-01",
+          107,
+          83
+        ],
+        [
+          "2026-11-02",
+          116,
+          90
+        ],
+        [
+          "2026-11-03",
+          147,
+          115
+        ],
+        [
+          "2026-11-04",
+          165,
+          129
+        ],
+        [
+          "2026-11-05",
+          157,
+          122
+        ],
+        [
+          "2026-11-06",
+          163,
+          127
+        ],
+        [
+          "2026-11-07",
+          130,
+          101
+        ],
+        [
+          "2026-11-08",
+          99,
+          77
+        ],
+        [
+          "2026-11-09",
+          125,
+          98
+        ],
+        [
+          "2026-11-10",
+          141,
+          110
+        ]
+      ]
+    },
+    "get_top_posts": {
+      "date": "2026-11-10",
+      "days": {
+        "2026-11-10": {
+          "postviews": [
+            {
+              "id": 3024,
+              "href": "https://northfield.example/the-quiet-art-of-writing-good-error-messages/",
+              "date": "2026-06-11 07:30:00",
+              "title": "The Quiet Art of Writing Good Error Messages",
+              "type": "post",
+              "views": 1310
+            },
+            {
+              "id": 3013,
+              "href": "https://northfield.example/sqlite-in-production-one-year-in/",
+              "date": "2026-10-29 07:30:00",
+              "title": "SQLite in Production, One Year In",
+              "type": "post",
+              "views": 640
+            },
+            {
+              "id": 3017,
+              "href": "https://northfield.example/rebuilding-the-home-lab-part-2-one-box-many-jobs/",
+              "date": "2026-11-03 07:30:00",
+              "title": "Rebuilding the Home Lab, Part 2: One Box, Many Jobs",
+              "type": "post",
+              "views": 590
+            },
+            {
+              "id": 3009,
+              "href": "https://northfield.example/the-mantle-part-1-of-4/",
+              "date": "2026-10-24 06:30:00",
+              "title": "The Mantle – Part 1 of 4",
+              "type": "post",
+              "views": 520
+            },
+            {
+              "id": 3006,
+              "href": "https://northfield.example/rebuilding-the-home-lab-part-1-taking-stock/",
+              "date": "2026-10-20 07:30:00",
+              "title": "Rebuilding the Home Lab, Part 1: Taking Stock",
+              "type": "post",
+              "views": 470
+            },
+            {
+              "id": 3020,
+              "href": "https://northfield.example/the-lighthouse-keepers-ledger/",
+              "date": "2026-11-07 06:30:00",
+              "title": "The Lighthouse Keeper's Ledger",
+              "type": "post",
+              "views": 430
+            },
+            {
+              "id": 3023,
+              "href": "https://northfield.example/passkeys-for-the-rest-of-us/",
+              "date": "2026-09-17 07:30:00",
+              "title": "Passkeys for the Rest of Us",
+              "type": "post",
+              "views": 410
+            },
+            {
+              "id": 3018,
+              "href": "https://northfield.example/your-roadmap-is-a-wish-list/",
+              "date": "2026-11-04 08:00:00",
+              "title": "Your Roadmap Is a Wish List",
+              "type": "post",
+              "views": 380
+            },
+            {
+              "id": 3011,
+              "href": "https://northfield.example/saying-no-to-good-clients/",
+              "date": "2026-10-26 07:00:00",
+              "title": "Saying No to Good Clients",
+              "type": "post",
+              "views": 350
+            },
+            {
+              "id": 3022,
+              "href": "https://northfield.example/what-a-small-studio-owes-its-clients/",
+              "date": "2026-11-09 07:00:00",
+              "title": "What a Small Studio Owes Its Clients",
+              "type": "post",
+              "views": 300
+            },
+            {
+              "id": 3016,
+              "href": "https://northfield.example/the-invoice-is-part-of-the-product/",
+              "date": "2026-11-02 07:00:00",
+              "title": "The Invoice Is Part of the Product",
+              "type": "post",
+              "views": 270
+            },
+            {
+              "id": 3007,
+              "href": "https://northfield.example/in-defense-of-boring-software/",
+              "date": "2026-10-21 08:00:00",
+              "title": "In Defense of Boring Software",
+              "type": "post",
+              "views": 260
+            },
+            {
+              "id": 3021,
+              "href": "https://northfield.example/gratitude-before-the-harvest-is-in/",
+              "date": "2026-11-08 06:30:00",
+              "title": "Gratitude Before the Harvest Is In",
+              "type": "post",
+              "views": 240
+            },
+            {
+              "id": 3015,
+              "href": "https://northfield.example/all-saints-and-ordinary-saints/",
+              "date": "2026-11-01 06:30:00",
+              "title": "All Saints and Ordinary Saints",
+              "type": "post",
+              "views": 210
+            },
+            {
+              "id": 3010,
+              "href": "https://northfield.example/the-long-obedience-of-small-things/",
+              "date": "2026-10-25 06:30:00",
+              "title": "The Long Obedience of Small Things",
+              "type": "post",
+              "views": 190
+            },
+            {
+              "id": 3005,
+              "href": "https://northfield.example/pricing-the-work-nobody-sees/",
+              "date": "2026-10-19 07:00:00",
+              "title": "Pricing the Work Nobody Sees",
+              "type": "post",
+              "views": 180
+            },
+            {
+              "id": 3012,
+              "href": "https://northfield.example/reading-logs-like-a-detective/",
+              "date": "2026-10-27 07:30:00",
+              "title": "Reading Logs Like a Detective",
+              "type": "post",
+              "views": 170
+            },
+            {
+              "id": 3019,
+              "href": "https://northfield.example/first-frost/",
+              "date": "2026-11-06 08:00:00",
+              "title": "First Frost",
+              "type": "post",
+              "views": 160
+            },
+            {
+              "id": 3014,
+              "href": "https://northfield.example/build-log-the-bench-finally-has-a-vise/",
+              "date": "2026-10-30 08:00:00",
+              "title": "Build Log: The Bench Finally Has a Vise",
+              "type": "post",
+              "views": 140
+            },
+            {
+              "id": 3004,
+              "href": "https://northfield.example/sabbath-as-a-practice-not-a-rule/",
+              "date": "2026-10-18 06:30:00",
+              "title": "Sabbath as a Practice, Not a Rule",
+              "type": "post",
+              "views": 120
+            }
+          ],
+          "total_views": 7340,
+          "other_views": 0
+        }
+      }
+    }
+  }
+}

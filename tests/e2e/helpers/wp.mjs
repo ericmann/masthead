@@ -13,6 +13,9 @@ export function wpCli( args ) {
 	} ).trim();
 }
 
+// Options the demo site sets (demo/site/seed.mjs) to point the fake AI client and fixture stats at its own files.
+const DEMO_OPTIONS = [ 'masthead_e2e_ai_dir', 'masthead_e2e_stats_file' ];
+
 /**
  * Re-seeds the fixture queue with the pinned clock.
  *
@@ -20,6 +23,8 @@ export function wpCli( args ) {
  */
 export function seedFixture() {
 	setFixtureStats( false );
+	// Deleting an option that is not set only warns.
+	wpCli( [ 'option', 'delete', ...DEMO_OPTIONS ] );
 	return wpCli( [
 		'masthead',
 		'seed',

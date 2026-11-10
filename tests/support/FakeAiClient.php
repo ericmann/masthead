@@ -12,7 +12,7 @@ namespace Masthead\Tests\Support;
 use Masthead\Ai\AiClient;
 
 /**
- * Returns fixtures from tests/fixtures/ai.
+ * Returns fixtures from tests/fixtures/ai, or from another directory of the same files.
  */
 class FakeAiClient implements AiClient {
 
@@ -31,14 +31,23 @@ class FakeAiClient implements AiClient {
 	private ?string $alternative;
 
 	/**
+	 * Directory the fixtures are read from.
+	 *
+	 * @var string
+	 */
+	private string $directory;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param bool        $fail        Make every call return a WP_Error.
 	 * @param string|null $alternative Name of a fixture to return from json() instead.
+	 * @param string|null $directory   Directory holding <schema title>.json files; null for tests/fixtures/ai.
 	 */
-	public function __construct( bool $fail = false, ?string $alternative = null ) {
+	public function __construct( bool $fail = false, ?string $alternative = null, ?string $directory = null ) {
 		$this->fail        = $fail;
 		$this->alternative = $alternative;
+		$this->directory   = rtrim( $directory ?? __DIR__ . '/../fixtures/ai', '/' );
 	}
 
 	/**
@@ -64,7 +73,7 @@ class FakeAiClient implements AiClient {
 			return new \WP_Error( 'masthead_ai_invalid', 'Fake failure.' );
 		}
 		$name = $this->alternative ?? (string) ( $schema['title'] ?? '' );
-		$path = __DIR__ . '/../fixtures/ai/' . basename( $name ) . '.json';
+		$path = $this->directory . '/' . basename( $name ) . '.json';
 		$text = is_readable( $path ) ? file_get_contents( $path ) : false; // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown,WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		$data = is_string( $text ) ? json_decode( $text, true ) : null;
 		return is_array( $data ) ? $data : new \WP_Error( 'masthead_ai_invalid', 'No fixture.' );

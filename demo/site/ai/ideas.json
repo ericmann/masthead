@@ -1,0 +1,7 @@
+{
+	"ideas": [
+		{ "title": "Threat Modeling a Household", "angle": "A plain-language walk through what a family actually needs to protect, and from whom.", "category": "security" },
+		{ "title": "The Five-Minute Security Review for Small Sites", "angle": "A short checklist readers can run on their own site over a coffee.", "category": "security" },
+		{ "title": "What Self-Hosting Taught Me About Trust", "angle": "Where running your own services pays off, and where handing them to someone else is the wiser call.", "category": "technology" }
+	]
+}

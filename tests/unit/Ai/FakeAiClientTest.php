@@ -45,4 +45,24 @@ final class FakeAiClientTest extends TestCase {
 		$wrong = ( new FakeAiClient( false, 'outline' ) )->json( 's', 'u', Schemas::share_copy(), 'fast' );
 		$this->assertNotTrue( Schemas::validate( $wrong, Schemas::share_copy() ) );
 	}
+
+	public function test_reads_the_demo_fixtures_from_another_directory(): void {
+		// The demo site answers from demo/site/ai; its ideas are for a Thursday (Technology and Security).
+		$fake    = new FakeAiClient( false, null, dirname( __DIR__, 3 ) . '/demo/site/ai/' );
+		$schemas = array(
+			Schemas::ideas( array( 'technology', 'security' ), 3 ),
+			Schemas::outline(),
+			Schemas::share_copy(),
+			Schemas::series_proposal( array( 'technology', 'business', 'faith', 'journal', 'writing', 'security', 'opinion' ), 12 ),
+		);
+		foreach ( $schemas as $schema ) {
+			$data = $fake->json( 's', 'u', $schema, 'fast' );
+			$this->assertIsArray( $data, $schema['title'] );
+			$this->assertTrue( Schemas::validate( $data, $schema ), $schema['title'] );
+		}
+		$this->assertSame( 'Locked Down', $fake->json( 's', 'u', $schemas[3], 'strong' )['name'] );
+
+		$missing = new FakeAiClient( false, null, __DIR__ . '/no-such-directory' );
+		$this->assertInstanceOf( \WP_Error::class, $missing->json( 's', 'u', Schemas::outline(), 'fast' ) );
+	}
 }
