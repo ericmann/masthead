@@ -400,6 +400,16 @@ final class SwapCheckTest extends TestCase {
 		$this->assertContains( 'collision', array_column( $this->check()->run(), 'type' ) );
 	}
 
+	public function test_two_non_exempt_posts_collide_even_when_a_journal_post_shares_the_date(): void {
+		$this->post( 40, 'Tech one', '2026-11-20', 'technology' );
+		$this->post( 41, 'Tech two', '2026-11-20', 'technology' );
+		$this->post( 42, 'Build log', '2026-11-20', 'journal' );
+		$collisions = array_values( array_filter( $this->check()->run(), static fn( $f ) => 'collision' === $f['type'] ) );
+		$this->assertSame( array( 'collision:40', 'collision:41' ), array_column( $collisions, 'key' ) );
+		$this->assertSame( 'Tech one shares Nov 20 with Tech two.', $collisions[0]['why'] );
+		$this->assertSame( 'Tech two shares Nov 20 with Tech one.', $collisions[1]['why'] );
+	}
+
 	public function test_better_candidate_needs_the_minimum_delta(): void {
 		// Tuesday 2026-11-17 is a technology day. A business post there scores 0.0; a technology draft scores 1.0.
 		$this->post( 50, 'Business on technology day', '2026-11-17', 'business' );

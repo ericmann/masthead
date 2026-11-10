@@ -310,7 +310,7 @@ class SwapCheck {
 	}
 
 	/**
-	 * Collision findings: two or more examined posts on one date, unless one of them is in an exempt category.
+	 * Collision findings: two or more non-exempt examined posts on one date; exempt-category posts are left out of the group.
 	 *
 	 * @param array<int,array<string,mixed>> $posts Examined posts.
 	 * @return array<int,array<string,mixed>>
@@ -323,11 +323,8 @@ class SwapCheck {
 		}
 		$findings = array();
 		foreach ( $by_date as $date => $group ) {
+			$group = array_values( array_filter( $group, static fn( $post ) => ! in_array( $post['primary_category'] ?? null, $exempt, true ) ) );
 			if ( count( $group ) <= 1 ) {
-				continue;
-			}
-			$primaries = array_map( static fn( $post ) => $post['primary_category'] ?? null, $group );
-			if ( array() !== array_intersect( $primaries, $exempt ) ) {
 				continue;
 			}
 			foreach ( $group as $post ) {
