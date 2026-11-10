@@ -13,6 +13,8 @@ use Masthead\Abilities\CreatePlannedDraft;
 use Masthead\Abilities\GetPlan;
 use Masthead\Abilities\Registrar;
 use Masthead\Abilities\Reschedule;
+use Masthead\Abilities\ShareConnections;
+use Masthead\Abilities\SharePost;
 use Masthead\Abilities\StatsSummary;
 use Masthead\Admin\Assets;
 use Masthead\Admin\CalendarPage;
@@ -87,7 +89,9 @@ final class Plugin {
 			new GetPlan( $reader ),
 			new CreatePlannedDraft( $slots, $series ),
 			new Reschedule( new PlanReschedule( $clock ) ),
-			new StatsSummary( $stats )
+			new StatsSummary( $stats ),
+			new ShareConnections( $share ),
+			new SharePost( $share, $clock )
 		);
 		add_action( 'wp_abilities_api_categories_init', array( $registrar, 'register_category' ) );
 		add_action( 'wp_abilities_api_init', array( $registrar, 'register' ) );
