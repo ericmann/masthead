@@ -61,7 +61,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-06 Reasons templates and the Suggester
 - [x] P4-07 suggest-for-date and dismiss-suggestion abilities, wp masthead suggest
 - [x] P4-08 Ghost cards and "Fill open days"
-- [ ] P4-09 Desk rail
+- [x] P4-09 Desk rail
 - [ ] P4-10 Day plan
 - [ ] P4-11 Tune the Desk assumptions
 - [ ] P4-12 Scoring
@@ -318,3 +318,7 @@ Tests: integration SuggestForDateTest(7), DismissSuggestionTest(5), unit Suggest
 ### P4-08 — 0ce887a
 
 Tests: GhostCard.test.js(3), useSuggestions.test.js(4), e2e desk.spec.js(3 x2); full npm run test:e2e = 68 passed, 2 skipped (4.2 min). Client: GhostCard({suggestion,color,onSelect}) [data-kind], useSuggestions()->{get,load,loadMany (sequential),invalidate,isRunning,progress} (never sends include_ideas), DayCell gained ghost prop ({suggestion,color}) and shows it instead of OpenSlot (aria-label "<day>: suggested <kind>, <title>"), MonthGrid/WeekGrid take ghosts map, Toolbar gained "Fill open days" button + aria-live status. App loads suggestions for open days today..today+config.ghostDays whenever the plan changes, and Fill loads open days up to today+config.horizonDays (boot config.ghostDays/horizonDays required; unit-test boots now include them). Neutral lane colour #646970 (axe contrast). e2e axe helper now lists offending selectors. Note: a run log can be stale if I read it before the new run overwrote it - always wait for the DONE marker of the new run.
+
+### P4-09 — aebd33d
+
+Tests: DeskRail.test.js(4), SuggestionCard.test.js(5), e2e desk.spec.js(+4 x2); full npm run test:e2e = 76 passed, 2 skipped (4.6 min). Client: DeskRail({days,today,weekStartsOn,selectedDate,result,onPlace,onShare,onDismiss}) (week bars + "n of 7 days have a post. Next gap: Tue Nov 10.", day title "<Wednesday, Nov 18> · <lane> lane"), SuggestionCard({suggestion,onPlace,onShare,onDismiss}) rendering schedule/open/share/dismiss only (create_draft and suggest_topics are not rendered yet: P4-10 and P5-06 must add them to SuggestionCard.renderAction). App wires dismiss (runAbility dismiss-suggestion, invalidate, reload), place (useReschedule.move({id,date:null}, selectedDay)) and share (selects a minimal published post so SharePanel opens). dates.js gained weekdayMonthDayLabel. The rail shows DeskRail unless a post is selected; DraftTray always below.
