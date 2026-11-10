@@ -76,7 +76,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P5-03 Prompts
 - [x] P5-04 WpAiClient, Factory, FakeAiClient and AI fixtures
 - [x] P5-05 Budget and the BudgetedAi decorator
-- [ ] P5-06 Ideas and include_ideas in suggest-for-date
+- [x] P5-06 Ideas and include_ideas in suggest-for-date
 - [ ] P5-07 masthead/draft-outline ability and the Day plan outline
 - [ ] P5-08 masthead/draft-share-copy ability and the Share panel's AI button
 - [ ] P5-09 SeriesPlanner and masthead/propose-series
@@ -378,3 +378,7 @@ Ai\WpAiClient (only wp_ai_client_prompt caller; ctor ?callable prompt_factory, ?
 ### P5-05 — c872ec5
 
 Desk\Budget (reserve, remaining, note_model, models; option masthead_ai_usage {month, requests, models}) and Desk\BudgetedAi (final, implements AiClient; WP_Error masthead_ai_budget status 429). Plugin builds $ai = BudgetedAi(AiFactory::make(null, [budget,'note_model']), budget) once ($ai and $budget are available for later consumers) and the 'ai' boot provider now returns {supported: $ai->supported(), remaining}. Tests: BudgetTest 6, BudgetedAiTest 3; unit 264, integration 105 green. Interpretation: cap 0 disables and writes nothing; month key via Clock::format Y-m in site zone; negative stored counts clamp to 0; models survive a month reset. Lesson: Clock::format needs wp_date stubbed in unit tests.
+
+### P5-06 — 7755b9a
+
+Desk\Ideas(AiClient, PlanReader, SeriesSource, CategoryGap, Budget): status(), context(date), ideas(date, lane, dismissed) -> Candidate[]|WP_Error. Suggester::suggest(date, user, kinds, include_ideas) with optional 10th ctor arg ?Ideas; ideas appended after the ranked list (kind idea, why = angle, actions create_draft+dismiss); on WP_Error list unchanged, ai.used false, ai.error = code; ai.remaining = Budget::remaining() when Ideas wired. SuggestForDate passes include_ideas (permission already required prompt_ai); SuggestCommand --ideas. Client: useSuggestions.loadIdeas, DeskRail "Suggest ideas" (needs boot ai.supported && caps.promptAi, hidden once ai.used), SuggestionCard "Suggest topics", ai.error notice. Tests: unit 275, integration SuggestForDate 9, jest 126, e2e ideas.spec desktop+mobile pass (desk.spec still passes). Interpretation: context window anchored on the target day; ideas structurally validated against all categories then out-of-lane ones dropped individually; invalid reply -> masthead_ai_invalid. Lessons: scripted replace in App.js silently missed (prettier indentation) - assert the match; npm run build must be rerun before e2e; the e2e site already has the fake AI via the mu loader, so integration tests use it too.
