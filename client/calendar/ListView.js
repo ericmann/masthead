@@ -1,7 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 
 import { getBoot } from '../data/boot';
-import { shortDayLabel, timeLabel } from '../data/dates';
+import { monthDayLabel, shortDayLabel, timeLabel } from '../data/dates';
 
 const STATUS_LABELS = {
 	publish: __( 'Published', 'masthead' ),
@@ -16,9 +16,15 @@ const STATUS_LABELS = {
  * @param {Object[]}    props.days         Plan days.
  * @param {Set<string>} props.hidden       Hidden category slugs.
  * @param {Function}    props.onSelectPost Called with a post.
+ * @param {Object|null} props.findings     useFindings() result; adds Fits or Review verdicts.
  * @return {Element} The list.
  */
-export default function ListView( { days, hidden = new Set(), onSelectPost } ) {
+export default function ListView( {
+	days,
+	hidden = new Set(),
+	onSelectPost,
+	findings = null,
+} ) {
 	const names = new Map(
 		( getBoot().categories || [] ).map( ( category ) => [
 			category.slug,
@@ -49,6 +55,19 @@ export default function ListView( { days, hidden = new Set(), onSelectPost } ) {
 					scheduled
 				) }
 			</h2>
+			{ findings ? (
+				<p className="masthead-list__checked">
+					{ findings.generatedAt
+						? sprintf(
+								/* translators: %s: short date, such as "Nov 9". */
+								__( 'Swap check ran %s', 'masthead' ),
+								monthDayLabel(
+									findings.generatedAt.slice( 0, 10 )
+								)
+							)
+						: __( 'Swap check has not run yet', 'masthead' ) }
+				</p>
+			) : null }
 			<ul className="masthead-list__rows">
 				{ posts.map( ( { post, date } ) => (
 					<li key={ post.id }>
@@ -83,7 +102,34 @@ export default function ListView( { days, hidden = new Set(), onSelectPost } ) {
 							</span>
 							<span className="masthead-list__status">
 								{ STATUS_LABELS[ post.status ] || post.status }
-							</span>
+							</span>{ ' ' }
+							{ findings &&
+							( post.status === 'future' ||
+								post.status === 'draft' ) ? (
+								<span
+									className="masthead-list__verdict"
+									data-verdict={
+										findings
+											.byPost( post.id )
+											.some(
+												( finding ) =>
+													finding.severity ===
+													'review'
+											)
+											? 'review'
+											: 'fits'
+									}
+								>
+									{ findings
+										.byPost( post.id )
+										.some(
+											( finding ) =>
+												finding.severity === 'review'
+										)
+										? __( 'Review', 'masthead' )
+										: __( 'Fits', 'masthead' ) }
+								</span>
+							) : null }
 						</button>
 					</li>
 				) ) }

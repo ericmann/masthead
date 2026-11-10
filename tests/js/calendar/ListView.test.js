@@ -117,4 +117,44 @@ describe( 'ListView', () => {
 		);
 		expect( onSelectPost ).toHaveBeenCalledWith( days[ 2 ].posts[ 0 ] );
 	} );
+
+	it( 'rows with a review finding read Review and others read Fits', () => {
+		const findings = {
+			generatedAt: '2026-11-09T14:00:00-08:00',
+			byPost: ( id ) =>
+				id === 12177 ? [ { severity: 'review' } ] : [],
+		};
+		const { container } = render(
+			<ListView
+				days={ days }
+				hidden={ new Set() }
+				onSelectPost={ () => {} }
+				findings={ findings }
+			/>
+		);
+		const verdicts = [
+			...container.querySelectorAll( '.masthead-list__verdict' ),
+		].map( ( v ) => [
+			v.closest( '[data-post-id]' ).getAttribute( 'data-post-id' ),
+			v.textContent,
+		] );
+		expect( verdicts ).toEqual( [
+			[ '12177', 'Review' ],
+			[ '10194', 'Fits' ],
+		] );
+		expect( screen.getByText( 'Swap check ran Nov 9' ) ).toBeTruthy();
+	} );
+
+	it( 'says when the swap check has not run yet', () => {
+		const findings = { generatedAt: null, byPost: () => [] };
+		render(
+			<ListView
+				days={ days }
+				hidden={ new Set() }
+				onSelectPost={ () => {} }
+				findings={ findings }
+			/>
+		);
+		expect( screen.getByText( 'Swap check has not run yet' ) ).toBeTruthy();
+	} );
 } );

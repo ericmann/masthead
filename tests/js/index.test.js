@@ -1,5 +1,14 @@
 import { act } from '@testing-library/react';
 
+jest.mock( '../../client/calendar/useFindings', () => ( {
+	useFindings: () => ( {
+		generatedAt: null,
+		findings: [],
+		loaded: true,
+		byPost: () => [],
+		refresh: () => Promise.resolve(),
+	} ),
+} ) );
 jest.mock( '../../client/data/usePlan', () => ( {
 	usePlan: () => ( {
 		days: [],

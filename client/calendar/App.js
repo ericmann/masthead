@@ -16,6 +16,8 @@ import DayPlan from './DayPlan';
 import DeskRail from './DeskRail';
 import DraftTray from './DraftTray';
 import SharePanel from './SharePanel';
+import SwapPanel from './SwapPanel';
+import { useFindings } from './useFindings';
 import { useReschedule } from './useReschedule';
 import { useSuggestions } from './useSuggestions';
 import ListView from './ListView';
@@ -83,6 +85,7 @@ export default function App() {
 	);
 	const plan = usePlan( from, to );
 	const suggestions = useSuggestions();
+	const findings = useFindings();
 	const boot = getBoot();
 	const today = bootToday();
 	const ghostEnd = addDays( today, Number( boot.config?.ghostDays ) );
@@ -291,6 +294,7 @@ export default function App() {
 					) : null }
 					{ view === 'list' ? (
 						<ListView
+							findings={ findings }
 							days={ plan.days }
 							hidden={ hidden }
 							onSelectPost={ ( post ) =>
@@ -312,6 +316,20 @@ export default function App() {
 						<SharePanel
 							key={ selection.post.id }
 							post={ selection.post }
+						/>
+					) : null }
+					{ selection?.type === 'post' &&
+					( selection.post.status === 'future' ||
+						selection.post.status === 'draft' ) ? (
+						<SwapPanel
+							key={ selection.post.id }
+							post={ selection.post }
+							findings={ findings.byPost( selection.post.id ) }
+							onApplied={ async () => {
+								await plan.refresh();
+								await findings.refresh();
+							} }
+							onClose={ () => setSelection( null ) }
 						/>
 					) : null }
 					{ selection?.type === 'post' ? null : (

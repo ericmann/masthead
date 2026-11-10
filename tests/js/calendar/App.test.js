@@ -5,6 +5,15 @@ import { resetBoot } from '../../../client/data/boot';
 import App from '../../../client/calendar/App';
 import { usePlan } from '../../../client/data/usePlan';
 
+jest.mock( '../../../client/calendar/useFindings', () => ( {
+	useFindings: () => ( {
+		generatedAt: null,
+		findings: [],
+		loaded: true,
+		byPost: () => [],
+		refresh: () => Promise.resolve(),
+	} ),
+} ) );
 jest.mock( '../../../client/data/usePlan', () => ( { usePlan: jest.fn() } ) );
 
 const plan = ( over = {} ) => ( {
