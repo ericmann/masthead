@@ -5,7 +5,7 @@ Started: 2026-11-10T00:40:38.244Z
 
 ## Tasks
 
-- [ ] P0-01 PHP toolchain, plugin bootstrap, Config, Clock and Plugin
+- [x] P0-01 PHP toolchain, plugin bootstrap, Config, Clock and Plugin
 - [ ] P0-02 JS toolchain and client shell
 - [ ] P0-03 Structural checks script and module boundaries test
 - [ ] P0-04 Posts › Calendar page and asset loading
@@ -94,3 +94,7 @@ Started: 2026-11-10T00:40:38.244Z
 ## Log
 
 (one entry per task, appended by implement)
+
+### P0-01 — fc0800b
+
+Tests: ConfigTest (8), ClockTest (6). Interpretation: autoload-dev also maps Masthead\Tests\Unit\ -> tests/unit/ and Tests\Integration\ -> tests/integration/ (dirs are lowercase; PSR-4 needs it). Planner keys (calendar.max_range_days etc.) are not settable. Config::get() reads option masthead_settings nested by dotted path. Test base class: Masthead\Tests\Unit\TestCase stubs wp_timezone (America/Los_Angeles), translation and escape functions. phpcs: first `composer install` may fail to set installed_paths on PHP 8.4; rerun composer install. phpcs.xml.dist silences warnings.
