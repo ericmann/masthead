@@ -14,6 +14,7 @@ import { runAbility } from '../data/useAbility';
 export default function AskDesk( { onCreated = () => {} } ) {
 	const boot = getBoot();
 	const [ prompt, setPrompt ] = useState( '' );
+	const [ start, setStart ] = useState( '' );
 	const [ proposal, setProposal ] = useState( null );
 	const [ busy, setBusy ] = useState( false );
 	const [ error, setError ] = useState( null );
@@ -29,9 +30,11 @@ export default function AskDesk( { onCreated = () => {} } ) {
 		setError( null );
 		setCreated( '' );
 		try {
-			const result = await runAbility( 'masthead/propose-series', {
-				prompt: prompt.trim(),
-			} );
+			const input = { prompt: prompt.trim() };
+			if ( start !== '' ) {
+				input.start = start;
+			}
+			const result = await runAbility( 'masthead/propose-series', input );
 			setProposal( {
 				name: result.name,
 				category: result.category,
@@ -116,6 +119,15 @@ export default function AskDesk( { onCreated = () => {} } ) {
 						'masthead'
 					) }
 					onChange={ ( event ) => setPrompt( event.target.value ) }
+				/>{ ' ' }
+				<label htmlFor="masthead-ask-start">
+					{ __( 'Start on', 'masthead' ) }
+				</label>{ ' ' }
+				<input
+					id="masthead-ask-start"
+					type="date"
+					value={ start }
+					onChange={ ( event ) => setStart( event.target.value ) }
 				/>{ ' ' }
 				<button
 					type="submit"

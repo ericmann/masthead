@@ -58,6 +58,27 @@ describe( 'AskDesk', () => {
 		);
 	} );
 
+	it( 'a chosen start date is sent to propose-series', async () => {
+		render( <AskDesk /> );
+		await userEvent.type(
+			screen.getByLabelText( 'Start on' ),
+			'2027-01-07'
+		);
+		await ask();
+		expect( runAbility ).toHaveBeenCalledWith( 'masthead/propose-series', {
+			prompt: 'a security series',
+			start: '2027-01-07',
+		} );
+	} );
+
+	it( 'no start is sent when the field is empty', async () => {
+		render( <AskDesk /> );
+		await ask();
+		expect( runAbility ).toHaveBeenCalledWith( 'masthead/propose-series', {
+			prompt: 'a security series',
+		} );
+	} );
+
 	it( 'is replaced by a Connectors hint when AI is unsupported', () => {
 		boot( { supported: false } );
 		render(
