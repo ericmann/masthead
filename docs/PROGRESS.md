@@ -11,7 +11,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P0-04 Posts › Calendar page and asset loading
 - [x] P0-05 wp-env and the integration test harness
 - [x] P0-06 Playwright and axe smoke harness, e2e mu-plugin loader
-- [ ] P0-07 Release packer and LICENSE
+- [x] P0-07 Release packer and LICENSE
 - [ ] P0-08 CI and release workflows
 - [ ] P0-09 Phase 0 push and manual checks
 - [ ] P1-01 Support\Dates and Support\Json
@@ -118,3 +118,7 @@ Tests: PluginLoadsTest(5), AdminPagesTest(3), all pass in wp-env (WP 7.1.4, PHP 
 ### P0-06 — 90fda47
 
 Tests: shell.spec.js 3 specs x 2 projects (desktop 1280x800, mobile 390x844) pass. Harness: tests/e2e/playwright.config.mjs (exports STORAGE_STATE), global-setup logs in admin/password, helpers/wp.mjs (wpCli, seedFixture), helpers/axe.mjs (expectNoSeriousViolations(page, selector)), mu-loader.php + mu/pin-now.php (option masthead_seed_now pins masthead_now). .wp-env.json mappings added for mu-plugins. wp-scripts test-playwright downloaded browsers itself. npm scripts test:e2e:smoke and test:e2e added (test:e2e needs `wp masthead seed`, first run P1-14). Wall time ~20s warm.
+
+### P0-07 — 721d39a
+
+Tests: pack.test.js (4). pack.mjs exports shouldInclude/tagMatches/checksumLine; `--check-tag vX` supported; root = process.cwd() (npm runs from repo root). jest.config.js got a .mjs transform (wp-scripts babel-transform). LICENSE downloaded from gnu.org (GPLv2). Zip has 18 entries; sha256sum -c OK. Codebase note: build/ ships style-index.css and RTL css.
