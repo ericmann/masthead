@@ -49,3 +49,15 @@ Needs a real AI provider on a local site, so none of this could be done by the b
 - [ ] Judge `ai.temperature` and the two model lists, which `docs/tuning/P5-13.md` records as NOT MEASURED. Also try a series request near the maximum (12 parts) and see whether the reply is cut off by `ai.max_tokens`; the Desk then reports an invalid reply and creates nothing.
 - [ ] Set the monthly cap to 1 in Settings, make two requests and see the budget message ("The monthly AI request limit has been reached.") on the second; set it back afterwards.
 - [ ] Read `docs/spikes/P5-01-ai-client.md` and list every fact still marked `UNCONFIRMED` (the JSON-constrained response shape and model-preference fallback).
+
+## Phase 6
+
+- [ ] After the pull request merges, create and push the signed tag `v0.1.0` (`git tag -s v0.1.0`), and confirm the release has `masthead.zip` and `masthead.zip.sha256` and that `sha256sum -c masthead.zip.sha256` passes. The build did not create a tag.
+- [ ] Bump the site repository's pinned Masthead version and checksum as described in `docs/DEPLOYMENT.md`, build the image, roll it, and plan one real week from the calendar.
+- [ ] Before making the repository public:
+  - Decide whether to rewrite git history, which still contains the real post titles that P6-01 replaced in the fixture.
+  - Decide whether to scrub or remove `docs/mockups/`, which still show real planned titles, series ideas and the blog's name (the SPEC and PLAN also name the site and owner).
+  - Confirm that keeping "The Mantle" and its four part titles in the fixture is acceptable.
+  - Check that `masthead` is free as a WordPress.org slug (SPEC section 9, question 1), and settle the repository owner used in the release URL.
+- [ ] Read `README.md`, `readme.txt` and the four screenshots in `docs/screenshots/`.
+- [ ] Run through every earlier section of this file that still reads NOT VERIFIED (Phases 0 to 5).
