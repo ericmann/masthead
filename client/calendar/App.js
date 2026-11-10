@@ -17,6 +17,7 @@ import { runAbility } from '../data/useAbility';
 import DayPlan from './DayPlan';
 import DeskRail from './DeskRail';
 import DraftTray from './DraftTray';
+import Header from './Header';
 import SharePanel from './SharePanel';
 import SwapPanel from './SwapPanel';
 import { useFindings } from './useFindings';
@@ -231,7 +232,11 @@ export default function App() {
 
 	return (
 		<div className="masthead-calendar">
-			<h1>{ __( 'Calendar', 'masthead' ) }</h1>
+			<Header
+				newPostUrl={ boot.caps?.editPosts ? boot.urls?.newPost : '' }
+				rhythm={ boot.rhythm }
+				weekStartsOn={ weekStartsOn }
+			/>
 			<Toolbar
 				view={ view }
 				title={

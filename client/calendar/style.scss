@@ -98,6 +98,30 @@
 	font-size: 12px;
 }
 
+.masthead-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+	margin: 0 0 14px;
+
+	.wp-heading-inline {
+		margin: 0;
+		padding: 9px 0 4px;
+	}
+
+	.page-title-action {
+		top: 0;
+		margin-left: 0;
+	}
+
+	&__rhythm {
+		margin: 0 0 0 auto;
+		color: #50575e;
+		font-size: 13px;
+	}
+}
+
 .masthead-toolbar {
 	display: flex;
 	flex-wrap: wrap;
@@ -277,6 +301,11 @@
 			display: block;
 			padding: 0 4px;
 		}
+	}
+
+	.masthead-header__rhythm {
+		flex-basis: 100%;
+		margin-left: 0;
 	}
 
 	.masthead-toolbar {
