@@ -1,0 +1,15 @@
+{
+  "core": "WordPress/WordPress#7.1.4",
+  "phpVersion": "8.5",
+  "plugins": [
+    ".",
+    "https://downloads.wordpress.org/plugin/jetpack.16.4.zip"
+  ],
+  "mappings": {
+    "wp-content/masthead-fixtures": "./docs/fixtures"
+  },
+  "config": {
+    "WP_ENVIRONMENT_TYPE": "local",
+    "DISABLE_WP_CRON": true
+  }
+}
