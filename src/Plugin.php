@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Masthead;
 
 use Masthead\Abilities\CreatePlannedDraft;
+use Masthead\Abilities\DraftOutline;
 use Masthead\Ai\Factory as AiFactory;
 use Masthead\Abilities\GetPlan;
 use Masthead\Abilities\Registrar;
@@ -113,6 +114,7 @@ final class Plugin {
 		add_action( 'init', array( $nightly, 'schedule' ) );
 		add_action( Nightly::HOOK, array( $nightly, 'run' ) );
 		$gap_source = new CategoryGap( $clock );
+		$ideas      = new Ideas( $ai, $reader, $series, $gap_source, $budget );
 		$suggester  = new Suggester(
 			new DraftMatch( $reader ),
 			new SeriesNext( $series ),
@@ -123,7 +125,7 @@ final class Plugin {
 			$dismissals,
 			$reader,
 			$clock,
-			new Ideas( $ai, $reader, $series, $gap_source, $budget )
+			$ideas
 		);
 		$registrar = new Registrar(
 			new GetPlan( $reader ),
@@ -134,7 +136,8 @@ final class Plugin {
 			new SharePost( $share, $clock ),
 			new SuggestForDate( $suggester ),
 			new DismissSuggestion( $dismissals ),
-			new SwapCheckAbility( $reader, $series )
+			new SwapCheckAbility( $reader, $series ),
+			new DraftOutline( $ideas )
 		);
 		add_action( 'wp_abilities_api_categories_init', array( $registrar, 'register_category' ) );
 		add_action( 'wp_abilities_api_init', array( $registrar, 'register' ) );

@@ -141,6 +141,35 @@ class Ideas {
 	}
 
 	/**
+	 * Asks for an outline for a post. Outline lines only; the AI never writes a body.
+	 *
+	 * @param string      $title    Working title.
+	 * @param string|null $category Category slug.
+	 * @param string|null $date     Day the post is planned for, Y-m-d; gives the prompt its context.
+	 * @return string[]|\WP_Error
+	 */
+	public function outline( string $title, ?string $category, ?string $date ): array|\WP_Error {
+		$name = null;
+		foreach ( Categories::all() as $candidate ) {
+			if ( $candidate['slug'] === $category ) {
+				$name = $candidate['name'];
+			}
+		}
+		$context = null === $date ? array( 'posts' => array() ) : $this->context( $date );
+		$prompt  = Prompts::outline( $title, $name, $context );
+		$schema  = Schemas::outline();
+
+		$reply = $this->ai->json( $prompt['system'], $prompt['user'], $schema, 'strong' );
+		if ( $reply instanceof \WP_Error ) {
+			return $reply;
+		}
+		if ( true !== Schemas::validate( $reply, $schema ) ) {
+			return new \WP_Error( 'masthead_ai_invalid', __( 'The AI reply did not match the expected shape.', 'masthead' ) );
+		}
+		return $reply['outline'];
+	}
+
+	/**
 	 * Excerpt of a post, plain and short. The body is never read.
 	 *
 	 * @param int $post_id Post ID.

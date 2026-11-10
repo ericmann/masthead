@@ -217,4 +217,116 @@ describe( 'DayPlan', () => {
 		);
 		expect( onPick ).toHaveBeenCalledWith( gap );
 	} );
+
+	describe( 'Draft an outline', () => {
+		const withAi = (
+			ai = { supported: true },
+			caps = { promptAi: true }
+		) => {
+			window.mastheadBoot = { ...window.mastheadBoot, ai, caps };
+			resetBoot();
+		};
+
+		it( 'is hidden when AI is unsupported or not permitted', () => {
+			withAi( { supported: false } );
+			const first = render(
+				<DayPlan
+					suggestion={ gap }
+					date="2026-11-18"
+					laneLabel="Standalone"
+					onPick={ () => {} }
+					onCreated={ () => {} }
+					onBack={ () => {} }
+				/>
+			);
+			expect( screen.queryByText( 'Draft an outline' ) ).toBeNull();
+			first.unmount();
+			withAi( { supported: true }, { promptAi: false } );
+			renderPlan();
+			expect( screen.queryByText( 'Draft an outline' ) ).toBeNull();
+		} );
+
+		it( 'the returned outline is editable and sent with create-planned-draft', async () => {
+			withAi();
+			runAbility.mockImplementation( async ( name ) =>
+				name === 'masthead/draft-outline'
+					? { outline: [ 'First', 'Second', 'Third' ] }
+					: { post_id: 99, edit_url: 'x', date: 'd' }
+			);
+			renderPlan( { suggestion: gap, others: [] } );
+			await userEvent.type(
+				screen.getByLabelText( 'Title' ),
+				'Why leaders read'
+			);
+			await userEvent.click(
+				screen.getByRole( 'button', { name: 'Draft an outline' } )
+			);
+			expect( runAbility ).toHaveBeenCalledWith(
+				'masthead/draft-outline',
+				{
+					title: 'Why leaders read',
+					date: '2026-11-18',
+					category: 'business',
+				}
+			);
+			const first = await screen.findByLabelText( 'Outline line 1' );
+			expect( first.value ).toBe( 'First' );
+			expect(
+				screen.getByText(
+					'Outline only. The Desk never writes body copy.'
+				)
+			).toBeTruthy();
+
+			await userEvent.clear( first );
+			await userEvent.type( first, 'Opening' );
+			await userEvent.click(
+				screen.getByRole( 'button', { name: 'Remove line 2' } )
+			);
+			await userEvent.click(
+				screen.getByRole( 'button', { name: 'Add line' } )
+			);
+			await userEvent.type(
+				screen.getByLabelText( 'Outline line 3' ),
+				'Closing'
+			);
+			await userEvent.click(
+				screen.getByRole( 'button', {
+					name: 'Create draft with outline',
+				} )
+			);
+			const create = runAbility.mock.calls.find(
+				( call ) => call[ 0 ] === 'masthead/create-planned-draft'
+			);
+			expect( create[ 1 ].outline ).toEqual( [
+				'Opening',
+				'Third',
+				'Closing',
+			] );
+		} );
+
+		it( 'an outline error leaves the form usable', async () => {
+			withAi();
+			runAbility.mockRejectedValueOnce( {
+				code: 'masthead_ai_budget',
+				message: 'The monthly AI request limit has been reached.',
+			} );
+			renderPlan();
+			await userEvent.click(
+				screen.getByRole( 'button', { name: 'Draft an outline' } )
+			);
+			expect(
+				await screen.findByText(
+					'The monthly AI request limit has been reached.'
+				)
+			).toBeTruthy();
+			expect( screen.getByLabelText( 'Title' ).disabled ).toBe( false );
+			expect(
+				screen.getByRole( 'button', { name: 'Create draft' } ).disabled
+			).toBe( false );
+			expect(
+				screen.getByRole( 'button', { name: 'Draft an outline' } )
+					.disabled
+			).toBe( false );
+		} );
+	} );
 } );

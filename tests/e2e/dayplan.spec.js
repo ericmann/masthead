@@ -46,3 +46,58 @@ test.describe( 'Day plan', () => {
 		await expect( page.locator( '.masthead-dayplan' ) ).toHaveCount( 0 );
 	} );
 } );
+
+test.describe( 'Day plan with an AI outline', () => {
+	test.beforeAll( () => {
+		seedFixture();
+		wpCli( [ 'option', 'update', 'start_of_week', '0' ] );
+		wpCli( [ 'option', 'delete', 'masthead_ai_usage' ] );
+	} );
+
+	test( 'planning the fixture idea with a drafted outline creates a draft whose content has the outline list', async ( {
+		page,
+	} ) => {
+		await page.goto( CALENDAR );
+		await page.waitForSelector( '.masthead-grid [data-date]' );
+		await page
+			.locator( '[data-date="2026-11-18"] .masthead-day__button' )
+			.click();
+		await page.waitForSelector( '.masthead-suggestion' );
+		await page.getByRole( 'button', { name: 'Suggest ideas' } ).click();
+		await page
+			.locator( '.masthead-suggestion[data-kind="idea"]' )
+			.first()
+			.getByRole( 'button', { name: 'Plan this' } )
+			.click();
+		await page.waitForSelector( '.masthead-dayplan' );
+
+		await page.getByRole( 'button', { name: 'Draft an outline' } ).click();
+		await expect( page.getByLabel( 'Outline line 1' ) ).toHaveValue(
+			'Why the problem is worth solving now'
+		);
+		await expect( page.getByLabel( 'Outline line 4' ) ).toBeVisible();
+		await expectNoSeriousViolations( page, '.masthead-dayplan' );
+
+		await page.getByRole( 'button', { name: 'Remove line 4' } ).click();
+		await page
+			.getByRole( 'button', { name: 'Create draft with outline' } )
+			.click();
+		await expect(
+			page.locator( '[data-date="2026-11-18"] [data-status="draft"]' )
+		).toHaveCount( 1 );
+
+		const id = wpCli( [
+			'post',
+			'list',
+			'--post_status=draft',
+			'--s=What a quiet inbox taught me',
+			'--field=ID',
+		] );
+		const content = wpCli( [ 'post', 'get', id, '--field=post_content' ] );
+		expect( content ).toContain( 'Why the problem is worth solving now' );
+		expect( content ).toContain( 'The approach, step by step' );
+		expect( content ).toContain( 'What went wrong along the way' );
+		expect( content ).not.toContain( 'What to try next' );
+		expect( content ).toContain( '<li>' );
+	} );
+} );

@@ -306,4 +306,37 @@ final class IdeasTest extends TestCase {
 			$this->ideas( array() )->status()
 		);
 	}
+
+	public function test_outline_uses_the_strong_tier_and_outline_schema(): void {
+		$ideas   = $this->ideas( array( 'outline' => array( 'One', 'Two' ) ), array( array( $this->post( 1 ) ) ) );
+		$outline = $ideas->outline( 'A title', 'security', '2026-11-18' );
+		$this->assertSame( array( 'One', 'Two' ), $outline );
+		$this->assertSame( 'strong', $this->client->schemas[0][1] );
+		$this->assertSame( 'outline', $this->client->schemas[0][0]['title'] );
+		$this->assertStringContainsString( '<untrusted-post-data>A title</untrusted-post-data>', $this->client->users[0] );
+		$this->assertStringContainsString( '<untrusted-post-data>Security</untrusted-post-data>', $this->client->users[0] );
+		$this->assertStringContainsString( 'Post 1', $this->client->users[0] );
+
+		$this->assertSame( array( 'One', 'Two' ), $ideas->outline( 'A title', null, null ) );
+		$this->assertSame( array(), $this->context_posts_of_last_call() );
+	}
+
+	/**
+	 * Whether the last outline prompt listed related posts.
+	 *
+	 * @return array
+	 */
+	private function context_posts_of_last_call(): array {
+		return str_contains( end( $this->client->users ), 'Post 1' ) ? array( 'leaked' ) : array();
+	}
+
+	public function test_invalid_outline_returns_wp_error(): void {
+		foreach ( array( array( 'outline' => array() ), array( 'outline' => array( '' ) ), array( 'outline' => 'text' ), array( 'extra' => 1 ) ) as $reply ) {
+			$result = $this->ideas( $reply )->outline( 'A title', null, null );
+			$this->assertInstanceOf( \WP_Error::class, $result );
+			$this->assertSame( 'masthead_ai_invalid', $result->get_error_code() );
+		}
+		$error = new \WP_Error( 'masthead_ai_budget', 'Limit.' );
+		$this->assertSame( $error, $this->ideas( $error )->outline( 'A title', null, null ) );
+	}
 }
