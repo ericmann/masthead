@@ -2,6 +2,7 @@ import {
 	shouldInclude,
 	tagMatches,
 	checksumLine,
+	missingDocs,
 } from '../../../scripts/release/pack.mjs';
 
 describe( 'release pack', () => {
@@ -43,5 +44,24 @@ describe( 'release pack', () => {
 	it( 'checksum line is sha256sum compatible', () => {
 		const hex = 'a'.repeat( 64 );
 		expect( checksumLine( hex ) ).toBe( `${ hex }  masthead.zip\n` );
+	} );
+
+	it( 'includes readme.txt and CHANGELOG.md in the zip', () => {
+		expect( shouldInclude( 'readme.txt' ) ).toBe( true );
+		expect( shouldInclude( 'CHANGELOG.md' ) ).toBe( true );
+		expect(
+			missingDocs( '0.1.0', [ 'masthead.php', 'readme.txt' ] )
+		).toEqual( [ 'CHANGELOG.md' ] );
+		expect(
+			missingDocs( '0.1.0', [ 'readme.txt', 'CHANGELOG.md' ] )
+		).toEqual( [] );
+		expect( missingDocs( '0.1.0', [] ) ).toEqual( [
+			'readme.txt',
+			'CHANGELOG.md',
+		] );
+	} );
+
+	it( 'does not require the docs for the unreleased 0.0.0', () => {
+		expect( missingDocs( '0.0.0', [] ) ).toEqual( [] );
 	} );
 } );

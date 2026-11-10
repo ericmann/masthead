@@ -76,12 +76,14 @@ check_ability_permission() {
 }
 
 check_version_agree() {
-	local root="$1" header const pkg
+	local root="$1" header const pkg stable change
 	header="$(sed -n 's/^[[:space:]]*\*[[:space:]]*Version:[[:space:]]*\([^[:space:]]*\).*/\1/p' "$root/masthead.php" 2>/dev/null | head -n 1)"
 	const="$(sed -n "s/^const VERSION[[:space:]]*=[[:space:]]*'\([^']*\)';.*/\1/p" "$root/src/constants.php" 2>/dev/null | head -n 1)"
 	pkg="$(node -e 'console.log(JSON.parse(require("fs").readFileSync(process.argv[1], "utf8")).version || "")' "$root/package.json" 2>/dev/null)"
-	if [ -z "$header" ] || [ "$header" != "$const" ] || [ "$header" != "$pkg" ]; then
-		echo "FAIL [version-agree] masthead.php: plugin header '$header', Masthead\\VERSION '$const', package.json '$pkg' must be equal"
+	stable="$(sed -n 's/^Stable tag:[[:space:]]*\([^[:space:]]*\).*/\1/p' "$root/readme.txt" 2>/dev/null | head -n 1)"
+	change="$(sed -n 's/^##[[:space:]]*\[\{0,1\}\([0-9][0-9A-Za-z.+-]*\).*/\1/p' "$root/CHANGELOG.md" 2>/dev/null | head -n 1)"
+	if [ -z "$header" ] || [ "$header" != "$const" ] || [ "$header" != "$pkg" ] || [ "$header" != "$stable" ] || [ "$header" != "$change" ]; then
+		echo "FAIL [version-agree] masthead.php: plugin header '$header', Masthead\\VERSION '$const', package.json '$pkg', readme.txt Stable tag '$stable', newest CHANGELOG.md heading '$change' must be equal"
 	fi
 }
 
@@ -120,6 +122,8 @@ make_good_tree() {
 	printf '<?php\ndeclare(strict_types=1);\n// permission_callback\n' > "$d/src/Abilities/GetPlan.php"
 	printf '<?php\ndeclare(strict_types=1);\n' > "$d/src/Abilities/Registrar.php"
 	printf '{"name":"masthead","version":"1.2.3","dependencies":{}}\n' > "$d/package.json"
+	printf '=== Masthead ===\nStable tag: 1.2.3\n' > "$d/readme.txt"
+	printf '# Changelog\n\n## [1.2.3] - 2026-01-01\n\n## [1.2.2] - 2025-12-01\n' > "$d/CHANGELOG.md"
 	printf '{}\n' > "$d/composer.lock"
 	printf '{}\n' > "$d/package-lock.json"
 	printf 'git commit -S\n' > "$d/scripts/release.sh"
@@ -134,6 +138,8 @@ make_bad_tree() {
 		lockfiles) rm "$d/package-lock.json" ;;
 		ability-permission) printf '<?php\ndeclare(strict_types=1);\n' > "$d/src/Abilities/GetPlan.php" ;;
 		version-agree) printf '{"name":"masthead","version":"9.9.9","dependencies":{}}\n' > "$d/package.json" ;;
+		version-agree-readme) printf '=== Masthead ===\nStable tag: 1.2.2\n' > "$d/readme.txt" ;;
+		version-agree-changelog) printf '# Changelog\n\n## [1.2.4] - 2026-02-01\n\n## [1.2.3] - 2026-01-01\n' > "$d/CHANGELOG.md" ;;
 		no-gpg-bypass) printf 'git commit --no-gpg-sign\n' > "$d/scripts/release.sh" ;;
 	esac
 }
@@ -152,6 +158,16 @@ self_test() {
 		bad="$tmp/bad-$id"
 		make_bad_tree "$id" "$bad"
 		out="$(run_check "$id" "$bad")"
+		if [ -z "$out" ]; then
+			echo "SELF-TEST FAILED [$id]: missed its bad tree"
+			failed=1
+		fi
+	done
+	# The readme.txt Stable tag and the newest CHANGELOG.md heading are part of version-agree.
+	for id in version-agree-readme version-agree-changelog; do
+		bad="$tmp/bad-$id"
+		make_bad_tree "$id" "$bad"
+		out="$(run_check version-agree "$bad")"
 		if [ -z "$out" ]; then
 			echo "SELF-TEST FAILED [$id]: missed its bad tree"
 			failed=1

@@ -52,6 +52,23 @@ export function tagMatches( tag, version ) {
 	return Boolean( version ) && tag === `v${ version }`;
 }
 
+// README.md joins this list in P6-03; until then its absence is accepted.
+const REQUIRED_DOCS = [ 'readme.txt', 'CHANGELOG.md' ];
+
+/**
+ * Documentation files a release must ship.
+ *
+ * @param {string}   version package.json version.
+ * @param {string[]} staged  Repository-relative paths staged for the zip.
+ * @return {string[]} Required files that are missing; empty for the unreleased 0.0.0.
+ */
+export function missingDocs( version, staged ) {
+	if ( version === '0.0.0' ) {
+		return [];
+	}
+	return REQUIRED_DOCS.filter( ( doc ) => ! staged.includes( doc ) );
+}
+
 /**
  * A line that `sha256sum -c` accepts.
  *
@@ -96,6 +113,16 @@ function pack() {
 	]
 		.filter( shouldInclude )
 		.sort();
+
+	const version = JSON.parse(
+		fs.readFileSync( path.join( ROOT, 'package.json' ), 'utf8' )
+	).version;
+	const lacking = missingDocs( version, candidates );
+	if ( lacking.length > 0 ) {
+		throw new Error(
+			`Release ${ version } is missing ${ lacking.join( ', ' ) }`
+		);
+	}
 
 	for ( const rel of candidates ) {
 		const dest = path.join( target, rel );
