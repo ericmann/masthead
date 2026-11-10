@@ -168,3 +168,114 @@ describe( 'SharePanel', () => {
 		).toBeTruthy();
 	} );
 } );
+
+describe( 'SharePanel Draft with AI', () => {
+	const aiBoot = ( ai = { supported: true }, caps = { promptAi: true } ) => {
+		window.mastheadBoot = {
+			timezone: 'America/Los_Angeles',
+			ai,
+			caps,
+		};
+		resetBoot();
+	};
+
+	beforeEach( () => {
+		runAbility.mockReset();
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
+	} );
+
+	const mockAbilities = ( draft ) =>
+		runAbility.mockImplementation( async ( name ) => {
+			if ( name === 'masthead/share-connections' ) {
+				return connections;
+			}
+			return draft();
+		} );
+
+	it( 'fills the message and does not share', async () => {
+		aiBoot();
+		mockAbilities( () => ( { message: 'Drafted copy.' } ) );
+		render( <SharePanel post={ post } /> );
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'Draft with AI' } )
+		);
+		await waitFor( () =>
+			expect( screen.getByLabelText( 'Message' ).value ).toBe(
+				'Drafted copy.'
+			)
+		);
+		expect( runAbility ).toHaveBeenCalledWith(
+			'masthead/draft-share-copy',
+			{ post_id: 12155 }
+		);
+		expect(
+			runAbility.mock.calls.filter(
+				( call ) => call[ 0 ] === 'masthead/share-post'
+			)
+		).toHaveLength( 0 );
+		await userEvent.type( screen.getByLabelText( 'Message' ), ' Edited.' );
+		expect( screen.getByLabelText( 'Message' ).value ).toBe(
+			'Drafted copy. Edited.'
+		);
+	} );
+
+	it( 'is hidden when AI is unsupported or not permitted', async () => {
+		runAbility.mockResolvedValue( connections );
+		aiBoot( { supported: false } );
+		const first = render( <SharePanel post={ post } /> );
+		await screen.findByLabelText( 'Message' );
+		expect( screen.queryByText( 'Draft with AI' ) ).toBeNull();
+		first.unmount();
+		aiBoot( { supported: true }, { promptAi: false } );
+		render( <SharePanel post={ post } /> );
+		await screen.findByLabelText( 'Message' );
+		expect( screen.queryByText( 'Draft with AI' ) ).toBeNull();
+	} );
+
+	it( 'replaces existing text only after confirmation', async () => {
+		aiBoot();
+		mockAbilities( () => ( { message: 'Drafted copy.' } ) );
+		const confirm = jest
+			.spyOn( window, 'confirm' )
+			.mockReturnValueOnce( false )
+			.mockReturnValueOnce( true );
+		render( <SharePanel post={ post } /> );
+		await userEvent.type(
+			await screen.findByLabelText( 'Message' ),
+			'My own words'
+		);
+		const button = screen.getByRole( 'button', { name: 'Draft with AI' } );
+		await userEvent.click( button );
+		expect( confirm ).toHaveBeenCalledTimes( 1 );
+		expect( screen.getByLabelText( 'Message' ).value ).toBe(
+			'My own words'
+		);
+		expect(
+			runAbility.mock.calls.filter(
+				( call ) => call[ 0 ] === 'masthead/draft-share-copy'
+			)
+		).toHaveLength( 0 );
+		await userEvent.click( button );
+		await waitFor( () =>
+			expect( screen.getByLabelText( 'Message' ).value ).toBe(
+				'Drafted copy.'
+			)
+		);
+	} );
+
+	it( 'shows an error and keeps the typed message', async () => {
+		aiBoot();
+		mockAbilities( () => {
+			throw { code: 'masthead_ai_budget', message: 'Limit reached.' };
+		} );
+		render( <SharePanel post={ post } /> );
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'Draft with AI' } )
+		);
+		expect( await screen.findByText( 'Limit reached.' ) ).toBeTruthy();
+		expect( screen.getByLabelText( 'Message' ).value ).toBe( '' );
+	} );
+} );

@@ -42,6 +42,10 @@ export default function SharePanel( { post } ) {
 	const [ busy, setBusy ] = useState( false );
 	const [ outcome, setOutcome ] = useState( null );
 	const [ queueHidden, setQueueHidden ] = useState( false );
+	const [ drafting, setDrafting ] = useState( false );
+	const [ draftError, setDraftError ] = useState( null );
+	const boot = getBoot();
+	const canDraft = Boolean( boot.ai?.supported && boot.caps?.promptAi );
 
 	useEffect( () => {
 		let live = true;
@@ -121,6 +125,30 @@ export default function SharePanel( { post } ) {
 			return next;
 		} );
 
+	const draftWithAi = async () => {
+		if (
+			message.trim() !== '' &&
+			// eslint-disable-next-line no-alert
+			! window.confirm(
+				__( 'Replace the current message with a draft?', 'masthead' )
+			)
+		) {
+			return;
+		}
+		setDrafting( true );
+		setDraftError( null );
+		try {
+			const result = await runAbility( 'masthead/draft-share-copy', {
+				post_id: post.id,
+			} );
+			setMessage( result.message );
+		} catch ( error ) {
+			setDraftError( error.message );
+		} finally {
+			setDrafting( false );
+		}
+	};
+
 	const send = async ( at ) => {
 		setBusy( true );
 		setOutcome( null );
@@ -154,6 +182,24 @@ export default function SharePanel( { post } ) {
 			<label htmlFor="masthead-share-message">
 				{ __( 'Message', 'masthead' ) }
 			</label>
+			{ canDraft ? (
+				<>
+					{ ' ' }
+					<button
+						type="button"
+						className="button"
+						disabled={ drafting || busy }
+						onClick={ draftWithAi }
+					>
+						{ __( 'Draft with AI', 'masthead' ) }
+					</button>
+				</>
+			) : null }
+			{ draftError ? (
+				<p role="alert" className="masthead-share__error">
+					{ draftError }
+				</p>
+			) : null }
 			<textarea
 				id="masthead-share-message"
 				rows="4"

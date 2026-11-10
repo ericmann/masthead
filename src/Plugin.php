@@ -11,6 +11,7 @@ namespace Masthead;
 
 use Masthead\Abilities\CreatePlannedDraft;
 use Masthead\Abilities\DraftOutline;
+use Masthead\Abilities\DraftShareCopy;
 use Masthead\Ai\Factory as AiFactory;
 use Masthead\Abilities\GetPlan;
 use Masthead\Abilities\Registrar;
@@ -45,6 +46,7 @@ use Masthead\Cron\Nightly;
 use Masthead\Desk\Ranker;
 use Masthead\Desk\Reasons;
 use Masthead\Desk\Scoring;
+use Masthead\Desk\ShareCopy;
 use Masthead\Desk\Suggester;
 use Masthead\Desk\SwapCheck as DeskSwapCheck;
 use Masthead\Plan\Colors;
@@ -137,7 +139,8 @@ final class Plugin {
 			new SuggestForDate( $suggester ),
 			new DismissSuggestion( $dismissals ),
 			new SwapCheckAbility( $reader, $series ),
-			new DraftOutline( $ideas )
+			new DraftOutline( $ideas ),
+			new DraftShareCopy( new ShareCopy( $ai ) )
 		);
 		add_action( 'wp_abilities_api_categories_init', array( $registrar, 'register_category' ) );
 		add_action( 'wp_abilities_api_init', array( $registrar, 'register' ) );
