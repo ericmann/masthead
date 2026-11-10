@@ -1,5 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 
+import { getBoot } from '../data/boot';
 import { shortDayLabel, weekRange, weekdayMonthDayLabel } from '../data/dates';
 import SuggestionCard from './SuggestionCard';
 
@@ -8,16 +9,17 @@ const DAYS_IN_WEEK = 7;
 /**
  * The Desk rail: a week summary and the selected day's suggestions.
  *
- * @param {Object}      props              Props.
- * @param {Object[]}    props.days         Plan days.
- * @param {string}      props.today        Today.
- * @param {number}      props.weekStartsOn First weekday.
- * @param {string|null} props.selectedDate Selected date.
- * @param {Object|null} props.result       suggest-for-date result for the selected date.
- * @param {Function}    props.onPlace      Called with a suggestion.
- * @param {Function}    props.onShare      Called with a suggestion.
- * @param {Function}    props.onDismiss    Called with a suggestion.
- * @param {Function}    props.onPlan       Called with a suggestion ("Plan this").
+ * @param {Object}      props                Props.
+ * @param {Object[]}    props.days           Plan days.
+ * @param {string}      props.today          Today.
+ * @param {number}      props.weekStartsOn   First weekday.
+ * @param {string|null} props.selectedDate   Selected date.
+ * @param {Object|null} props.result         suggest-for-date result for the selected date.
+ * @param {Function}    props.onPlace        Called with a suggestion.
+ * @param {Function}    props.onShare        Called with a suggestion.
+ * @param {Function}    props.onDismiss      Called with a suggestion.
+ * @param {Function}    props.onPlan         Called with a suggestion ("Plan this").
+ * @param {Function}    props.onSuggestIdeas Called with the selected date to ask for AI ideas.
  * @return {Element} The rail content.
  */
 export default function DeskRail( {
@@ -30,7 +32,12 @@ export default function DeskRail( {
 	onPlace,
 	onShare,
 	onDismiss,
+	onSuggestIdeas,
 } ) {
+	const boot = getBoot();
+	const canSuggest = Boolean(
+		onSuggestIdeas && boot.ai?.supported && boot.caps?.promptAi
+	);
 	const byDate = new Map( days.map( ( day ) => [ day.date, day ] ) );
 	const week = weekRange( today, weekStartsOn ).map( ( date ) => ( {
 		date,
@@ -43,6 +50,41 @@ export default function DeskRail( {
 	);
 
 	const selected = selectedDate ? byDate.get( selectedDate ) : null;
+	const ideasLoaded = Boolean( result?.ai?.used );
+	const ideasButton =
+		canSuggest &&
+		selectedDate &&
+		selected &&
+		selected.posts.length === 0 ? (
+			<>
+				{ ideasLoaded ? null : (
+					<p>
+						<button
+							type="button"
+							className="button"
+							onClick={ () => onSuggestIdeas( selectedDate ) }
+						>
+							{ __( 'Suggest ideas', 'masthead' ) }
+						</button>
+					</p>
+				) }
+				{ result?.ai?.error ? (
+					<div className="notice notice-warning inline" role="status">
+						<p>
+							{ result.ai.error === 'masthead_ai_budget'
+								? __(
+										'The monthly AI request limit has been reached.',
+										'masthead'
+									)
+								: __(
+										'AI ideas could not be loaded right now.',
+										'masthead'
+									) }
+						</p>
+					</div>
+				) : null }
+			</>
+		) : null;
 	let body;
 	if ( ! selectedDate ) {
 		body = (
@@ -61,6 +103,11 @@ export default function DeskRail( {
 				onPlace={ onPlace }
 				onShare={ onShare }
 				onDismiss={ onDismiss }
+				onSuggestTopics={
+					canSuggest
+						? () => onSuggestIdeas( selectedDate )
+						: undefined
+				}
 			/>
 		) );
 	}
@@ -125,6 +172,7 @@ export default function DeskRail( {
 					) }
 				</h3>
 			) : null }
+			{ ideasButton }
 			{ body }
 		</section>
 	);

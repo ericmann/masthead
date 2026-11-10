@@ -372,6 +372,7 @@ export default function App() {
 									onPlace={ placeSuggestion }
 									onShare={ shareSuggestion }
 									onDismiss={ dismissSuggestion }
+									onSuggestIdeas={ suggestions.loadIdeas }
 								/>
 							) }
 						</>

@@ -3,9 +3,9 @@ import { useCallback, useRef, useState } from '@wordpress/element';
 import { runAbility } from '../data/useAbility';
 
 /**
- * Session cache of suggest-for-date results. Requests run one at a time and never ask for ideas.
+ * Session cache of suggest-for-date results. Requests run one at a time and only loadIdeas asks for AI ideas.
  *
- * @return {Object} { get, load, loadMany, invalidate, isRunning, progress }.
+ * @return {Object} { get, load, loadMany, loadIdeas, invalidate, isRunning, progress }.
  */
 export function useSuggestions() {
 	const [ cache, setCache ] = useState( {} );
@@ -26,6 +26,35 @@ export function useSuggestions() {
 			setCache( cacheRef.current );
 			return result;
 		} catch {
+			return null;
+		}
+	}, [] );
+
+	const loadIdeas = useCallback( async ( date ) => {
+		try {
+			const result = await runAbility( 'masthead/suggest-for-date', {
+				date,
+				include_ideas: true,
+			} );
+			cacheRef.current = { ...cacheRef.current, [ date ]: result };
+			setCache( cacheRef.current );
+			return result;
+		} catch ( error ) {
+			const current = cacheRef.current[ date ];
+			if ( current ) {
+				cacheRef.current = {
+					...cacheRef.current,
+					[ date ]: {
+						...current,
+						ai: {
+							...current.ai,
+							used: false,
+							error: error?.code || 'masthead_ai_request',
+						},
+					},
+				};
+				setCache( cacheRef.current );
+			}
 			return null;
 		}
 	}, [] );
@@ -56,5 +85,5 @@ export function useSuggestions() {
 		setCache( next );
 	}, [] );
 
-	return { get, load, loadMany, invalidate, isRunning, progress };
+	return { get, load, loadMany, loadIdeas, invalidate, isRunning, progress };
 }

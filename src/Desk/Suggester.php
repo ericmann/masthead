@@ -31,6 +31,7 @@ class Suggester {
 		'draft'   => array( 'schedule', 'open', 'dismiss' ),
 		'reshare' => array( 'share', 'open', 'dismiss' ),
 		'gap'     => array( 'create_draft', 'suggest_topics', 'dismiss' ),
+		'idea'    => array( 'create_draft', 'dismiss' ),
 	);
 
 	/**
@@ -45,6 +46,7 @@ class Suggester {
 	 * @param Dismissals  $dismissals Dismissals.
 	 * @param PlanReader  $reader     Plan reader.
 	 * @param Clock       $clock      Clock.
+	 * @param Ideas|null  $ideas      AI ideas, when available.
 	 */
 	public function __construct(
 		private DraftMatch $drafts,
@@ -55,7 +57,8 @@ class Suggester {
 		private Reasons $reasons,
 		private Dismissals $dismissals,
 		private PlanReader $reader,
-		private Clock $clock
+		private Clock $clock,
+		private ?Ideas $ideas = null
 	) {}
 
 	/**
@@ -73,9 +76,10 @@ class Suggester {
 	 * @param string   $date    Date, Y-m-d.
 	 * @param int      $user_id User asking.
 	 * @param string[] $kinds   Restrict to these kinds; empty for all four deterministic kinds.
+	 * @param bool     $include_ideas Whether to append AI ideas (never asked for otherwise).
 	 * @return array{date:string,lane:array,suggestions:array,ai:array}
 	 */
-	public function suggest( string $date, int $user_id, array $kinds = array() ): array {
+	public function suggest( string $date, int $user_id, array $kinds = array(), bool $include_ideas = false ): array {
 		$lane = Lanes::for_date( $date );
 		$out  = array(
 			'date'        => $date,
@@ -112,6 +116,19 @@ class Suggester {
 		foreach ( $ranked as $candidate ) {
 			$list[] = $this->suggestion( $candidate->to_array(), $date, $lane );
 		}
+		$out['ai']['remaining'] = null === $this->ideas ? 0 : $this->ideas->status()['remaining'];
+		if ( $include_ideas && null !== $this->ideas && ( array() === $kinds || in_array( 'idea', $kinds, true ) ) && $this->ideas->status()['supported'] ) {
+			$ideas = $this->ideas->ideas( $date, $lane, $this->dismissals->for_date( $user_id, $date ) );
+			if ( $ideas instanceof \WP_Error ) {
+				$out['ai']['error'] = $ideas->get_error_code();
+			} else {
+				$out['ai']['used'] = true;
+				foreach ( $ideas as $idea ) {
+					$list[] = $this->suggestion( $idea->to_array(), $date, $lane );
+				}
+			}
+			$out['ai']['remaining'] = $this->ideas->status()['remaining'];
+		}
 		/**
 		 * Filters the suggestions for a date.
 		 *
@@ -147,7 +164,7 @@ class Suggester {
 			'key'     => $candidate['key'],
 			'kind'    => $candidate['kind'],
 			'title'   => $candidate['title'],
-			'why'     => $this->reasons->for_candidate( $candidate, $date, $lane ),
+			'why'     => 'idea' === $candidate['kind'] ? (string) ( $candidate['data']['angle'] ?? '' ) : $this->reasons->for_candidate( $candidate, $date, $lane ),
 			'actions' => $this->actions( $candidate ),
 		);
 		foreach ( array( 'category', 'post_id', 'series', 'outline' ) as $optional ) {

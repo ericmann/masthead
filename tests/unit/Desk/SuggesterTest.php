@@ -17,6 +17,7 @@ use Masthead\Desk\Candidates\DraftMatch;
 use Masthead\Desk\Candidates\Reshare;
 use Masthead\Desk\Candidates\SeriesNext;
 use Masthead\Desk\Dismissals;
+use Masthead\Desk\Ideas;
 use Masthead\Desk\Ranker;
 use Masthead\Desk\Reasons;
 use Masthead\Desk\Suggester;
@@ -85,7 +86,7 @@ final class SuggesterTest extends TestCase {
 	 * @param array $by_kind Candidates by kind.
 	 * @return Suggester
 	 */
-	private function suggester( array $by_kind ): Suggester {
+	private function suggester( array $by_kind, ?Ideas $ideas = null ): Suggester {
 		$drafts = new class( $by_kind['draft'] ?? array() ) extends DraftMatch {
 			public function __construct( private array $items ) {}
 
@@ -137,7 +138,7 @@ final class SuggesterTest extends TestCase {
 				);
 			}
 		};
-		return new Suggester( $drafts, $series, $shares, $gaps, new Ranker(), new Reasons( new Clock() ), $dismissals, $reader, new Clock() );
+		return new Suggester( $drafts, $series, $shares, $gaps, new Ranker(), new Reasons( new Clock() ), $dismissals, $reader, new Clock(), $ideas );
 	}
 
 	private function keys( array $result ): array {
@@ -237,5 +238,81 @@ final class SuggesterTest extends TestCase {
 		$suggester = $this->suggester( $this->allKinds() );
 		$this->assertSame( $suggester->suggest( '2026-11-18', 5 ), $suggester->suggest( '2026-11-18', 5 ) );
 		$this->assertSame( '2026-11-30', $suggester->horizon_end() );
+	}
+
+	/**
+	 * Ideas stub.
+	 *
+	 * @param array|\WP_Error $result    What ideas() returns.
+	 * @param bool            $supported Whether a provider is available.
+	 * @return Ideas
+	 */
+	private function ideas( array|\WP_Error $result, bool $supported = true ): Ideas {
+		return new class( $result, $supported ) extends Ideas {
+			public int $calls = 0;
+
+			public function __construct( private array|\WP_Error $result, private bool $supported ) {}
+
+			public function status(): array {
+				return array(
+					'supported' => $this->supported,
+					'remaining' => 41,
+				);
+			}
+
+			public function ideas( string $date, array $lane, array $dismissed ): array|\WP_Error {
+				++$this->calls;
+				return $this->result;
+			}
+		};
+	}
+
+	public function test_ideas_are_appended_after_deterministic_suggestions(): void {
+		$idea   = Candidate::make(
+			'idea',
+			'idea:abc',
+			'An idea',
+			0.0,
+			array(
+				'category' => 'security',
+				'data' => array( 'angle' => 'Because.' ),
+			) 
+		);
+		$result = $this->suggester( $this->allKinds(), $this->ideas( array( $idea ) ) )->suggest( '2026-11-18', 5, array(), true );
+		$this->assertSame( array( 'draft:10178', 'series:3:2', 'reshare:10191', 'idea:abc' ), $this->keys( $result ) );
+		$last = end( $result['suggestions'] );
+		$this->assertSame( 'idea', $last['kind'] );
+		$this->assertSame( 'Because.', $last['why'] );
+		$this->assertSame( array( 'create_draft', 'dismiss' ), $last['actions'] );
+		$this->assertSame( 'security', $last['category'] );
+		$this->assertSame(
+			array(
+				'used'      => true,
+				'remaining' => 41,
+			),
+			$result['ai']
+		);
+	}
+
+	public function test_ai_error_leaves_the_deterministic_list_unchanged(): void {
+		$plain  = $this->suggester( $this->allKinds() )->suggest( '2026-11-18', 5 );
+		$error  = new \WP_Error( 'masthead_ai_budget', 'Limit.' );
+		$result = $this->suggester( $this->allKinds(), $this->ideas( $error ) )->suggest( '2026-11-18', 5, array(), true );
+		$this->assertSame( $plain['suggestions'], $result['suggestions'] );
+		$this->assertFalse( $result['ai']['used'] );
+		$this->assertSame( 'masthead_ai_budget', $result['ai']['error'] );
+	}
+
+	public function test_ideas_are_not_requested_without_include_ideas(): void {
+		$ideas = $this->ideas( array() );
+		$this->suggester( $this->allKinds(), $ideas )->suggest( '2026-11-18', 5 );
+		$this->assertSame( 0, $ideas->calls );
+		$this->suggester( $this->allKinds(), $ideas )->suggest( '2026-11-18', 5, array( 'gap' ), true );
+		$this->assertSame( 0, $ideas->calls );
+		$unsupported = $this->ideas( array(), false );
+		$result      = $this->suggester( $this->allKinds(), $unsupported )->suggest( '2026-11-18', 5, array(), true );
+		$this->assertSame( 0, $unsupported->calls );
+		$this->assertFalse( $result['ai']['used'] );
+		$this->assertArrayNotHasKey( 'error', $result['ai'] );
 	}
 }

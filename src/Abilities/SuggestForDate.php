@@ -144,7 +144,6 @@ final class SuggestForDate implements Ability {
 			return new WP_Error( 'masthead_invalid_date', __( 'The date must be a real YYYY-MM-DD date.', 'masthead' ), array( 'status' => self::BAD_REQUEST ) );
 		}
 		$kinds = array_values( array_filter( (array) ( $input['kinds'] ?? array() ), 'is_string' ) );
-		// Ideas arrive with the AI phase; until then include_ideas is accepted and ignored.
-		return $this->suggester->suggest( $date, get_current_user_id(), $kinds );
+		return $this->suggester->suggest( $date, get_current_user_id(), $kinds, ! empty( $input['include_ideas'] ) );
 	}
 }

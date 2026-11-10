@@ -39,6 +39,7 @@ use Masthead\Desk\Candidates\SeriesNext;
 use Masthead\Desk\Budget;
 use Masthead\Desk\BudgetedAi;
 use Masthead\Desk\Dismissals;
+use Masthead\Desk\Ideas;
 use Masthead\Cron\Nightly;
 use Masthead\Desk\Ranker;
 use Masthead\Desk\Reasons;
@@ -111,16 +112,18 @@ final class Plugin {
 		$nightly    = new Nightly( $swap_check, $stats, $clock );
 		add_action( 'init', array( $nightly, 'schedule' ) );
 		add_action( Nightly::HOOK, array( $nightly, 'run' ) );
+		$gap_source = new CategoryGap( $clock );
 		$suggester  = new Suggester(
 			new DraftMatch( $reader ),
 			new SeriesNext( $series ),
 			new Reshare( $stats, $share, $clock ),
-			new CategoryGap( $clock ),
+			$gap_source,
 			new Ranker(),
 			new Reasons( $clock ),
 			$dismissals,
 			$reader,
-			$clock
+			$clock,
+			new Ideas( $ai, $reader, $series, $gap_source, $budget )
 		);
 		$registrar = new Registrar(
 			new GetPlan( $reader ),

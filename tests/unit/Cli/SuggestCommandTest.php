@@ -101,8 +101,23 @@ final class SuggestCommandTest extends TestCase {
 		$this->assertSame( array(), \WP_CLI::$warnings );
 
 		\WP_CLI::reset();
-		( new SuggestCommand( $this->ability( array( 'suggestions' => array() ) ) ) )->__invoke( array( '2026-11-18' ), array( 'ideas' => true ) );
-		$this->assertSame( array( '--ideas needs Phase 5' ), \WP_CLI::$warnings );
+		$with_ideas = $this->ability(
+			array(
+				'suggestions' => array(),
+				'ai' => array( 'error' => 'masthead_ai_budget' ),
+			) 
+		);
+		( new SuggestCommand( $with_ideas ) )->__invoke( array( '2026-11-18' ), array( 'ideas' => true ) );
+		$this->assertSame(
+			array(
+				array(
+					'date' => '2026-11-18',
+					'include_ideas' => true,
+				),
+			),
+			$with_ideas->inputs 
+		);
+		$this->assertSame( array( 'AI ideas unavailable: masthead_ai_budget' ), \WP_CLI::$warnings );
 
 		\WP_CLI::reset();
 		( new SuggestCommand( $this->ability( new \WP_Error( 'masthead_invalid_date', 'Bad date.' ) ) ) )->__invoke( array( 'junk' ), array() );
