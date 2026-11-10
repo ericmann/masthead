@@ -62,7 +62,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-07 suggest-for-date and dismiss-suggestion abilities, wp masthead suggest
 - [x] P4-08 Ghost cards and "Fill open days"
 - [x] P4-09 Desk rail
-- [ ] P4-10 Day plan
+- [x] P4-10 Day plan
 - [ ] P4-11 Tune the Desk assumptions
 - [ ] P4-12 Scoring
 - [ ] P4-13 SwapCheck: lane_mismatch and cadence_break with options
@@ -322,3 +322,7 @@ Tests: GhostCard.test.js(3), useSuggestions.test.js(4), e2e desk.spec.js(3 x2); 
 ### P4-09 — aebd33d
 
 Tests: DeskRail.test.js(4), SuggestionCard.test.js(5), e2e desk.spec.js(+4 x2); full npm run test:e2e = 76 passed, 2 skipped (4.6 min). Client: DeskRail({days,today,weekStartsOn,selectedDate,result,onPlace,onShare,onDismiss}) (week bars + "n of 7 days have a post. Next gap: Tue Nov 10.", day title "<Wednesday, Nov 18> · <lane> lane"), SuggestionCard({suggestion,onPlace,onShare,onDismiss}) rendering schedule/open/share/dismiss only (create_draft and suggest_topics are not rendered yet: P4-10 and P5-06 must add them to SuggestionCard.renderAction). App wires dismiss (runAbility dismiss-suggestion, invalidate, reload), place (useReschedule.move({id,date:null}, selectedDay)) and share (selects a minimal published post so SharePanel opens). dates.js gained weekdayMonthDayLabel. The rail shows DeskRail unless a post is selected; DraftTray always below.
+
+### P4-10 — d421fdc
+
+Tests: DayPlan.test.js(7), e2e dayplan.spec.js(2 x2); full npm run test:e2e = 80 passed, 2 skipped (4.7 min). DayPlan({suggestion,date,laneLabel,others,onPick,onCreated,onBack}) runs masthead/create-planned-draft {date,time,title,category,series?,outline?}; "Scheduled" then saves status future via core-data saveEntityRecord('postType','post',{id,status:'future'}); SuggestionCard gained onPlan and renders "Plan this" for create_draft; DeskRail passes onPlan; App holds `planning` (reset on selected day change) and renders DayPlan instead of DeskRail. suggest_topics still not rendered (P5-06). Outline comes from suggestion.outline (P5-07 supplies it).
