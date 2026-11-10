@@ -30,7 +30,7 @@ const days = [
 		posts: [
 			post(
 				12177,
-				'Nineteen Years',
+				'Nine Winters',
 				'future',
 				'2026-11-11T08:00:00-08:00'
 			),
@@ -40,7 +40,7 @@ const days = [
 		date: '2026-11-12',
 		lane: { label: 'Technical' },
 		posts: [
-			post( 10194, 'Embeddings', 'future', '2026-11-12T07:37:00-08:00', {
+			post( 10194, 'Clusters', 'future', '2026-11-12T07:37:00-08:00', {
 				primary_category: 'faith',
 			} ),
 		],
@@ -113,7 +113,7 @@ describe( 'ListView', () => {
 			/>
 		);
 		await userEvent.click(
-			screen.getByRole( 'button', { name: /Nineteen Years/ } )
+			screen.getByRole( 'button', { name: /Nine Winters/ } )
 		);
 		expect( onSelectPost ).toHaveBeenCalledWith( days[ 2 ].posts[ 0 ] );
 	} );

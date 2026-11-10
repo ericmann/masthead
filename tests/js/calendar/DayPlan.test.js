@@ -26,7 +26,7 @@ const gap = {
 const draft = {
 	key: 'draft:10178',
 	kind: 'draft',
-	title: 'From Craftsmen to Swarms',
+	title: 'From Guilds to Fleets',
 	why: 'Wednesday is your Standalone slot.',
 	category: 'technology',
 	post_id: 10178,
@@ -83,7 +83,7 @@ describe( 'DayPlan', () => {
 	it( 'prefills the title and default lane time', () => {
 		renderPlan();
 		expect( screen.getByLabelText( 'Title' ).value ).toBe(
-			'From Craftsmen to Swarms'
+			'From Guilds to Fleets'
 		);
 		expect( screen.getByLabelText( 'Time' ).value ).toBe( '08:00' );
 		expect(

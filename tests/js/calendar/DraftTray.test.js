@@ -4,7 +4,7 @@ import DraftTray from '../../../client/calendar/DraftTray';
 
 const draft = {
 	id: 10178,
-	title: 'From Craftsmen to Swarms',
+	title: 'From Guilds to Fleets',
 	color: '#2f5fd0',
 	modified: '2026-10-29T21:46:13-07:00',
 	edit_url: 'http://example.test/wp-admin/post.php?post=10178&action=edit',
@@ -21,7 +21,7 @@ describe( 'DraftTray', () => {
 		expect( rows[ 0 ].getAttribute( 'data-post-id' ) ).toBe( '10178' );
 		expect(
 			container.querySelector( '.masthead-tray__title' ).textContent
-		).toBe( 'From Craftsmen to Swarms' );
+		).toBe( 'From Guilds to Fleets' );
 		expect(
 			screen
 				.getByRole( 'link', { name: /Open draft/ } )

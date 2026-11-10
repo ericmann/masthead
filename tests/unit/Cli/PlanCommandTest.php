@@ -47,7 +47,7 @@ final class PlanCommandTest extends TestCase {
 						array(
 							'id'     => 10193,
 							'status' => 'publish',
-							'title'  => 'DailyMedToday',
+							'title'  => 'Atlas Ledger',
 						),
 					),
 					'open'  => false,

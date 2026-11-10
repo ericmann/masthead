@@ -41,7 +41,7 @@ const result = {
 		{
 			key: 'draft:10178',
 			kind: 'draft',
-			title: 'From Craftsmen to Swarms',
+			title: 'From Guilds to Fleets',
 			why: 'Wednesday is your Standalone slot.',
 			actions: [ 'dismiss' ],
 		},
@@ -102,7 +102,7 @@ describe( 'DeskRail', () => {
 		expect(
 			screen.getByRole( 'heading', { name: 'Desk · Wednesday, Nov 18' } )
 		).toBeTruthy();
-		expect( screen.getByText( 'From Craftsmen to Swarms' ) ).toBeTruthy();
+		expect( screen.getByText( 'From Guilds to Fleets' ) ).toBeTruthy();
 		expect(
 			screen.getByText( 'Wednesday is your Standalone slot.' )
 		).toBeTruthy();

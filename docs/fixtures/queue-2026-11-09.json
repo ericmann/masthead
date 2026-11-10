@@ -1,6 +1,6 @@
 {
-  "_source": "eric.mann.blog via MCP (ewpa/get-posts), captured 2026-11-09 13:55 America/Los_Angeles",
-  "_note": "All post IDs, dates, titles and categories are real. Use as the acceptance scenario for the calendar, Desk and swap check. Contains no traffic numbers.",
+  "_source": "Captured from a live site on 2026-11-09 13:55 America/Los_Angeles; the six standalone post titles and the draft tags below are synthetic",
+  "_note": "Post IDs, dates, statuses and categories come from the live capture. The titles of the six posts that are not part of a series (10193, 12177, 10194, 10178, 10192, 10191) and the tags of 10178 are synthetic, invented for this file. The series name and its four part titles are unchanged. Use as the acceptance scenario for the calendar, Desk and swap check. Contains no traffic numbers.",
   "now": "2026-11-09 14:00:00",
   "timezone": "America/Los_Angeles",
   "categories": [
@@ -69,7 +69,7 @@
       "id": 10193,
       "status": "publish",
       "date": "2026-11-09 05:47:05",
-      "title": "DailyMedToday: A Production Case Study in Semantic Search",
+      "title": "Atlas Ledger: A Production Case Study in Faceted Search",
       "categories": [
         "technology",
         "faith"
@@ -79,7 +79,7 @@
       "id": 12177,
       "status": "future",
       "date": "2026-11-11 08:00:00",
-      "title": "Nineteen Years, Four Domains, and a New Front Page",
+      "title": "Nine Winters, Three Servers, and a Fresh Home Page",
       "categories": [
         "technology"
       ]
@@ -88,7 +88,7 @@
       "id": 10194,
       "status": "future",
       "date": "2026-11-12 07:37:00",
-      "title": "What the Embeddings Reveal: A Map of Meaning",
+      "title": "What the Clusters Show: A Map of Reading Habits",
       "categories": [
         "faith",
         "technology"
@@ -132,20 +132,20 @@
       "status": "draft",
       "date": null,
       "modified": "2026-10-29 21:46:13",
-      "title": "From Craftsmen to Swarms: How Software Engineering is Following the Auto Industry's Playbook",
+      "title": "From Guilds to Fleets: How Small Teams Are Following the Shipping Industry's Playbook",
       "categories": [
         "technology"
       ],
       "tags": [
-        "AI",
-        "developer tools"
+        "automation",
+        "team tooling"
       ]
     },
     {
       "id": 10192,
       "status": "publish",
       "date": "2026-10-01 07:57:00",
-      "title": "From Voice to Vectors: Building a Searchable Audio Archive in PHP",
+      "title": "From Notes to Indexes: Building a Searchable Photo Archive in PHP",
       "categories": [
         "technology"
       ]
@@ -154,7 +154,7 @@
       "id": 10191,
       "status": "publish",
       "date": "2026-09-29 07:57:00",
-      "title": "RAG Over Markdown: An End-to-End Local Pipeline in Pure PHP",
+      "title": "Search Over Plain Text: An End-to-End Local Pipeline in Pure PHP",
       "categories": [
         "technology"
       ]

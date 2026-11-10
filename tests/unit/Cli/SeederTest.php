@@ -28,7 +28,7 @@ final class SeederTest extends TestCase {
 				'id'         => 12177,
 				'status'     => 'future',
 				'date'       => '2026-11-11 08:00:00',
-				'title'      => 'Nineteen Years',
+				'title'      => 'Nine Winters',
 				'categories' => array( 'technology', 'unknown' ),
 			),
 			self::IDS
@@ -37,7 +37,7 @@ final class SeederTest extends TestCase {
 		$this->assertSame( '2026-11-11 16:00:00', $arr['post_date_gmt'] );
 		$this->assertTrue( $arr['edit_date'] );
 		$this->assertSame( array( 8 ), $arr['post_category'] );
-		$this->assertSame( 'Nineteen Years', $arr['post_title'] );
+		$this->assertSame( 'Nine Winters', $arr['post_title'] );
 	}
 
 	public function test_post_array_for_undated_draft_uses_modified_and_no_gmt_date(): void {

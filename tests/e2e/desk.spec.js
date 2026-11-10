@@ -27,7 +27,7 @@ test.describe( 'Desk ghost cards', () => {
 		await expect(
 			ghost.getByText( 'DRAFT', { exact: true } )
 		).toBeVisible();
-		await expect( ghost ).toContainText( 'From Craftsmen to Swarms' );
+		await expect( ghost ).toContainText( 'From Guilds to Fleets' );
 	} );
 
 	test( 'a day beyond the ghost window shows Open with its lane', async ( {

@@ -7,7 +7,7 @@ import SuggestionCard from '../../../client/calendar/SuggestionCard';
 const suggestion = ( extra = {} ) => ( {
 	key: 'draft:10178',
 	kind: 'draft',
-	title: 'From Craftsmen to Swarms',
+	title: 'From Guilds to Fleets',
 	why: "Wednesday is your Standalone slot. This draft isn't on the calendar; last edited Oct 29.",
 	post_id: 10178,
 	actions: [ 'schedule', 'open', 'dismiss' ],

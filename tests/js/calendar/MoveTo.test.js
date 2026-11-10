@@ -6,7 +6,7 @@ import PostChip from '../../../client/calendar/PostChip';
 
 const post = ( status ) => ( {
 	id: 10194,
-	title: 'What the Embeddings Reveal',
+	title: 'What the Clusters Show',
 	status,
 	color: '#7a5c2e',
 	date: '2026-11-12T07:37:00-08:00',
@@ -38,11 +38,11 @@ describe( 'MoveTo', () => {
 		render( <MoveTo post={ post( 'future' ) } onMove={ onMove } /> );
 		await userEvent.click(
 			screen.getByRole( 'button', {
-				name: 'Move “What the Embeddings Reveal” to another day',
+				name: 'Move “What the Clusters Show” to another day',
 			} )
 		);
 		const input = screen.getByLabelText(
-			'New date for “What the Embeddings Reveal”'
+			'New date for “What the Clusters Show”'
 		);
 		expect( input.value ).toBe( '2026-11-12' );
 		await userEvent.clear( input );

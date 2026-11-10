@@ -45,11 +45,11 @@ test.describe( 'rescheduling', () => {
 		page,
 	} ) => {
 		const opener = page.getByRole( 'button', {
-			name: /Move “What the Embeddings Reveal: A Map of Meaning” to another day/,
+			name: /Move “What the Clusters Show: A Map of Reading Habits” to another day/,
 		} );
 		await opener.focus();
 		await page.keyboard.press( 'Enter' );
-		const input = page.getByLabel( /New date for “What the Embeddings/ );
+		const input = page.getByLabel( /New date for “What the Clusters/ );
 		await input.fill( '2026-11-13' );
 		await input.press( 'Enter' );
 		await expect(

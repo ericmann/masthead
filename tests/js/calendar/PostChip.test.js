@@ -5,7 +5,7 @@ import PostChip from '../../../client/calendar/PostChip';
 
 const base = {
 	id: 12177,
-	title: 'Nineteen Years, Four Domains, and a New Front Page',
+	title: 'Nine Winters, Three Servers, and a Fresh Home Page',
 	color: '#2f5fd0',
 	date: '2026-11-11T08:00:00-08:00',
 };

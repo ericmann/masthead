@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import GhostCard from '../../../client/calendar/GhostCard';
 
-const suggestion = { kind: 'draft', title: 'From Craftsmen to Swarms' };
+const suggestion = { kind: 'draft', title: 'From Guilds to Fleets' };
 
 describe( 'GhostCard', () => {
 	it( 'renders the kind label and title', () => {
@@ -15,7 +15,7 @@ describe( 'GhostCard', () => {
 			/>
 		);
 		expect( screen.getByText( 'DRAFT' ) ).toBeTruthy();
-		expect( screen.getByText( 'From Craftsmen to Swarms' ) ).toBeTruthy();
+		expect( screen.getByText( 'From Guilds to Fleets' ) ).toBeTruthy();
 		expect( screen.getByRole( 'button' ).getAttribute( 'data-kind' ) ).toBe(
 			'draft'
 		);

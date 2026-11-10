@@ -189,8 +189,8 @@ final class SwapCheckTest extends TestCase {
 	}
 
 	public function test_post_in_its_lane_has_no_finding(): void {
-		$this->post( 12177, 'Nineteen Years', '2026-11-11', 'technology' );
-		$this->post( 10194, 'Embeddings', '2026-11-12', 'technology' );
+		$this->post( 12177, 'Nine Winters', '2026-11-11', 'technology' );
+		$this->post( 10194, 'Clusters', '2026-11-12', 'technology' );
 		$this->assertSame( array(), $this->check()->run() );
 	}
 

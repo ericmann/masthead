@@ -79,7 +79,7 @@ final class SeederTest extends TestCase {
 		$this->assertSame( 'draft', $post->post_status );
 		$this->assertFalse( Slots::is_dated( $post ) );
 		$this->assertSame( '2026-10-29 21:46:13', $post->post_modified );
-		$this->assertEqualsCanonicalizing( array( 'AI', 'developer tools' ), wp_list_pluck( wp_get_post_tags( 10178 ), 'name' ) );
+		$this->assertEqualsCanonicalizing( array( 'automation', 'team tooling' ), wp_list_pluck( wp_get_post_tags( 10178 ), 'name' ) );
 	}
 
 	public function test_mantle_series_has_four_parts_and_cadence(): void {
