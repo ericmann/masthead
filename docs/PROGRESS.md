@@ -14,7 +14,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P0-07 Release packer and LICENSE
 - [x] P0-08 CI and release workflows
 - [x] P0-09 Phase 0 push and manual checks
-- [ ] P1-01 Support\Dates and Support\Json
+- [x] P1-01 Support\Dates and Support\Json
 - [ ] P1-02 Rhythm option, activation defaults and Lanes
 - [ ] P1-03 Primary category and Colors
 - [ ] P1-04 Cadence
@@ -130,3 +130,7 @@ Tests: workflows.test.js (5, reads YAML as text). ci.yml: verify/integration/e2e
 ### P0-09 — 2ef7a74
 
 Docs only: docs/manual-checks.md Phase 0 section. composer audit: no advisories. npm audit --audit-level=high: fails on transitive dev advisories (minimatch, markdown-it/deepmerge; see P0-02), no non-breaking fix. Push: pushed build/2026-11-10 to origin. Manual check: NOT VERIFIED (human).
+
+### P1-01 — bdfdf9e
+
+Tests: DatesTest(10), JsonTest(3). Dates static API per task; invalid input: add_days/time_of -> '', weekday/diff_days -> 0, local_to_gmt -> '0000-00-00 00:00:00', parse_* -> null. parse_iso returns site-zone object. Dates::DAYS_IN_WEEK=7. UTC zone via timezone_open('UTC') because the one-clock regex forbids `new DateTime*` (even DateTimeZone) outside Clock. is_time uses createFromFormat('!H:i') round trip (numeric literals inside regex strings trip hard-coded-tunable). Json::encode uses wp_json_encode (tests alias it to json_encode).
