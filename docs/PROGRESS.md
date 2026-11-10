@@ -24,7 +24,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-08 PlanReader
 - [x] P1-09 Spike — Abilities REST execution and exposure flags
 - [x] P1-10 Abilities Registrar, category and masthead/get-plan
-- [ ] P1-11 masthead/create-planned-draft ability
+- [x] P1-11 masthead/create-planned-draft ability
 - [ ] P1-12 masthead/reschedule ability
 - [ ] P1-13 REST contract for running abilities
 - [ ] P1-14 wp masthead seed
@@ -170,3 +170,7 @@ Spike docs/spikes/P1-09-abilities-rest.md. Decision: core-endpoint. Key facts fo
 ### P1-10 — 0cc2156
 
 Tests: unit RegistrarTest(4), integration GetPlanTest(6). Abilities\Ability interface (name,label,description,input_schema,output_schema,annotations,permission,execute); Registrar( Ability ... ) with register_category, register, get( name ), describe(). Registrar sets meta.show_in_rest=true always and meta.public by expose_mcp / expose_share (share-post). Plugin::boot builds PlanReader, Registrar( new GetPlan( $reader ) ) -- later ability tasks add their ability to that constructor call; boot data `abilities` (describe) and `run` ({path:'/wp-abilities/v1/abilities/%s/run', readonly:{method:'GET',input:'query'}, write:{method:'POST',input:'body'}}). Integration tests call wp_get_ability(name)->check_permissions()/execute(). Error status consts are named private consts (400).
+
+### P1-11 — bd3143c
+
+Tests: integration CreatePlannedDraftTest(6). new CreatePlannedDraft( Slots, SeriesSource ), added to the Registrar(...) call in Plugin::boot (multi-line args; add new abilities as further arguments). Interpretation: empty title -> masthead_missing_title (400). Ability pattern used (copy for later abilities): final class implements Ability, private const BAD_REQUEST = 400, annotations non-readonly/non-destructive/non-idempotent.
