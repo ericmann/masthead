@@ -55,7 +55,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P3-10 Phase 3 push and manual checks
 - [x] P4-01 Candidate shape and DraftMatch
 - [x] P4-02 SeriesNext candidates
-- [ ] P4-03 CategoryGap candidates
+- [x] P4-03 CategoryGap candidates
 - [ ] P4-04 Reshare candidates
 - [ ] P4-05 Ranker and Dismissals
 - [ ] P4-06 Reasons templates and the Suggester
@@ -294,3 +294,7 @@ Tests: CandidateTest(2), DraftMatchTest(4). Desk\Candidates\Candidate::make(kind
 ### P4-02 — 9f275cf
 
 Tests: SeriesNextTest(7). Desk\Candidates\SeriesNext( SeriesSource )->for_date(date, lane): per term with cadence, last dated part + 1 (skipped when dated, or past known total via for_post(last)['total']), expected via Cadence::expected_date, emit when |date-expected| <= desk.series_window_days, score 1 - distance/(window+1), key series:<term>:<part>, title "<Series>: Part <n>" or the undated holder's title (post_id set), sort_id term id, tiebreak series name, category primary of last dated part, data {expected, every_weeks, series_name, part}. Codebase note: the one-clock regex flags the words "date (" even in docblocks (avoid "the date (" in prose).
+
+### P4-03 — a006b47
+
+Tests: CategoryGapTest(7). Desk\Candidates\CategoryGap( Clock ): gaps() (all gaps sorted: never-published first, then most days, then slug) and for_date(date, lane) (lane categories, or all when the lane has none). One get_posts per category ('cat' => term id, numberposts 1, no_found_rows, publish, date_query before today). Interpretation: gap when days since last publish > desk.gap_days (strict). score 1.0 never-published else days/(days+gap_days); key gap:<term id>; sort_id 0; tiebreak slug; title "Something under <Name>"; data {last_published, category_name}.
