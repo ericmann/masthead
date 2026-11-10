@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Masthead;
 
+use Masthead\Abilities\AcceptSeries;
 use Masthead\Abilities\CreatePlannedDraft;
 use Masthead\Abilities\DraftOutline;
 use Masthead\Abilities\DraftShareCopy;
@@ -119,6 +120,7 @@ final class Plugin {
 		add_action( Nightly::HOOK, array( $nightly, 'run' ) );
 		$gap_source = new CategoryGap( $clock );
 		$ideas      = new Ideas( $ai, $reader, $series, $gap_source, $budget );
+		$planner    = new SeriesPlanner( $ai, $clock, $slots, $series );
 		$suggester  = new Suggester(
 			new DraftMatch( $reader ),
 			new SeriesNext( $series ),
@@ -143,7 +145,8 @@ final class Plugin {
 			new SwapCheckAbility( $reader, $series ),
 			new DraftOutline( $ideas ),
 			new DraftShareCopy( new ShareCopy( $ai ) ),
-			new ProposeSeries( new SeriesPlanner( $ai, $clock ) )
+			new ProposeSeries( $planner ),
+			new AcceptSeries( $planner )
 		);
 		add_action( 'wp_abilities_api_categories_init', array( $registrar, 'register_category' ) );
 		add_action( 'wp_abilities_api_init', array( $registrar, 'register' ) );
