@@ -12,11 +12,13 @@ namespace Masthead;
 use Masthead\Abilities\CreatePlannedDraft;
 use Masthead\Abilities\GetPlan;
 use Masthead\Abilities\Registrar;
+use Masthead\Abilities\Reschedule;
 use Masthead\Admin\Assets;
 use Masthead\Admin\CalendarPage;
 use Masthead\Admin\Notices;
 use Masthead\Plan\Colors;
 use Masthead\Plan\PlanReader;
+use Masthead\Plan\Reschedule as PlanReschedule;
 use Masthead\Plan\Rhythm;
 use Masthead\Plan\SeriesSource;
 use Masthead\Plan\Slots;
@@ -64,7 +66,8 @@ final class Plugin {
 		$reader    = new PlanReader( $clock, $series );
 		$registrar = new Registrar(
 			new GetPlan( $reader ),
-			new CreatePlannedDraft( $slots, $series )
+			new CreatePlannedDraft( $slots, $series ),
+			new Reschedule( new PlanReschedule( $clock ) )
 		);
 		add_action( 'wp_abilities_api_categories_init', array( $registrar, 'register_category' ) );
 		add_action( 'wp_abilities_api_init', array( $registrar, 'register' ) );
