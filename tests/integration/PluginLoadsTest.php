@@ -16,7 +16,7 @@ final class PluginLoadsTest extends TestCase {
 
 	public function test_plugin_is_loaded_with_expected_version(): void {
 		$this->assertTrue( defined( 'Masthead\VERSION' ) );
-		$this->assertSame( '0.1.0', \Masthead\VERSION );
+		$this->assertSame( '1.0.0', \Masthead\VERSION );
 		$this->assertTrue( class_exists( \Masthead\Plugin::class ) );
 		$this->assertNotFalse( has_action( 'plugins_loaded', array( \Masthead\Plugin::class, 'boot' ) ) );
 	}

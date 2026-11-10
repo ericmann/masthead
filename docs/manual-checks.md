@@ -52,7 +52,7 @@ Needs a real AI provider on a local site, so none of this could be done by the b
 
 ## Phase 6
 
-- [ ] After the pull request merges, create and push the signed tag `v0.1.0` (`git tag -s v0.1.0`), and confirm the release has `masthead.zip` and `masthead.zip.sha256` and that `sha256sum -c masthead.zip.sha256` passes. The build did not create a tag.
+- [ ] After the pull request merges, create and push the signed tag `v1.0.0` (`git tag -s v1.0.0`; 0.1.0 was never tagged), and confirm the release has `masthead.zip` and `masthead.zip.sha256` and that `sha256sum -c masthead.zip.sha256` passes. The build did not create a tag.
 - [ ] Bump the site repository's pinned Masthead version and checksum as described in `docs/DEPLOYMENT.md`, build the image, roll it, and plan one real week from the calendar.
 - [ ] Before making the repository public:
   - Decide whether to rewrite git history, which still contains the real post titles that P6-01 replaced in the fixture.

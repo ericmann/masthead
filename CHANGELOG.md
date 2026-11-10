@@ -2,6 +2,23 @@
 
 All notable changes to Masthead are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.0.0] - 2026-11-10
+
+### Added
+
+- `prompt_ai` fallback: WordPress 7.1 neither defines nor grants `prompt_ai`, so the AI features were denied to everyone on a stock site. When no role, user or plugin has set `prompt_ai`, Masthead now grants it to users who hold the capability named by the new non-settable Config key `ai.fallback_capability` (default `publish_posts`). An explicit grant or deny of `prompt_ai` always wins. The AI section of Settings > Calendar says who has access.
+
+### Changed
+
+- `ai.max_tokens` is set per request kind: 4000 for series proposals and 1200 for ideas, outlines, share copy and plain text. A worst-case 12-part proposal (about 2565 estimated tokens) was cut off and rejected at the old single limit of 1200. A `masthead_config` filter that sets `ai.max_tokens` to one number still applies it to every kind. Measurements are in `docs/tuning/P5-13.md`.
+- The e2e fake AI mu-plugin no longer grants `prompt_ai`; the tests rely on Masthead's own fallback.
+- `CLAUDE.md` limits "never changes a post's status" to the server-side write paths (`Plan\Slots`, `Plan\Reschedule`); the Day plan's "Save as scheduled" sets `future` after a click.
+- The design mockups in `docs/mockups/` use the synthetic post titles from the test fixtures instead of real ones.
+
+### Fixed
+
+- Series planning meta (`masthead_cadence`, `masthead_lane_exception`) no longer appears in public `wp/v2/<series>` responses. With ttm-core's public `series` taxonomy those responses are the ones the theme uses. The keys are returned only when the request's `context` is `edit`, which needs the `edit_terms` capability; the Settings screen and the swap panel read and write them in that context, and writes are unchanged.
+
 ## [0.1.0] - 2026-11-09
 
 ### Added

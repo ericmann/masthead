@@ -3,7 +3,7 @@ Tags: editorial calendar, content planning, scheduling, jetpack, ai
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 0.1.0
+Stable tag: 1.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,11 @@ In your own database: the weekly rhythm and settings as options, plans and outli
 Calendar abilities can be exposed to MCP clients from Settings > Calendar. Sharing is a separate switch and is off by default.
 
 == Changelog ==
+
+= 1.0.0 =
+* AI features work on a stock WordPress site: anyone who can publish posts gets the `prompt_ai` capability, unless a role, user or plugin grants or denies it explicitly.
+* Series proposals get a larger token limit (4000), so a long Ask the Desk request is no longer cut off.
+* Series cadence and lane exceptions are returned by the REST API only in the edit context, so public series responses carry nothing from Masthead.
 
 = 0.1.0 =
 * First release: calendar (month, week, list), weekly rhythm, draft tray, drag and keyboard rescheduling, series cadence.

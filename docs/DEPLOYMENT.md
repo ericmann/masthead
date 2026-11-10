@@ -17,7 +17,7 @@ Check a downloaded release with `sha256sum -c masthead.zip.sha256` (run it in th
 The site repository builds an immutable WordPress image. Add this fragment to its Dockerfile, with `<owner>` and the plugins directory filled in for your repository and image:
 
 ```dockerfile
-ARG MASTHEAD_VERSION=0.1.0
+ARG MASTHEAD_VERSION=1.0.0
 ARG MASTHEAD_SHA256=<from dist/masthead.zip.sha256>
 RUN curl -fsSL -o /tmp/masthead.zip \
       "https://github.com/<owner>/masthead/releases/download/v${MASTHEAD_VERSION}/masthead.zip" \

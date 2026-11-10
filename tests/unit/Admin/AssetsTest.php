@@ -76,7 +76,7 @@ final class AssetsTest extends TestCase {
 		$data = $assets->boot_data();
 		$this->assertSame( array( 'a' => 1 ), $data['extra'] );
 		$this->assertSame( '2026-11-09', $data['today'] );
-		$this->assertSame( '0.1.0', $data['version'] );
+		$this->assertSame( '1.0.0', $data['version'] );
 		$this->assertStringStartsWith( '2026-11-09T14:00:00', $data['now'] );
 	}
 
