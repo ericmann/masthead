@@ -21,6 +21,7 @@ use Masthead\Admin\SettingsPage;
 use Masthead\Cli\Commands;
 use Masthead\Cli\PlanCommand;
 use Masthead\Cli\SeedCommand;
+use Masthead\Cli\SocialProbeCommand;
 use Masthead\Cli\StatsProbeCommand;
 use Masthead\Cli\Seeder;
 use Masthead\Plan\Colors;
@@ -29,6 +30,7 @@ use Masthead\Plan\Reschedule as PlanReschedule;
 use Masthead\Plan\Rhythm;
 use Masthead\Plan\SeriesSource;
 use Masthead\Plan\Slots;
+use Masthead\Social\Factory as SocialFactory;
 use Masthead\Stats\Factory as StatsFactory;
 use Masthead\Support\Clock;
 
@@ -79,6 +81,7 @@ final class Plugin {
 		$assets->add_planning_boot_data( $series );
 
 		$stats     = StatsFactory::make();
+		$share     = SocialFactory::make();
 		$reader    = new PlanReader( $clock, $series );
 		$registrar = new Registrar(
 			new GetPlan( $reader ),
@@ -94,6 +97,7 @@ final class Plugin {
 					'seed' => new SeedCommand( new Seeder( $slots, $series ) ),
 					'plan' => new PlanCommand( $registrar->get( 'masthead/get-plan' ), $clock ),
 					'stats:probe' => new StatsProbeCommand( $stats ),
+					'social:probe' => new SocialProbeCommand( $share ),
 				)
 			);
 		}
