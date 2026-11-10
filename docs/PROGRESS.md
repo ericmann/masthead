@@ -94,7 +94,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] R1-02 Swap check: collision when two non-Journal posts share a date
 - [x] R1-03 Ideas prompt lists every category for an any-category lane
 - [x] R1-04 Ask the Desk: optional start date sent to propose-series
-- [ ] R1-05 suggest-for-date is not annotated idempotent
+- [x] R1-05 suggest-for-date is not annotated idempotent
 - [ ] R1-06 Reshare: pin the min-age and cooldown boundaries
 
 ## Log
@@ -456,3 +456,7 @@ Ideas::ideas passes lane with categories replaced by resolved allowed list to Pr
 ### R1-04 — 1105401
 
 Added labelled "Start on" date input in AskDesk form; start included in propose-series input only when non-empty. Two jest tests added; unit, e2e (106 passed) green.
+
+### R1-05 — 3826271
+
+idempotent annotation set to false on suggest-for-date; integration test added; 127 integration tests pass.
