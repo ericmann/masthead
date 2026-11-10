@@ -12,6 +12,7 @@ namespace Masthead;
 use Masthead\Admin\Assets;
 use Masthead\Admin\CalendarPage;
 use Masthead\Admin\Notices;
+use Masthead\Plan\Rhythm;
 use Masthead\Support\Clock;
 
 /**
@@ -45,5 +46,14 @@ final class Plugin {
 		add_action( 'admin_menu', array( $calendar, 'register' ) );
 		add_action( 'admin_enqueue_scripts', array( $assets, 'enqueue' ) );
 		add_action( 'admin_notices', array( $notices, 'render' ) );
+	}
+
+	/**
+	 * Activation hook: installs the default rhythm.
+	 *
+	 * @return void
+	 */
+	public static function activate(): void {
+		Rhythm::install_defaults();
 	}
 }

@@ -34,3 +34,5 @@ spl_autoload_register(
 require_once __DIR__ . '/src/constants.php';
 
 add_action( 'plugins_loaded', array( \Masthead\Plugin::class, 'boot' ) );
+
+register_activation_hook( __FILE__, array( \Masthead\Plugin::class, 'activate' ) );

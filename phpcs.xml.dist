@@ -22,6 +22,9 @@
 	<rule ref="WordPressVIPMinimum"/>
 	<rule ref="PHPCompatibilityWP"/>
 
+	<rule ref="Squiz.Commenting.LongConditionClosingComment">
+		<severity>0</severity>
+	</rule>
 	<rule ref="WordPress.Files.FileName">
 		<severity>0</severity>
 	</rule>
