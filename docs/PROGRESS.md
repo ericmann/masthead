@@ -80,7 +80,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P5-07 masthead/draft-outline ability and the Day plan outline
 - [x] P5-08 masthead/draft-share-copy ability and the Share panel's AI button
 - [x] P5-09 SeriesPlanner and masthead/propose-series
-- [ ] P5-10 masthead/accept-series
+- [x] P5-10 masthead/accept-series
 - [ ] P5-11 Ask the Desk
 - [ ] P5-12 Settings: Desk and AI fields, and wp masthead ai:status
 - [ ] P5-13 Tune the AI assumptions
@@ -394,3 +394,7 @@ Desk\ShareCopy(AiClient)::draft(post_id) -> message|WP_Error (masthead_not_found
 ### P5-09 — 7834a47
 
 Desk\SeriesPlanner(AiClient, ?Clock)::propose(prompt, ?start) and Abilities\ProposeSeries masthead/propose-series (input {prompt, start?}; output {name, category, cadence{every_weeks,weekday,time}, lane{slug,label,categories}, parts[{date,title,outline}]}; readonly annotation, idempotent false; edit_posts + prompt_ai). Dates are computed by Masthead: first date = first day in [start, start+6] whose lane explicitly lists the category else start; later parts via Cadence::schedule. Strong tier; allowed categories = every category slug; empty prompt (masthead_invalid_input) and past/invalid start (masthead_invalid_date) refused with 400 before any AI call; empty parts/invalid reply -> masthead_ai_invalid. Verified: security series from 2027-01-01 -> Thursdays 2027-01-07..28. Tests: unit 288, integration ProposeSeries 5. Lesson: integration tests with the real clock must use far-future dates.
+
+### P5-10 — d79e414
+
+SeriesPlanner::accept(name, parts, ?cadence, ?category) + Abilities\AcceptSeries masthead/accept-series (input {name, parts[{date,title,outline?}], cadence?, category?}; output {term_id, post_ids}; readonly=false destructive=false idempotent=false; edit_posts, no prompt_ai). SeriesPlanner ctor is now (AiClient, Clock, Slots, SeriesSource); Plugin builds one $planner for ProposeSeries and AcceptSeries. Validates everything first (name, 1..ai.series_max_parts parts, real non-past dates, titles, category exists, cadence via Cadence::sanitize, name not taken -> masthead_series_exists 409); category defaults to the first part's lane category else masthead_invalid_input; then wp_insert_term, masthead_cadence + total-parts term meta, Slots::create per part with series {term_id, part n}; any failure deletes the created drafts (Slots::delete) and the term. Tests: unit 293, integration full suite 126 green (AcceptSeries 5). Interpretation: part time = cadence.time when cadence given, else lane time; cadence optional.
