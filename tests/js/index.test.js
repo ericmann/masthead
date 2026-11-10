@@ -1,5 +1,17 @@
 import { act } from '@testing-library/react';
 
+jest.mock( '../../client/data/usePlan', () => ( {
+	usePlan: () => ( {
+		days: [],
+		unscheduled: [],
+		truncated: false,
+		isLoading: false,
+		error: null,
+	} ),
+} ) );
+
+window.mastheadBoot = { today: '2026-11-09', weekStartsOn: 0, rhythm: [] };
+
 jest.mock( '@wordpress/dom-ready', () => ( {
 	__esModule: true,
 	default: () => {},

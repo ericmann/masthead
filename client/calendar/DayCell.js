@@ -30,7 +30,13 @@ export default function DayCell( {
 		( post ) =>
 			! post.primary_category || ! hidden.has( post.primary_category )
 	);
-	const label = dayLabel( day.date );
+	const label = isToday
+		? sprintf(
+				/* translators: %s: weekday, month and day. */
+				__( '%s, today', 'masthead' ),
+				dayLabel( day.date )
+			)
+		: dayLabel( day.date );
 	const ariaLabel = day.open
 		? sprintf(
 				/* translators: 1: weekday, month and day; 2: lane label. */
@@ -71,12 +77,12 @@ export default function DayCell( {
 				<span className="masthead-day__number">
 					{ Number( day.date.slice( -2 ) ) }
 				</span>
-				{ isToday ? (
-					<span className="masthead-day__today">
-						{ __( 'TODAY', 'masthead' ) }
-					</span>
-				) : null }
 			</button>
+			{ isToday ? (
+				<span className="masthead-day__today" aria-hidden="true">
+					{ __( 'TODAY', 'masthead' ) }
+				</span>
+			) : null }
 			{ posts.map( ( post ) => (
 				<PostChip
 					key={ post.id }

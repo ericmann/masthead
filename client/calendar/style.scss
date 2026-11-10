@@ -39,9 +39,13 @@
 	}
 
 	&__today {
+		position: absolute;
+		top: 8px;
+		right: 8px;
 		color: #135e96;
 		font-size: 11px;
 		letter-spacing: 0.04em;
+		pointer-events: none;
 	}
 }
 
@@ -86,4 +90,78 @@
 	border-radius: 4px;
 	color: #50575e;
 	font-size: 12px;
+}
+
+.masthead-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	margin: 8px 0 12px;
+
+	&__nav,
+	&__views {
+		display: flex;
+		gap: 4px;
+	}
+
+	&__title {
+		flex: 1;
+		margin: 0;
+		font-size: 18px;
+	}
+
+	.button[aria-pressed="true"] {
+		border-color: #2271b1;
+		background: #f0f6fc;
+		color: #135e96;
+	}
+}
+
+.masthead-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 320px;
+	gap: 16px;
+}
+
+.masthead-rail:empty {
+	display: none;
+}
+
+.masthead-grid {
+
+	&__head,
+	&__week {
+		display: grid;
+		grid-template-columns: repeat(7, minmax(0, 1fr));
+	}
+
+	&__weekday {
+		padding: 6px 4px;
+		color: #50575e;
+		font-size: 12px;
+		font-weight: 600;
+	}
+}
+
+@media (max-width: 782px) {
+
+	.masthead-layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.masthead-grid {
+
+		&__head {
+			display: none;
+		}
+
+		&__week {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+	.masthead-day {
+		min-height: 0;
+	}
 }
