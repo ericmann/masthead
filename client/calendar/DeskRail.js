@@ -2,6 +2,7 @@ import { __, sprintf } from '@wordpress/i18n';
 
 import { getBoot } from '../data/boot';
 import { shortDayLabel, weekRange, weekdayMonthDayLabel } from '../data/dates';
+import AskDesk from './AskDesk';
 import SuggestionCard from './SuggestionCard';
 
 const DAYS_IN_WEEK = 7;
@@ -19,6 +20,7 @@ const DAYS_IN_WEEK = 7;
  * @param {Function}    props.onShare        Called with a suggestion.
  * @param {Function}    props.onDismiss      Called with a suggestion.
  * @param {Function}    props.onPlan         Called with a suggestion ("Plan this").
+ * @param {Function}    props.onAskCreated   Called after Ask the Desk creates a series.
  * @param {Function}    props.onSuggestIdeas Called with the selected date to ask for AI ideas.
  * @return {Element} The rail content.
  */
@@ -33,8 +35,10 @@ export default function DeskRail( {
 	onShare,
 	onDismiss,
 	onSuggestIdeas,
+	onAskCreated,
 } ) {
 	const boot = getBoot();
+	const canAsk = Boolean( boot.ai?.supported && boot.caps?.promptAi );
 	const canSuggest = Boolean(
 		onSuggestIdeas && boot.ai?.supported && boot.caps?.promptAi
 	);
@@ -174,6 +178,21 @@ export default function DeskRail( {
 			) : null }
 			{ ideasButton }
 			{ body }
+			{ canAsk ? (
+				<AskDesk onCreated={ onAskCreated } />
+			) : (
+				<p className="masthead-ask__hint">
+					{ __( 'Ask the Desk needs an AI provider', 'masthead' ) }
+					{ boot.urls?.connectors ? (
+						<>
+							{ ' ' }
+							<a href={ boot.urls.connectors }>
+								{ __( 'Settings › Connectors', 'masthead' ) }
+							</a>
+						</>
+					) : null }
+				</p>
+			) }
 		</section>
 	);
 }
