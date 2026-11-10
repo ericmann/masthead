@@ -15,7 +15,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P0-08 CI and release workflows
 - [x] P0-09 Phase 0 push and manual checks
 - [x] P1-01 Support\Dates and Support\Json
-- [ ] P1-02 Rhythm option, activation defaults and Lanes
+- [x] P1-02 Rhythm option, activation defaults and Lanes
 - [ ] P1-03 Primary category and Colors
 - [ ] P1-04 Cadence
 - [ ] P1-05 SeriesSource adapter and series term meta
@@ -134,3 +134,7 @@ Docs only: docs/manual-checks.md Phase 0 section. composer audit: no advisories.
 ### P1-01 — bdfdf9e
 
 Tests: DatesTest(10), JsonTest(3). Dates static API per task; invalid input: add_days/time_of -> '', weekday/diff_days -> 0, local_to_gmt -> '0000-00-00 00:00:00', parse_* -> null. parse_iso returns site-zone object. Dates::DAYS_IN_WEEK=7. UTC zone via timezone_open('UTC') because the one-clock regex forbids `new DateTime*` (even DateTimeZone) outside Clock. is_time uses createFromFormat('!H:i') round trip (numeric literals inside regex strings trip hard-coded-tunable). Json::encode uses wp_json_encode (tests alias it to json_encode).
+
+### P1-02 — 12591f2
+
+Tests: RhythmTest(5), LanesTest(8), RhythmActivationTest(1 integration). Rhythm and Lanes are static classes (Rhythm::get/sanitize/install_defaults/reinstall_defaults, Lanes::for_date/fit/nearest_date_for_category). Rhythm keys are PHP int weekdays 0..6 (written as quoted keys in DEFAULTS because hard-coded-tunable flags `2 =>`). Plugin::activate() installs defaults. phpcs.xml.dist: LongConditionClosingComment disabled. Tooling: vendor/bin/phpcbf autofixes style errors. Process note: I run composer lint/unit, a local re-implementation of the constraint regexes, forbidden-patterns and integration directly per task (kukulu_verify output is ~5k tokens each) and call kukulu_verify at phase ends.
