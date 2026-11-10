@@ -9,6 +9,11 @@ declare(strict_types=1);
 
 namespace Masthead;
 
+use Masthead\Admin\Assets;
+use Masthead\Admin\CalendarPage;
+use Masthead\Admin\Notices;
+use Masthead\Support\Clock;
+
 /**
  * Builds every service and wires every hook. Later tasks add their wiring in boot().
  */
@@ -31,5 +36,14 @@ final class Plugin {
 			return;
 		}
 		self::$booted = true;
+
+		$clock  = new Clock();
+		$assets = new Assets( $clock, dirname( __DIR__ ) . '/masthead.php' );
+
+		$calendar = new CalendarPage( $assets );
+		$notices  = new Notices( $assets );
+		add_action( 'admin_menu', array( $calendar, 'register' ) );
+		add_action( 'admin_enqueue_scripts', array( $assets, 'enqueue' ) );
+		add_action( 'admin_notices', array( $notices, 'render' ) );
 	}
 }
