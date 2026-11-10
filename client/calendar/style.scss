@@ -553,14 +553,27 @@
 }
 
 .masthead-share {
-	margin-bottom: 12px;
-	padding: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px 16px;
 	border: 1px solid #dcdcde;
+	border-radius: 4px;
 	background: #fff;
+	overflow-wrap: anywhere;
 
 	h2 {
-		margin: 0 0 4px;
+		margin: 0;
 		font-size: 14px;
+	}
+
+	p {
+		margin: 0;
+	}
+
+	textarea,
+	input[type="datetime-local"] {
+		max-width: 100%;
 	}
 
 	textarea {
@@ -568,7 +581,7 @@
 	}
 
 	fieldset {
-		margin: 8px 0;
+		margin: 0;
 		padding: 0;
 		border: 0;
 	}
@@ -747,30 +760,68 @@
 }
 
 .masthead-swap {
-	margin-bottom: 12px;
-	padding: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px 16px;
 	border: 1px solid #dcdcde;
+	border-radius: 4px;
 	background: #fff;
+	overflow-wrap: anywhere;
 
 	h2 {
-		margin: 0 0 8px;
+		margin: 0;
 		font-size: 14px;
+		line-height: 1.4;
 	}
 
 	h3 {
-		margin: 8px 0 2px;
-		font-size: 13px;
+		margin: 0;
+		color: #50575e;
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	p {
+		margin: 0;
+	}
+
+	&__finding {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		padding-top: 10px;
+		border-top: 1px solid #f0f0f1;
+	}
+
+	&__choice {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 2px;
+	}
+
+	// Option labels can list several dates; they wrap inside the rail.
+	// Four classes outrank core's .wp-core-ui .button.button-compact line-height.
+	&__option.button.button-compact {
+		max-width: 100%;
+		height: auto;
+		padding: 5px 12px;
+		line-height: 1.4;
+		text-align: left;
+		white-space: normal;
 	}
 
 	&__numbers {
-		margin: 4px 0;
+		margin: 0;
 		padding: 0;
 		font-size: 12px;
 		list-style: none;
 	}
 
 	&__count {
-		margin-left: 6px;
 		color: #50575e;
 		font-size: 12px;
 	}
@@ -827,13 +878,37 @@
 		font-size: 11px;
 	}
 
-	&__proposal input[type="text"] {
-		max-width: 100%;
+	&__proposal {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+
+		p {
+			margin: 0;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 2px;
+			font-weight: 600;
+		}
+
+		input[type="text"] {
+			width: 100%;
+		}
 	}
 
 	&__parts {
-		margin: 8px 0;
+		margin: 0;
 		padding-left: 20px;
+
+		> li {
+			margin-bottom: 8px;
+		}
+
+		input[type="text"] {
+			margin-top: 4px;
+		}
 
 		ul {
 			margin: 2px 0 8px;

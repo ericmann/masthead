@@ -121,10 +121,13 @@ export default function SwapPanel( { post, findings, onApplied, onClose } ) {
 							</ul>
 						) : null }
 						{ finding.options.map( ( option ) => (
-							<p key={ option.label }>
+							<p
+								key={ option.label }
+								className="masthead-swap__choice"
+							>
 								<button
 									type="button"
-									className="button"
+									className="button button-compact masthead-swap__option"
 									disabled={ busy }
 									onClick={ () => apply( option ) }
 								>
