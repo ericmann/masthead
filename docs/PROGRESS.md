@@ -44,7 +44,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P2-11 Settings: SeriesCadence, Exposure and AI provider status
 - [x] P2-12 Phase 2 push and manual checks
 - [x] P3-01 Spike — Jetpack Stats methods, payloads and probe design
-- [ ] P3-02 Stats core: StatsSource, NullStats, Payloads, FixtureStats, Cache, Factory
+- [x] P3-02 Stats core: StatsSource, NullStats, Payloads, FixtureStats, Cache, Factory
 - [ ] P3-03 Spike — Jetpack Social routes, payloads and plan gating
 - [ ] P3-04 JetpackStats and wp masthead stats:probe
 - [ ] P3-05 masthead/stats-summary ability and the e2e stats switch
@@ -250,3 +250,7 @@ Docs only: Phase 2 section appended to docs/manual-checks.md. kukulu_verify (ful
 ### P3-01 — a53cc16
 
 Spike docs/spikes/P3-01-jetpack-stats.md + docs/fixtures/stats-sample.json (synthetic). Decision: categories-from-top-posts. Facts: class Automattic\Jetpack\Stats\WPCOM_Stats (jetpack_vendor/automattic/jetpack-stats/src/class-wpcom-stats.php), no-arg constructor; methods get_visits(args) [unit/quantity/date -> views_by_weekday], get_top_posts(args) [period/date/num/summarize -> top_posts and views_by_category], get_post_views(post_id,args) [-> post_views], get_tags(args) (per tag/category name; not used); all return array|WP_Error (codes missing_token, no_possible_tokens, site_not_connected); Jetpack caches 5 min in transient jetpack_restapi_stats_cache_<md5>; availability = class exists + Jetpack::is_connection_ready() + Jetpack::is_module_active('stats'). Payload shapes UNCONFIRMED (not connected): JetpackStats must validate every field and return unavailable on mismatch. Fixture keys: payloads.get_visits / get_top_posts / get_post_views / get_tags plus fetched_at 2026-11-09T13:00:00-08:00; posts 12155, 10193, 10192, 10191. stats:probe scrubbing rule documented (numbers->0, strings->"", keys kept).
+
+### P3-02 — ac61f9c
+
+Tests: NullStatsTest(1), PayloadsTest(5), FixtureStatsTest(2), CacheTest(4), FactoryTest(4). API: Stats\StatsSource (SPEC 6.2 verbatim), NullStats, Payloads (static: by_weekday(raw), top_posts(raw,limit), post_views(raw), by_category_from_top_posts(top_posts, primary_of)), FixtureStats(path, primary_of callable) (ignores $days; post_views only for posts in the top-posts payload), Cache(Clock)->remember(name,args,producer)/fetched_at(name,args) with transients masthead_stats_<md5> for stats.cache_ttl, Factory::make(?env, ?path) -> FixtureStats only when env === 'local' and the path is a readable file, else NullStats (P3-04 adds the Jetpack branch first). Interpretation: by_weekday omits weekdays with no rows; Payloads::by_category (native) not implemented (spike decision categories-from-top-posts). Codebase note: int/int division gives int in PHP - cast to float for averages. The stats-confined regex also trips on the word WPCOM_Stats in docblocks outside JetpackStats.php.
