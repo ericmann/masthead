@@ -17,7 +17,7 @@ use Masthead\Support\Dates;
 /**
  * Categories with no published post inside desk.gap_days.
  */
-final class CategoryGap {
+class CategoryGap {
 
 	/**
 	 * Constructor.

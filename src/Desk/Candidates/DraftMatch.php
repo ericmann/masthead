@@ -15,7 +15,7 @@ use Masthead\Plan\PlanReader;
 /**
  * Unscheduled drafts whose categories intersect the lane's.
  */
-final class DraftMatch {
+class DraftMatch {
 
 	/**
 	 * Constructor.

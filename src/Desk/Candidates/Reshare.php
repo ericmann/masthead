@@ -19,7 +19,7 @@ use Masthead\Support\Dates;
 /**
  * Published posts in the lane, old enough, not shared lately, ranked by views. Nothing without stats or sharing.
  */
-final class Reshare {
+class Reshare {
 
 	/**
 	 * Constructor.

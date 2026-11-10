@@ -18,7 +18,7 @@ use Masthead\Support\Dates;
 /**
  * Suggests the next part of a series when its cadence lands on or near the date.
  */
-final class SeriesNext {
+class SeriesNext {
 
 	/**
 	 * Constructor.

@@ -14,7 +14,7 @@ use Masthead\Support\Clock;
 /**
  * A dismissal is one person's choice, so it lives in user meta: a map of date to keys.
  */
-final class Dismissals {
+class Dismissals {
 
 	/**
 	 * User meta name.
