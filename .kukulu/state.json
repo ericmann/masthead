@@ -7,12 +7,16 @@
   "halted": null,
   "preexistingUntracked": [],
   "policies": {
-    "signing": "auto",
+    "signing": "required",
     "push": true,
     "pr": "draft",
-    "feedback": true
+    "feedback": true,
+    "archive": true,
+    "finalize": "auto",
+    "mergeMethod": "merge",
+    "syncBase": true
   },
-  "signing": null,
+  "signing": "on",
   "rounds": [],
   "timeline": [
     {
@@ -33,5 +37,8 @@
       "round": 0,
       "at": "2026-11-10T00:40:28.918Z"
     }
-  ]
+  ],
+  "cleanroom": {
+    "mode": "general"
+  }
 }
