@@ -65,7 +65,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-10 Day plan
 - [x] P4-11 Tune the Desk assumptions
 - [x] P4-12 Scoring
-- [ ] P4-13 SwapCheck: lane_mismatch and cadence_break with options
+- [x] P4-13 SwapCheck: lane_mismatch and cadence_break with options
 - [ ] P4-14 SwapCheck: collision and better_candidate
 - [ ] P4-15 Nightly cron, masthead/swap-check ability and wp masthead swap-check
 - [ ] P4-16 Swap panel and queue verdicts
@@ -334,3 +334,7 @@ Tuning the Desk assumptions (docs/tuning/P4-11.md); all defaults kept, Config un
 ### P4-12 — b188be5
 
 Tests: ScoringTest(8 incl. property grid). Desk\Scoring (instance, no deps): terms( post{categories,primary_category}, date, lane, lane_exception, ?views_by_category, ?views_by_weekday ) -> {lane, category|null, weekday|null}; score( terms ) = sum(w*t)/sum(w) over non-null terms using Config swap.weights (0.0 when all weights present are zero, clamped to 0..1). Absent primary category / weekday key counts as zero views; null/zero-max maps drop the term.
+
+### P4-13 — 7f80f2b
+
+Tests: SwapCheckTest(8), ReasonsTest(+2), integration SwapCheckMantleTest(5) - the SPEC Mantle acceptance passes on the fixture with NullStats: parts 12156/12157/12158 each lane_mismatch; series option exactly "Move to Saturdays: 2026-12-12, 2027-01-09, 2027-02-06" (input = own post, also = other parts' reschedule calls); part 2 cadence_break expecting 2026-12-07 (option "Move to 2026-12-07"); lane exception clears the three mismatches and leaves cadence_break:12156; 12177 and 10194 no findings; order [12156 lane, 12156 cadence, 12157, 12158]. API: Desk\SwapCheck( PlanReader, SeriesSource, Scoring, Reasons, StatsSource, Clock ) [Clock added] ->run(?from, ?to) -> findings {key,post_id,date,type,severity,why,options[{label,ability,input,also?}]}; default range tomorrow..today+swap.lookahead_days; series parts later than the range are added when a part of that series is inside it. Option for the exception has ability null and input.rest {path /wp/v2/<rest base>/<term>, method POST, data.meta.masthead_lane_exception true}. Reasons::for_lane_mismatch(title,date,lane) / for_cadence_break(part,date,every_weeks,expected). Not wired into Plugin yet (P4-15). SwapCheck::TYPES constant lists type order. Bug caught: strlen('Y-m-d') is 5, not 10 - never use it as a length.
