@@ -8,7 +8,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P0-01 PHP toolchain, plugin bootstrap, Config, Clock and Plugin
 - [x] P0-02 JS toolchain and client shell
 - [x] P0-03 Structural checks script and module boundaries test
-- [ ] P0-04 Posts › Calendar page and asset loading
+- [x] P0-04 Posts › Calendar page and asset loading
 - [ ] P0-05 wp-env and the integration test harness
 - [ ] P0-06 Playwright and axe smoke harness, e2e mu-plugin loader
 - [ ] P0-07 Release packer and LICENSE
@@ -106,3 +106,7 @@ Tests: index.test.js (2), App.test.js (1). index.js exports ROUTES and mountAll(
 ### P0-03 — 61c8c0d
 
 Tests: BoundariesTest (4); script self-test builds good/bad trees per check (6 checks). BoundariesTest::scan( $path, $source ) is public static, returns violation strings; comments and the namespace line are stripped before matching. Top-level Masthead\Config allowed for all modules but Config; SLUG/VERSION allowed everywhere. Note: kukulu_verify output is very long because composer prints PHP 8.4 deprecation notices from its own phar; harmless.
+
+### P0-04 — 65ef08d
+
+Tests: CalendarPageTest(2), AssetsTest(4), NoticesTest(1). Assets(Clock, plugin_file) with add_page_hook/is_page_hook/add_boot_data/boot_data/build_exists/enqueue; script handle = SLUG; CSS from build/style-index.css else build/index.css. Notices uses get_current_screen()->id against registered hooks. Plugin::boot builds Clock, Assets, CalendarPage, Notices and adds admin_menu/admin_enqueue_scripts/admin_notices. Codebase note: VIP sniffs forbid mkdir/file_put_contents/unlink even in tests; use committed fixtures (tests/unit/fixtures/plugin/build). Brain Monkey Filters\expectApplied needs ->zeroOrMoreTimes() when optional.
