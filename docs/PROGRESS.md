@@ -57,7 +57,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-02 SeriesNext candidates
 - [x] P4-03 CategoryGap candidates
 - [x] P4-04 Reshare candidates
-- [ ] P4-05 Ranker and Dismissals
+- [x] P4-05 Ranker and Dismissals
 - [ ] P4-06 Reasons templates and the Suggester
 - [ ] P4-07 suggest-for-date and dismiss-suggestion abilities, wp masthead suggest
 - [ ] P4-08 Ghost cards and "Fill open days"
@@ -302,3 +302,7 @@ Tests: CategoryGapTest(7). Desk\Candidates\CategoryGap( Clock ): gaps() (all gap
 ### P4-04 — 89df536
 
 Tests: ReshareTest(7). Desk\Candidates\Reshare( StatsSource, ShareSource, Clock ) [Clock added to the spec'd constructor, needed for today]. for_date: [] unless stats->available() and share->available() and top_posts( stats.window_days, desk.candidate_pool ) non-null; keeps publish posts in lane categories (any when lane empty), age > desk.reshare_min_age_days, last share (masthead_last_shared) absent or > desk.reshare_cooldown_days old; score = views / max kept views; key reshare:<id>; data {published}; no view count in the candidate. Candidate order follows the stats top_posts order.
+
+### P4-05 — 58de0ab
+
+Tests: RankerTest(7 incl. permutation property test over 5 candidates), DismissalsTest(3). Desk\Ranker (instance, no deps): rank( Candidate[], dismissed_keys ) -> Candidate[]; order kind (draft, series, reshare, gap, idea) -> score desc -> sort_id asc -> tiebreak strcmp -> key; truncates to desk.max_suggestions. Desk\Dismissals( Clock ): dismiss( user_id, date, key ) idempotent, prunes dates < today on write, for_date( user_id, date ); user meta masthead_dismissed = { date: [keys] }. Test note: in Brain Monkey the FIRST Filters\expectApplied registration for a hook wins, so tests that vary a config value must read it from a property inside one setUp filter.
