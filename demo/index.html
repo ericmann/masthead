@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Masthead: product demo</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      /* Newsreader (Production Type) and IBM Plex (IBM), SIL Open Font License: assets/fonts/OFL-*.txt */
+      @font-face { font-family: Newsreader; font-style: normal; font-weight: 200 800; src: url('assets/fonts/newsreader-latin-opsz-normal.woff2') format('woff2-variations'); }
+      @font-face { font-family: Newsreader; font-style: italic; font-weight: 200 800; src: url('assets/fonts/newsreader-latin-opsz-italic.woff2') format('woff2-variations'); }
+      @font-face { font-family: Plex; font-weight: 400; src: url('assets/fonts/ibm-plex-sans-latin-400-normal.woff2') format('woff2'); }
+      @font-face { font-family: Plex; font-weight: 500; src: url('assets/fonts/ibm-plex-sans-latin-500-normal.woff2') format('woff2'); }
+      @font-face { font-family: Plex; font-weight: 600; src: url('assets/fonts/ibm-plex-sans-latin-600-normal.woff2') format('woff2'); }
+      @font-face { font-family: PlexMono; font-weight: 400; src: url('assets/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2'); }
+      @font-face { font-family: PlexMono; font-weight: 500; src: url('assets/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2'); }
+
+      /* Category colours are Masthead's defaults (SPEC 5.2). */
+      :root {
+        --paper: #f6f3ec;
+        --paper-deep: #ece7dc;
+        --ink: #1b1d1f;
+        --muted: #5b5f64;
+        --wp-blue: #3858e9;
+        --technology: #2f5fd0;
+        --business: #8a5409;
+        --faith: #7a5c2e;
+        --writing: #b8325a;
+        --journal: #1f7a52;
+        --opinion: #6d45c9;
+        --security: #0f6e7a;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--paper); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: Plex, 'Helvetica Neue', Arial, sans-serif; color: var(--ink); }
+      .scene { position: absolute; inset: 0; overflow: hidden; background: var(--paper); }
+
+      /* Footage */
+      .cam { position: absolute; left: 0; top: 0; width: 1920px; transform-origin: 0 0; will-change: transform; }
+      .still { position: absolute; left: 0; top: 0; width: 1920px; opacity: 0; display: block; }
+      .mark { position: absolute; border: solid #3858e9; border-radius: 8px; opacity: 0; background: rgba(56, 88, 233, 0.06); }
+      .mark .label { position: absolute; left: -2px; bottom: calc(100% + 8px); white-space: nowrap; padding: 0.32em 0.7em 0.36em; border-radius: 6px; background: var(--ink); color: #fff; font-weight: 500; letter-spacing: 0.01em; }
+      .mark.below .label { bottom: auto; top: calc(100% + 8px); }
+      .mark.right .label { left: auto; right: -2px; }
+      .line { position: absolute; height: 0; border-top: dashed #b8325a; opacity: 0; }
+      .line .label { position: absolute; left: 47%; top: 0; transform: translateY(-50%); white-space: nowrap; padding: 0.32em 0.7em 0.36em; border-radius: 6px; background: #b8325a; color: #fff; font-weight: 500; }
+      .drag { position: absolute; opacity: 0; border-radius: 6px; box-shadow: 0 14px 34px rgba(27, 29, 31, 0.28); transform-origin: 50% 50%; }
+      .ripple { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; }
+      .ripple i { position: absolute; left: -26px; top: -26px; width: 52px; height: 52px; border-radius: 50%; border: 3px solid #3858e9; background: rgba(56, 88, 233, 0.18); }
+      .cursor { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; z-index: 4; }
+      .cursor .arrow { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+      .cursor svg { display: block; width: 30px; height: 36px; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35)); }
+
+      .kicker { position: absolute; left: 40px; bottom: 40px; z-index: 6; display: flex; align-items: center; gap: 14px; padding: 13px 22px 13px 18px; background: var(--paper); border-radius: 6px; box-shadow: 0 10px 30px rgba(27, 29, 31, 0.18); font-weight: 600; font-size: 24px; letter-spacing: 0.01em; opacity: 0; }
+      .kicker b { width: 6px; height: 28px; border-radius: 3px; background: var(--wp-blue); }
+      .tag { position: absolute; right: 28px; bottom: 26px; z-index: 6; padding: 8px 15px 9px; border-radius: 999px; background: rgba(27, 29, 31, 0.8); color: #fff; font-weight: 500; font-size: 17px; letter-spacing: 0.02em; }
+      .note { position: absolute; left: 40px; bottom: 40px; z-index: 7; max-width: 760px; padding: 18px 26px 19px; border-radius: 8px; background: var(--ink); color: #fff; font-size: 27px; line-height: 1.32; opacity: 0; box-shadow: 0 14px 34px rgba(27, 29, 31, 0.3); }
+      .note small { display: block; margin-bottom: 4px; font-size: 16px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #9fb4ff; }
+      .keys { position: absolute; left: 50%; bottom: 96px; z-index: 6; transform: translateX(-50%); display: flex; gap: 12px; opacity: 0; }
+      .keys span { padding: 12px 22px 13px; border-radius: 10px; background: var(--ink); border: 1px solid #000; box-shadow: 0 5px 0 #000, 0 16px 34px rgba(27, 29, 31, 0.35); font-family: PlexMono, monospace; font-weight: 500; font-size: 30px; color: #fff; }
+
+      /* Cards */
+      .card { position: absolute; inset: 0; background: var(--paper); }
+      .nameplate { position: absolute; left: 280px; right: 280px; }
+      .ears { display: flex; justify-content: space-between; font-weight: 500; font-size: 19px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+      .rule { height: 0; transform-origin: 50% 50%; }
+      .rule.thick { border-top: 5px solid var(--ink); }
+      .rule.thin { border-top: 1.5px solid var(--ink); }
+      .wordmark { font-family: Newsreader, Georgia, serif; font-variation-settings: 'opsz' 72; font-weight: 560; letter-spacing: -0.025em; line-height: 1; text-align: center; }
+      .colors { display: flex; height: 10px; }
+      .colors i { flex: 1; transform-origin: 0 50%; }
+      .tagline { font-family: Newsreader, Georgia, serif; font-style: italic; font-variation-settings: 'opsz' 36; font-weight: 400; text-align: center; color: var(--ink); }
+
+      .honest-head { position: absolute; left: 150px; top: 230px; width: 620px; }
+      .honest-head small { display: block; font-weight: 600; font-size: 20px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--writing); }
+      .honest-head h2 { margin: 18px 0 26px; font-family: Newsreader, Georgia, serif; font-variation-settings: 'opsz' 72; font-weight: 520; font-size: 104px; line-height: 0.98; letter-spacing: -0.02em; }
+      .honest-head p { font-size: 27px; line-height: 1.4; color: var(--muted); }
+      .rules { position: absolute; left: 880px; right: 140px; top: 200px; list-style: none; }
+      .rules li { display: flex; align-items: baseline; gap: 34px; padding: 30px 0 32px; border-top: 1.5px solid #cfc8b8; opacity: 0; }
+      .rules li:last-child { border-bottom: 1.5px solid #cfc8b8; }
+      .rules b { width: 46px; font-family: Newsreader, Georgia, serif; font-variation-settings: 'opsz' 72; font-weight: 600; font-size: 64px; line-height: 1; }
+      .rules span { font-family: Newsreader, Georgia, serif; font-variation-settings: 'opsz' 48; font-size: 56px; line-height: 1.08; letter-spacing: -0.01em; }
+
+      .mcp-head { position: absolute; left: 100px; top: 96px; right: 100px; display: flex; align-items: baseline; justify-content: space-between; }
+      .mcp-head h2 { font-family: Newsreader, Georgia, serif; font-variation-settings: 'opsz' 60; font-weight: 520; font-size: 66px; letter-spacing: -0.015em; }
+      .mcp-head small { font-family: PlexMono, monospace; font-size: 22px; color: var(--muted); }
+      .term { position: absolute; left: 100px; top: 236px; width: 1060px; height: 600px; border-radius: 12px; background: #16181b; box-shadow: 0 26px 60px rgba(27, 29, 31, 0.28); overflow: hidden; opacity: 0; }
+      .term header, .chat header { height: 50px; padding: 0 22px; display: flex; align-items: center; justify-content: space-between; font-weight: 500; font-size: 18px; letter-spacing: 0.06em; }
+      .term header { background: #23262b; color: #aeb4bd; }
+      .term pre { padding: 30px 30px; font-family: PlexMono, monospace; font-size: 18.5px; line-height: 1.6; color: #e8eaed; white-space: pre; }
+      .term pre .cmd { color: #ffffff; }
+      .term pre .ch { opacity: 0; }
+      .term pre .prompt { color: #7fd4a8; }
+      .term pre .out { opacity: 0; }
+      .term .caret { display: inline-block; width: 10px; height: 21px; margin-left: 2px; vertical-align: -4px; background: #e8eaed; }
+      .chat { position: absolute; left: 1196px; top: 236px; width: 624px; height: 600px; border-radius: 12px; background: #fff; box-shadow: 0 26px 60px rgba(27, 29, 31, 0.22); overflow: hidden; opacity: 0; }
+      .chat header { background: var(--paper-deep); color: var(--ink); }
+      .chat header em { font-style: normal; font-weight: 400; color: var(--muted); letter-spacing: 0.02em; }
+      .chat .body { padding: 26px 28px; display: flex; flex-direction: column; gap: 18px; }
+      .bubble { max-width: 520px; padding: 15px 20px 16px; border-radius: 14px; font-size: 23px; line-height: 1.38; opacity: 0; }
+      .bubble.me { align-self: flex-end; background: var(--ink); color: #fff; border-bottom-right-radius: 4px; }
+      .bubble.ai { align-self: flex-start; background: #f1efe9; color: var(--ink); border-bottom-left-radius: 4px; max-width: 600px; }
+      .bubble.ai ul { list-style: none; margin: 8px 0 10px; }
+      .bubble.ai li { position: relative; padding-left: 20px; margin: 5px 0; font-size: 21px; }
+      .bubble.ai li i { position: absolute; left: 0; top: 0.42em; width: 9px; height: 9px; border-radius: 50%; }
+      .bubble.ai p.open { font-size: 20px; color: var(--muted); }
+      .bubble.ai .hl { position: relative; white-space: nowrap; isolation: isolate; }
+      .bubble.ai .hl i { position: absolute; left: -5px; right: -5px; top: -2px; bottom: -2px; z-index: -1; border-radius: 5px; background: #ffe7a3; opacity: 0; }
+      .tool { align-self: flex-start; padding: 9px 14px; border-radius: 8px; border: 1px dashed #b9b3a5; font-family: PlexMono, monospace; font-size: 17px; color: var(--muted); opacity: 0; }
+      .tool b { color: var(--ink); font-weight: 500; }
+
+      .end-links { text-align: center; }
+      .end-links p { font-size: 32px; font-weight: 500; color: var(--ink); }
+      .end-links code { display: inline-block; margin-top: 20px; font-family: PlexMono, monospace; font-size: 34px; color: var(--ink); padding: 10px 22px; border: 1.5px solid var(--ink); border-radius: 8px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="1920" data-height="1080" data-duration="184.06">
+
+      <!-- 1. Title: a nameplate, no music yet -->
+      <div id="scene-open" class="scene clip" data-scene="open" data-start="0" data-duration="6.81" data-track-index="0">
+        <div class="card">
+          <div class="nameplate" style="top: 250px">
+            <div id="open-ears" class="ears"><span>Est. 2026</span><span>An editorial calendar for WordPress</span><span>Version 1.0</span></div>
+            <div id="open-r1" class="rule thick" style="margin-top: 22px"></div>
+            <div id="open-r2" class="rule thin" style="margin-top: 5px"></div>
+            <h1 id="open-word" class="wordmark" style="margin: 34px 0 30px; font-size: 250px">Masthead</h1>
+            <div id="open-r3" class="rule thin"></div>
+            <div id="open-colors" class="colors" style="margin-top: 5px">
+              <i style="background: var(--technology)"></i><i style="background: var(--business)"></i><i style="background: var(--faith)"></i><i style="background: var(--journal)"></i><i style="background: var(--writing)"></i><i style="background: var(--security)"></i><i style="background: var(--opinion)"></i>
+            </div>
+            <p id="open-tag" class="tagline" style="margin-top: 46px; font-size: 54px">The editorial calendar that knows your rhythm.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2–9. Footage, generated by build.mjs from lib/plan.mjs and assets/shots/manifest.json -->
+      <!-- footage:start -->
+      <div id="scene-problem" class="scene clip" data-scene="problem" data-start="6.81" data-duration="16.9" data-track-index="0">
+        <div id="cam-problem" class="cam">
+          <img id="st-problem-posts" class="still" src="assets/shots/posts.png" alt="" width="1920" height="2808" />
+          <div id="mk-problem-1" class="line" style="left: 219.6px; top: 850.6px; width: 1675.2px; border-top-width: 2.21px"><span class="label" style="font-size: 15.4px">Tuesday, Nov 10: nothing planned</span></div>
+          <div id="mk-problem-2" class="mark" style="left: 212.4px; top: 315.4px; width: 1689.6px; height: 80.4px; border-width: 2.21px; transform-origin: 50% 50%"><span class="label" style="font-size: 15.4px">Part 2 drifted: Nov 27, not Nov 21</span></div>
+          <div id="mk-problem-3" class="mark" style="left: 212.4px; top: 2559.4px; width: 1689.6px; height: 80.4px; border-width: 3px; transform-origin: 50% 50%"><span class="label" style="font-size: 21px">A good post from June, out of sight</span></div>
+          <div id="rp-problem" class="ripple"><i></i></div>
+          <div id="cu-problem" class="cursor"><div class="arrow"><svg viewBox="0 0 30 36" aria-hidden="true"><path d="M2 2 L2 29 L9.2 22.4 L14 33.2 L19 31 L14.3 20.4 L24 20.4 Z" fill="#fff" stroke="#1b1d1f" stroke-width="2.2" stroke-linejoin="round"/></svg></div></div>
+        </div>
+        <div id="kk-problem" class="kicker"><b></b>Posts › All Posts</div>
+        <div class="tag">Demo site · sample data</div>
+      </div>
+
+      <div id="scene-calendar" class="scene clip" data-scene="calendar" data-start="23.71" data-duration="14.57" data-track-index="0">
+        <div id="cam-calendar" class="cam">
+          <img id="st-calendar-cal-month" class="still" src="assets/shots/cal-month.png" alt="" width="1920" height="1080" />
+          <img id="st-calendar-cal-week" class="still" src="assets/frames/cal-week.png" alt="" width="1920" height="1080" />
+          <img id="st-calendar-cal-list" class="still" src="assets/shots/cal-list.png" alt="" width="1920" height="1080" />
+          <div id="mk-calendar-1" class="mark" style="left: -7.2px; top: 358.2px; width: 206.4px; height: 48.2px; border-width: 3px; transform-origin: 50% 50%"></div>
+          <div id="mk-calendar-2" class="mark" style="left: 220.8px; top: 451.3px; width: 174.7px; height: 77.5px; border-width: 3px; transform-origin: 50% 50%"></div>
+          <div id="mk-calendar-3" class="mark" style="left: 934px; top: 451.3px; width: 174.7px; height: 77.5px; border-width: 3px; transform-origin: 50% 50%"></div>
+          <div id="mk-calendar-4" class="mark" style="left: 1290.5px; top: 451.3px; width: 175.9px; height: 77.5px; border-width: 3px; transform-origin: 50% 50%"></div>
+          <div id="mk-calendar-5" class="mark below" style="left: 804.8px; top: 129.5px; width: 913.1px; height: 43.2px; border-width: 2.33px; transform-origin: 50% 50%"></div>
+          <div id="rp-calendar" class="ripple"><i></i></div>
+          <div id="cu-calendar" class="cursor"><div class="arrow"><svg viewBox="0 0 30 36" aria-hidden="true"><path d="M2 2 L2 29 L9.2 22.4 L14 33.2 L19 31 L14.3 20.4 L24 20.4 Z" fill="#fff" stroke="#1b1d1f" stroke-width="2.2" stroke-linejoin="round"/></svg></div></div>
+        </div>
+        <div id="kk-calendar" class="kicker"><b></b>Posts › Calendar</div>
+        <div class="tag">Demo site · sample data</div>
+      </div>
+
+      <div id="scene-rhythm" class="scene clip" data-scene="rhythm" data-start="38.28" data-duration="17.73" data-track-index="0">
+        <div id="cam-rhythm" class="cam">
+          <img id="st-rhythm-rhythm" class="still" src="assets/shots/rhythm.png" alt="" width="1920" height="1080" />
+          <img id="st-rhythm-rhythm-picker" class="still" src="assets/shots/rhythm-picker.png" alt="" width="1920" height="1080" />
+          <img id="st-rhythm-cal-month" class="still" src="assets/shots/cal-month.png" alt="" width="1920" height="1080" />
+          <div id="mk-rhythm-1" class="mark" style="left: 364.8px; top: 496.4px; width: 278.4px; height: 52.8px; border-width: 2.07px; transform-origin: 50% 50%"></div>
+          <div id="mk-rhythm-2" class="mark" style="left: 966.2px; top: 496.4px; width: 170.4px; height: 52.8px; border-width: 2.19px; transform-origin: 50% 50%"></div>
+          <div id="mk-rhythm-3" class="mark" style="left: 390.7px; top: 196.7px; width: 192.7px; height: 55.4px; border-width: 2.07px; transform-origin: 50% 50%"></div>
+          <div id="mk-rhythm-4" class="mark" style="left: 568.9px; top: 196.7px; width: 192.7px; height: 55.4px; border-width: 2.07px; transform-origin: 50% 50%"></div>
+          <div id="mk-rhythm-5" class="mark" style="left: 925.6px; top: 196.7px; width: 192.7px; height: 55.4px; border-width: 2.07px; transform-origin: 50% 50%"></div>
+          <div id="mk-rhythm-6" class="mark" style="left: 1282.1px; top: 196.7px; width: 192.7px; height: 55.4px; border-width: 2.07px; transform-origin: 50% 50%"></div>
+          <div id="mk-rhythm-7" class="mark" style="left: 755.6px; top: 799.3px; width: 174.7px; height: 42.5px; border-width: 1.58px; transform-origin: 50% 50%"></div>
+          <div id="mk-rhythm-8" class="mark" style="left: 934px; top: 799.3px; width: 174.7px; height: 42.5px; border-width: 1.58px; transform-origin: 50% 50%"></div>
+          <div id="mk-rhythm-9" class="mark" style="left: 1290.5px; top: 799.3px; width: 175.9px; height: 42.5px; border-width: 1.58px; transform-origin: 50% 50%"></div>
+          <div id="rp-rhythm" class="ripple"><i></i></div>
+          <div id="cu-rhythm" class="cursor"><div class="arrow"><svg viewBox="0 0 30 36" aria-hidden="true"><path d="M2 2 L2 29 L9.2 22.4 L14 33.2 L19 31 L14.3 20.4 L24 20.4 Z" fill="#fff" stroke="#1b1d1f" stroke-width="2.2" stroke-linejoin="round"/></svg></div></div>
+        </div>
+        <div id="kk-rhythm" class="kicker"><b></b>Settings › Calendar</div>
+        <div class="tag">Demo site · sample data</div>
+      </div>
+
+      <div id="scene-desk" class="scene clip" data-scene="desk" data-start="56.01" data-duration="21.18" data-track-index="0">
+        <div id="cam-desk" class="cam">
+          <img id="st-desk-cal-month" class="still" src="assets/shots/cal-month.png" alt="" width="1920" height="1080" />
+          <img id="st-desk-desk" class="still" src="assets/shots/desk.png" alt="" width="1920" height="1080" />
+          <div id="mk-desk-1" class="mark" style="left: 1501.2px; top: 456px; width: 381.6px; height: 184px; border-width: 2.13px; transform-origin: 50% 50%"></div>
+          <div id="mk-desk-2" class="mark" style="left: 1501.2px; top: 635.2px; width: 381.6px; height: 184px; border-width: 2.13px; transform-origin: 50% 50%"></div>
+          <div id="mk-desk-3" class="mark" style="left: 1501.2px; top: 814.4px; width: 381.6px; height: 184px; border-width: 2px; transform-origin: 50% 50%"></div>
+          <div id="mk-desk-5" class="mark" style="left: 1516.8px; top: 522.6px; width: 350.4px; height: 56.2px; border-width: 1.36px; transform-origin: 50% 50%"></div>
+          <div id="rp-desk" class="ripple"><i></i></div>
+          <div id="cu-desk" class="cursor"><div class="arrow"><svg viewBox="0 0 30 36" aria-hidden="true"><path d="M2 2 L2 29 L9.2 22.4 L14 33.2 L19 31 L14.3 20.4 L24 20.4 Z" fill="#fff" stroke="#1b1d1f" stroke-width="2.2" stroke-linejoin="round"/></svg></div></div>
+        </div>
+        <div id="kk-desk" class="kicker"><b></b>The Desk</div>
+        <div id="ov-desk-4" class="note"><small>About this demo</small>Re-share suggestions also need Jetpack Social, which this demo site does not have.</div>
+        <div class="tag">Demo site · sample data</div>
+      </div>
+
+      <div id="scene-dayplan" class="scene clip" data-scene="dayplan" data-start="77.19" data-duration="16.24" data-track-index="0">
+        <div id="cam-dayplan" class="cam">
+          <img id="st-dayplan-desk" class="still" src="assets/shots/desk.png" alt="" width="1920" height="1080" />
+          <img id="st-dayplan-desk-ideas" class="still" src="assets/shots/desk-ideas.png" alt="" width="1920" height="2118" />
+          <img id="st-dayplan-plan" class="still" src="assets/shots/plan.png" alt="" width="1920" height="1080" />
+          <img id="st-dayplan-plan-type-1" class="still" src="assets/shots/plan-type-1.png" alt="" width="1920" height="1080" />
+          <img id="st-dayplan-plan-type-2" class="still" src="assets/shots/plan-type-2.png" alt="" width="1920" height="1080" />
+          <img id="st-dayplan-plan-type-3" class="still" src="assets/shots/plan-type-3.png" alt="" width="1920" height="1080" />
+          <img id="st-dayplan-plan-type-4" class="still" src="assets/shots/plan-type-4.png" alt="" width="1920" height="1080" />
+          <img id="st-dayplan-plan-outline" class="still" src="assets/shots/plan-outline.png" alt="" width="1920" height="1787" />
+          <img id="st-dayplan-plan-created" class="still" src="assets/shots/plan-created.png" alt="" width="1920" height="1080" />
+          <div id="mk-dayplan-1" class="mark" style="left: 1501.2px; top: 393.4px; width: 381.6px; height: 395.6px; border-width: 1.88px; transform-origin: 50% 50%"></div>
+          <div id="mk-dayplan-2" class="mark" style="left: 934px; top: 625.3px; width: 174.7px; height: 77.5px; border-width: 1.67px; transform-origin: 50% 50%"></div>
+          <div id="rp-dayplan" class="ripple"><i></i></div>
+          <div id="cu-dayplan" class="cursor"><div class="arrow"><svg viewBox="0 0 30 36" aria-hidden="true"><path d="M2 2 L2 29 L9.2 22.4 L14 33.2 L19 31 L14.3 20.4 L24 20.4 Z" fill="#fff" stroke="#1b1d1f" stroke-width="2.2" stroke-linejoin="round"/></svg></div></div>
+        </div>
+        <div id="kk-dayplan" class="kicker"><b></b>Day plan</div>
+        <div class="tag">Demo site · sample data</div>
+      </div>
+
+      <div id="scene-reschedule" class="scene clip" data-scene="reschedule" data-start="93.43" data-duration="9.5" data-track-index="0">
+        <div id="cam-reschedule" class="cam">
+          <img id="st-reschedule-move" class="still" src="assets/shots/move.png" alt="" width="1920" height="1080" />
+          <img id="st-reschedule-move-over" class="still" src="assets/shots/move-over.png" alt="" width="1920" height="1080" />
+          <img id="st-reschedule-move-dropped" class="still" src="assets/shots/move-dropped.png" alt="" width="1920" height="1080" />
+          <img id="st-reschedule-kbd-open" class="still" src="assets/shots/kbd-open.png" alt="" width="1920" height="1080" />
+          <img id="st-reschedule-kbd-date" class="still" src="assets/shots/kbd-date.png" alt="" width="1920" height="1080" />
+          <img id="st-reschedule-kbd-moved" class="still" src="assets/shots/kbd-moved.png" alt="" width="1920" height="1080" />
+          <img id="dg-reschedule" class="drag" src="assets/shots/drag-chip.png" alt="" style="left: 406.3px; top: 632.5px; width: 160.3px; height: 63.1px" />
+          <div id="mk-reschedule-4" class="mark" style="left: 399.1px; top: 799.3px; width: 174.7px; height: 77.5px; border-width: 1.88px; transform-origin: 50% 50%"><span class="label" style="font-size: 13.1px">Still scheduled</span></div>
+          <div id="mk-reschedule-5" class="mark" style="left: 1290.5px; top: 799.3px; width: 175.9px; height: 77.5px; border-width: 1.88px; transform-origin: 50% 50%"><span class="label" style="font-size: 13.1px">Still a draft</span></div>
+          <div id="rp-reschedule" class="ripple"><i></i></div>
+          <div id="cu-reschedule" class="cursor"><div class="arrow"><svg viewBox="0 0 30 36" aria-hidden="true"><path d="M2 2 L2 29 L9.2 22.4 L14 33.2 L19 31 L14.3 20.4 L24 20.4 Z" fill="#fff" stroke="#1b1d1f" stroke-width="2.2" stroke-linejoin="round"/></svg></div></div>
+        </div>
+        <div id="kk-reschedule" class="kicker"><b></b>Reschedule</div>
+        <div id="ov-reschedule-1" class="keys"><span>Tab ⇥</span><span>Enter ⏎</span></div>
+        <div id="ov-reschedule-2" class="keys"><span>11 / 28 / 2026</span></div>
+        <div id="ov-reschedule-3" class="keys"><span>Enter ⏎</span></div>
+        <div class="tag">Demo site · sample data</div>
+      </div>
+
+      <div id="scene-series" class="scene clip" data-scene="series" data-start="102.93" data-duration="16.48" data-track-index="0">
+        <div id="cam-series" class="cam">
+          <img id="st-series-ask" class="still" src="assets/shots/ask.png" alt="" width="1920" height="1080" />
+          <img id="st-series-ask-type-1" class="still" src="assets/shots/ask-type-1.png" alt="" width="1920" height="1080" />
+          <img id="st-series-ask-type-2" class="still" src="assets/shots/ask-type-2.png" alt="" width="1920" height="1080" />
+          <img id="st-series-ask-type-3" class="still" src="assets/shots/ask-type-3.png" alt="" width="1920" height="1080" />
+          <img id="st-series-ask-type-4" class="still" src="assets/shots/ask-type-4.png" alt="" width="1920" height="1080" />
+          <img id="st-series-ask-start" class="still" src="assets/shots/ask-start.png" alt="" width="1920" height="1080" />
+          <img id="st-series-ask-proposal" class="still" src="assets/shots/ask-proposal.png" alt="" width="1920" height="2045" />
+          <img id="st-series-ask-dec" class="still" src="assets/frames/ask-dec.png" alt="" width="1920" height="1194" />
+          <img id="st-series-ask-created" class="still" src="assets/frames/ask-created.png" alt="" width="1920" height="1080" />
+          <img id="st-series-ask-january" class="still" src="assets/shots/ask-january.png" alt="" width="1920" height="1394" />
+          <div id="mk-series-1" class="mark" style="left: 1526.4px; top: 722.4px; width: 200.4px; height: 62.4px; border-width: 2.65px; transform-origin: 50% 50%"></div>
+          <div id="mk-series-2" class="mark" style="left: 1501.2px; top: 689.4px; width: 381.6px; height: 37.8px; border-width: 2.65px; transform-origin: 50% 50%"></div>
+          <div id="mk-series-3" class="mark" style="left: 1526.4px; top: 1366.1px; width: 200.4px; height: 62.4px; border-width: 2.65px; transform-origin: 50% 50%"></div>
+          <div id="mk-series-4" class="mark" style="left: 925.6px; top: 439.3px; width: 192.7px; height: 188.4px; border-width: 2.27px; transform-origin: 50% 50%"></div>
+          <div id="mk-series-5" class="mark" style="left: 925.6px; top: 613.3px; width: 192.7px; height: 188.4px; border-width: 2.27px; transform-origin: 50% 50%"></div>
+          <div id="mk-series-6" class="mark" style="left: 925.6px; top: 787.3px; width: 192.7px; height: 188.4px; border-width: 2.27px; transform-origin: 50% 50%"></div>
+          <div id="mk-series-7" class="mark" style="left: 925.6px; top: 961.3px; width: 192.7px; height: 188.4px; border-width: 2.27px; transform-origin: 50% 50%"></div>
+          <div id="rp-series" class="ripple"><i></i></div>
+          <div id="cu-series" class="cursor"><div class="arrow"><svg viewBox="0 0 30 36" aria-hidden="true"><path d="M2 2 L2 29 L9.2 22.4 L14 33.2 L19 31 L14.3 20.4 L24 20.4 Z" fill="#fff" stroke="#1b1d1f" stroke-width="2.2" stroke-linejoin="round"/></svg></div></div>
+        </div>
+        <div id="kk-series" class="kicker"><b></b>Ask the Desk</div>
+        <div class="tag">Demo site · sample data</div>
+      </div>
+
+      <div id="scene-swap" class="scene clip" data-scene="swap" data-start="119.41" data-duration="20.13" data-track-index="0">
+        <div id="cam-swap" class="cam">
+          <img id="st-swap-swap-list" class="still" src="assets/shots/swap-list.png" alt="" width="1920" height="1272" />
+          <img id="st-swap-swap-panel" class="still" src="assets/shots/swap-panel.png" alt="" width="1920" height="1272" />
+          <img id="st-swap-swap-fixed" class="still" src="assets/shots/swap-fixed.png" alt="" width="1920" height="1272" />
+          <div id="mk-swap-1" class="mark" style="left: 211.2px; top: 257.9px; width: 1264.8px; height: 37.8px; border-width: 2.26px; transform-origin: 50% 50%"></div>
+          <div id="mk-swap-2" class="mark" style="left: 1501.2px; top: 244.2px; width: 381.6px; height: 214.3px; border-width: 2.04px; transform-origin: 50% 50%"></div>
+          <div id="mk-swap-3" class="mark" style="left: 211.2px; top: 614.9px; width: 1264.8px; height: 70.8px; border-width: 2.26px; transform-origin: 50% 50%"></div>
+          <div id="mk-swap-4" class="mark" style="left: 211.2px; top: 678.5px; width: 1264.8px; height: 70.8px; border-width: 2.26px; transform-origin: 50% 50%"></div>
+          <div id="mk-swap-5" class="mark" style="left: 1501.2px; top: 453.7px; width: 381.6px; height: 149px; border-width: 1.5px; transform-origin: 50% 50%"></div>
+          <div id="mk-swap-6" class="mark" style="left: 1501.2px; top: 244.2px; width: 381.6px; height: 214.3px; border-width: 1.5px; transform-origin: 50% 50%"></div>
+          <div id="mk-swap-7" class="mark right" style="left: 211.2px; top: 487.7px; width: 1264.8px; height: 70.8px; border-width: 2.63px; transform-origin: 50% 50%"><span class="label" style="font-size: 18.4px">Now Saturday, Nov 21: fits</span></div>
+          <div id="rp-swap" class="ripple"><i></i></div>
+          <div id="cu-swap" class="cursor"><div class="arrow"><svg viewBox="0 0 30 36" aria-hidden="true"><path d="M2 2 L2 29 L9.2 22.4 L14 33.2 L19 31 L14.3 20.4 L24 20.4 Z" fill="#fff" stroke="#1b1d1f" stroke-width="2.2" stroke-linejoin="round"/></svg></div></div>
+        </div>
+        <div id="kk-swap" class="kicker"><b></b>Swap check</div>
+        <div class="tag">Demo site · sample data</div>
+      </div>
+      <!-- footage:end -->
+
+      <!-- 10. Honest by design -->
+      <div id="scene-honest" class="scene clip" data-scene="honest" data-start="139.54" data-duration="18.57" data-track-index="0">
+        <div class="card">
+          <div id="honest-head" class="honest-head">
+            <small>Honest by design</small>
+            <h2>The rules it doesn’t bend.</h2>
+            <p>Most of them are enforced by automated checks on every commit.</p>
+          </div>
+          <ol class="rules">
+            <li><b style="color: var(--technology)">1</b><span>Never publishes, moves or shares on its own.</span></li>
+            <li><b style="color: var(--journal)">2</b><span>Real traffic numbers, or none at all.</span></li>
+            <li><b style="color: var(--opinion)">3</b><span>The AI writes ideas, not facts.</span></li>
+            <li><b style="color: var(--writing)">4</b><span>Nothing on your public pages.</span></li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- 11. Abilities: WP-CLI and an MCP client, with real output from the demo site -->
+      <div id="scene-mcp" class="scene clip" data-scene="mcp" data-start="158.11" data-duration="17.84" data-track-index="0">
+        <div class="card">
+          <div id="mcp-head" class="mcp-head">
+            <h2>One set of abilities, every door.</h2>
+            <small>masthead/get-plan</small>
+          </div>
+          <!-- mcp:start -->
+          <div class="term">
+            <header><span>Terminal · wp-cli</span><span>northfield-notes</span></header>
+            <pre><span class="prompt">$ </span><span id="term-cmd" class="cmd"><span class="ch">w</span><span class="ch">p</span><span class="ch"> </span><span class="ch">m</span><span class="ch">a</span><span class="ch">s</span><span class="ch">t</span><span class="ch">h</span><span class="ch">e</span><span class="ch">a</span><span class="ch">d</span><span class="ch"> </span><span class="ch">p</span><span class="ch">l</span><span class="ch">a</span><span class="ch">n</span><span class="ch"> </span><span class="ch">2</span><span class="ch">0</span><span class="ch">2</span><span class="ch">6</span><span class="ch">-</span><span class="ch">1</span><span class="ch">1</span><span class="ch">-</span><span class="ch">1</span><span class="ch">5</span><span class="ch"> </span><span class="ch">2</span><span class="ch">0</span><span class="ch">2</span><span class="ch">6</span><span class="ch">-</span><span class="ch">1</span><span class="ch">1</span><span class="ch">-</span><span class="ch">2</span><span class="ch">1</span></span><span class="caret"></span>
+<span class="out">+------------+---------+------------+--------+-------+---------------------------+
+</span><span class="out">| date       | weekday | lane       | status | id    | title                     |
+</span><span class="out">+------------+---------+------------+--------+-------+---------------------------+
+</span><span class="out">| 2026-11-15 | Sun     | faith      | open   |       |                           |
+</span><span class="out">| 2026-11-16 | Mon     | business   | open   |       |                           |
+</span><span class="out">| 2026-11-17 | Tue     | technology | open   |       |                           |
+</span><span class="out">| 2026-11-18 | Wed     | standalone | open   |       |                           |
+</span><span class="out">| 2026-11-19 | Thu     | technology | draft  | 12474 | A Family Security Checkup |
+</span><span class="out">| 2026-11-20 | Fri     | journal    | open   |       |                           |
+</span><span class="out">| 2026-11-21 | Sat     | fiction    | future | 3036  | The Mantle – Part 2 of 4  |
+</span><span class="out">+------------+---------+------------+--------+-------+---------------------------+
+</span></pre>
+          </div>
+          <div class="chat">
+            <header><span>MCP client</span><em>connected to Northfield Notes</em></header>
+            <div class="body">
+              <div class="bubble me">What’s on my calendar next week?</div>
+              <div class="tool">called <b>masthead/get-plan</b> { from: "2026-11-15", to: "2026-11-21" }</div>
+              <div class="bubble ai">
+                Next week (Nov 15–21) has two posts so far:
+                <ul>
+                  <li><i style="background: #0f6e7a"></i><b>Thu, Nov 19</b> · A Family Security Checkup <span style="color: var(--muted)">(draft, Security)</span></li>
+                  <li><i style="background: #b8325a"></i><b>Sat, Nov 21</b> · The Mantle – Part 2 of 4 <span style="color: var(--muted)">(scheduled, Writing)</span></li>
+                </ul>
+                <p class="open">Open: Sun, Nov 15 (Faith) · Mon, Nov 16 (Business &amp; leadership) · Tue, Nov 17 (Technical series) · Wed, Nov 18 (Standalone) · <span id="chat-friday" class="hl"><i></i>Fri, Nov 20 (Journal &amp; build log)</span></p>
+              </div>
+            </div>
+          </div>
+          <!-- mcp:end -->
+          <div class="tag">Demo site · sample data</div>
+        </div>
+      </div>
+
+      <!-- 12. Close -->
+      <div id="scene-close" class="scene clip" data-scene="close" data-start="175.94" data-duration="8.12" data-track-index="0">
+        <div class="card">
+          <div class="nameplate" style="top: 230px">
+            <div id="close-r1" class="rule thick"></div>
+            <div id="close-r2" class="rule thin" style="margin-top: 5px"></div>
+            <h1 id="close-word" class="wordmark" style="margin: 30px 0 26px; font-size: 210px">Masthead</h1>
+            <div id="close-r3" class="rule thin"></div>
+            <div id="close-colors" class="colors" style="margin-top: 5px">
+              <i style="background: var(--technology)"></i><i style="background: var(--business)"></i><i style="background: var(--faith)"></i><i style="background: var(--journal)"></i><i style="background: var(--writing)"></i><i style="background: var(--security)"></i><i style="background: var(--opinion)"></i>
+            </div>
+            <div id="close-links" class="end-links" style="margin-top: 60px">
+              <p>Free and open source · WordPress 7.1+</p>
+              <code>github.com/ericmann/masthead</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- audio:start -->
+      <audio id="vo-open" src="audio/vo-open.mp3" data-start="0.5" data-duration="5.51" data-volume="1.4" data-track-index="10"></audio>
+      <audio id="vo-problem" src="audio/vo-problem.mp3" data-start="7.31" data-duration="15.6" data-volume="1.4" data-track-index="10"></audio>
+      <audio id="vo-calendar" src="audio/vo-calendar.mp3" data-start="24.21" data-duration="13.27" data-volume="1.4" data-track-index="10"></audio>
+      <audio id="vo-rhythm" src="audio/vo-rhythm.mp3" data-start="38.78" data-duration="16.43" data-volume="1.4" data-track-index="10"></audio>
+      <audio id="vo-desk" src="audio/vo-desk.mp3" data-start="56.51" data-duration="19.88" data-volume="1.4" data-track-index="10"></audio>
+      <audio id="vo-dayplan" src="audio/vo-dayplan.mp3" data-start="77.69" data-duration="14.94" data-volume="1.4" data-track-index="10"></audio>
+      <audio id="vo-reschedule" src="audio/vo-reschedule.mp3" data-start="93.93" data-duration="7.76" data-volume="1.4" data-track-index="10"></audio>
+      <audio id="vo-series" src="audio/vo-series.mp3" data-start="103.43" data-duration="15.18" data-volume="1.4" data-track-index="10"></audio>
+      <audio id="vo-swap" src="audio/vo-swap.mp3" data-start="119.91" data-duration="18.83" data-volume="1.4" data-track-index="10"></audio>
+      <audio id="vo-honest" src="audio/vo-honest.mp3" data-start="140.04" data-duration="17.27" data-volume="1.4" data-track-index="10"></audio>
+      <audio id="vo-mcp" src="audio/vo-mcp.mp3" data-start="158.61" data-duration="16.54" data-volume="1.4" data-track-index="10"></audio>
+      <audio id="vo-close" src="audio/vo-close.mp3" data-start="176.44" data-duration="6.82" data-volume="1.4" data-track-index="10"></audio>
+      <audio id="music" src="audio/music.mp3" data-start="6.81" data-duration="177.25" data-media-start="1.7" data-volume="0.15" data-fade-in="2" data-fade-out="3" data-track-index="11"></audio>
+      <!-- audio:end -->
+    </div>
+
+    <script>
+      /* timing:start */ const T = {"open":{"start":0,"dur":6.81},"problem":{"start":6.81,"dur":16.9},"calendar":{"start":23.71,"dur":14.57},"rhythm":{"start":38.28,"dur":17.73},"desk":{"start":56.01,"dur":21.18},"dayplan":{"start":77.19,"dur":16.24},"reschedule":{"start":93.43,"dur":9.5},"series":{"start":102.93,"dur":16.48},"swap":{"start":119.41,"dur":20.13},"honest":{"start":139.54,"dur":18.57},"mcp":{"start":158.11,"dur":17.84},"close":{"start":175.94,"dur":8.12}}; const TOTAL = 184.06; const CUE = {"open":{"calendar":1.99,"rhythm":5.12},"honest":{"rules":[2.32,6.43,10.38,15.26]},"mcp":{"cli":4.88,"assistants":7.28,"ask":11.12,"friday":13.63},"close":{"free":1.53}}; const OPS = [{"sel":"#st-problem-posts","from":null,"to":{"opacity":1},"t":6.81,"dur":0},{"sel":"#cam-problem","from":null,"to":{"x":-19.2,"y":0,"scale":1.01},"t":6.81,"dur":0},{"sel":"#cu-problem .arrow","from":null,"to":{"scale":0.99},"t":6.81,"dur":0},{"sel":"#cam-problem","from":{"x":-19.2,"y":0,"scale":1.01},"to":{"x":-148.2,"y":-147.3,"scale":1.11},"t":7.11,"dur":5.5,"ease":"sine.inOut"},{"sel":"#cu-problem .arrow","from":{"scale":0.99},"to":{"scale":0.9},"t":7.11,"dur":5.5,"ease":"sine.inOut"},{"sel":"#cam-problem","from":{"x":-148.2,"y":-147.3,"scale":1.11},"to":{"x":-234.6,"y":-569.7,"scale":1.36},"t":14.4,"dur":1.2,"ease":"power2.inOut"},{"sel":"#cu-problem .arrow","from":{"scale":0.9},"to":{"scale":0.74},"t":14.4,"dur":1.2,"ease":"power2.inOut"},{"sel":"#mk-problem-1","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":14.8,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-problem-1","from":{"opacity":1},"to":{"opacity":0},"t":17.9,"dur":0.3,"ease":"none"},{"sel":"#cam-problem","from":{"x":-234.6,"y":-569.7,"scale":1.36},"to":{"x":-234.6,"y":-161.7,"scale":1.36},"t":16.9,"dur":1,"ease":"power2.inOut"},{"sel":"#cu-problem .arrow","from":{"scale":0.74},"to":{"scale":0.74},"t":16.9,"dur":1,"ease":"power2.inOut"},{"sel":"#mk-problem-2","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":17.2,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-problem-2","from":{"opacity":1},"to":{"opacity":0},"t":19.5,"dur":0.3,"ease":"none"},{"sel":"#cam-problem","from":{"x":-234.6,"y":-161.7,"scale":1.36},"to":{"x":0,"y":-1728,"scale":1},"t":18.84,"dur":1.6,"ease":"power2.inOut"},{"sel":"#cu-problem .arrow","from":{"scale":0.74},"to":{"scale":1},"t":18.84,"dur":1.6,"ease":"power2.inOut"},{"sel":"#mk-problem-3","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":20.04,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-problem-3","from":{"opacity":1},"to":{"opacity":0},"t":22.94,"dur":0.3,"ease":"none"},{"sel":"#kk-problem","from":{"opacity":0,"x":-16},"to":{"opacity":1,"x":0},"t":7.26,"dur":0.45,"ease":"power2.out"},{"sel":"#kk-problem","from":{"opacity":1},"to":{"opacity":0},"t":10.41,"dur":0.4,"ease":"none"},{"sel":"#st-calendar-cal-month","from":null,"to":{"opacity":1},"t":23.71,"dur":0},{"sel":"#cam-calendar","from":null,"to":{"x":-384,"y":-133.6,"scale":1.4},"t":23.71,"dur":0},{"sel":"#cu-calendar .arrow","from":null,"to":{"scale":0.71},"t":23.71,"dur":0},{"sel":"#cam-calendar","from":{"x":-384,"y":-133.6,"scale":1.4},"to":{"x":0,"y":0,"scale":1},"t":23.91,"dur":2.4,"ease":"power2.inOut"},{"sel":"#cu-calendar .arrow","from":{"scale":0.71},"to":{"scale":1},"t":23.91,"dur":2.4,"ease":"power2.inOut"},{"sel":"#cu-calendar","from":null,"to":{"x":840,"y":840},"t":23.91,"dur":0},{"sel":"#cu-calendar","from":{"opacity":0},"to":{"opacity":1},"t":23.91,"dur":0.3,"ease":"none"},{"sel":"#cu-calendar","from":{"x":840,"y":840},"to":{"x":96,"y":382.3},"t":25.13,"dur":0.9,"ease":"power2.inOut"},{"sel":"#mk-calendar-1","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":25.53,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-calendar-1","from":{"opacity":1},"to":{"opacity":0},"t":26.63,"dur":0.3,"ease":"none"},{"sel":"#cu-calendar","from":{"x":96,"y":382.3},"to":{"x":308.2,"y":490.1},"t":28.04,"dur":0.8,"ease":"power2.inOut"},{"sel":"#mk-calendar-2","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":28.24,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-calendar-2","from":{"opacity":1},"to":{"opacity":0},"t":29.24,"dur":0.3,"ease":"none"},{"sel":"#cu-calendar","from":{"x":308.2,"y":490.1},"to":{"x":1021.3,"y":490.1},"t":28.66,"dur":0.7,"ease":"power2.inOut"},{"sel":"#mk-calendar-3","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":28.86,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-calendar-3","from":{"opacity":1},"to":{"opacity":0},"t":29.76,"dur":0.3,"ease":"none"},{"sel":"#cu-calendar","from":{"x":1021.3,"y":490.1},"to":{"x":1378.4,"y":490.1},"t":29.26,"dur":0.7,"ease":"power2.inOut"},{"sel":"#mk-calendar-4","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":29.46,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-calendar-4","from":{"opacity":1},"to":{"opacity":0},"t":30.46,"dur":0.3,"ease":"none"},{"sel":"#cu-calendar","from":{"x":1378.4,"y":490.1},"to":{"x":1261.4,"y":151.1},"t":31.07,"dur":0.8,"ease":"power2.inOut"},{"sel":"#cam-calendar","from":{"x":0,"y":0,"scale":1},"to":{"x":-556.8,"y":-31.9,"scale":1.29},"t":31.17,"dur":1.2,"ease":"power2.inOut"},{"sel":"#cu-calendar .arrow","from":{"scale":1},"to":{"scale":0.78},"t":31.17,"dur":1.2,"ease":"power2.inOut"},{"sel":"#mk-calendar-5","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":31.57,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-calendar-5","from":{"opacity":1},"to":{"opacity":0},"t":33.07,"dur":0.3,"ease":"none"},{"sel":"#cam-calendar","from":{"x":-556.8,"y":-31.9,"scale":1.29},"to":{"x":0,"y":0,"scale":1},"t":32.73,"dur":1,"ease":"power2.inOut"},{"sel":"#cu-calendar .arrow","from":{"scale":0.78},"to":{"scale":1},"t":32.73,"dur":1,"ease":"power2.inOut"},{"sel":"#cu-calendar","from":{"x":1261.4,"y":151.1},"to":{"x":700.9,"y":151.1},"t":33.03,"dur":0.6,"ease":"power2.inOut"},{"sel":"#rp-calendar","from":null,"to":{"x":700.9,"y":151.1,"opacity":1,"scale":1},"t":33.75,"dur":0},{"sel":"#rp-calendar i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":33.75,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-calendar svg","from":{"scale":1},"to":{"scale":0.84},"t":33.69,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-calendar svg","from":{"scale":0.84},"to":{"scale":1},"t":33.79,"dur":0.14,"ease":"power1.out"},{"sel":"#cu-calendar","from":{"x":700.9,"y":151.1},"to":{"x":790.1,"y":164.3},"t":33.86,"dur":0.5,"ease":"power2.inOut"},{"sel":"#st-calendar-cal-week","from":{"opacity":0},"to":{"opacity":1},"t":33.87,"dur":0.25,"ease":"none"},{"sel":"#st-calendar-cal-month","from":null,"to":{"opacity":0},"t":34.12,"dur":0},{"sel":"#rp-calendar","from":null,"to":{"x":790.1,"y":164.3,"opacity":1,"scale":1},"t":34.47,"dur":0},{"sel":"#rp-calendar i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":34.47,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-calendar svg","from":{"scale":1},"to":{"scale":0.84},"t":34.41,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-calendar svg","from":{"scale":0.84},"to":{"scale":1},"t":34.51,"dur":0.14,"ease":"power1.out"},{"sel":"#st-calendar-cal-list","from":{"opacity":0},"to":{"opacity":1},"t":34.59,"dur":0.25,"ease":"none"},{"sel":"#st-calendar-cal-week","from":null,"to":{"opacity":0},"t":34.84,"dur":0},{"sel":"#cam-calendar","from":{"x":0,"y":0,"scale":1},"to":{"x":-136.6,"y":-169.9,"scale":1.3},"t":35.37,"dur":1.6,"ease":"power2.inOut"},{"sel":"#cu-calendar .arrow","from":{"scale":1},"to":{"scale":0.77},"t":35.37,"dur":1.6,"ease":"power2.inOut"},{"sel":"#kk-calendar","from":{"opacity":0,"x":-16},"to":{"opacity":1,"x":0},"t":24.16,"dur":0.45,"ease":"power2.out"},{"sel":"#kk-calendar","from":{"opacity":1},"to":{"opacity":0},"t":27.31,"dur":0.4,"ease":"none"},{"sel":"#st-rhythm-rhythm","from":null,"to":{"opacity":1},"t":38.28,"dur":0},{"sel":"#cam-rhythm","from":null,"to":{"x":0,"y":0,"scale":1},"t":38.28,"dur":0},{"sel":"#cu-rhythm .arrow","from":null,"to":{"scale":1},"t":38.28,"dur":0},{"sel":"#cam-rhythm","from":{"x":0,"y":0,"scale":1},"to":{"x":-48,"y":-97.5,"scale":1.45},"t":38.48,"dur":2.2,"ease":"power2.inOut"},{"sel":"#cu-rhythm .arrow","from":{"scale":1},"to":{"scale":0.69},"t":38.48,"dur":2.2,"ease":"power2.inOut"},{"sel":"#cu-rhythm","from":null,"to":{"x":768,"y":744},"t":38.68,"dur":0},{"sel":"#cu-rhythm","from":{"opacity":0},"to":{"opacity":1},"t":38.68,"dur":0.3,"ease":"none"},{"sel":"#cu-rhythm","from":{"x":768,"y":744},"to":{"x":504,"y":522.8},"t":41.87,"dur":0.7,"ease":"power2.inOut"},{"sel":"#mk-rhythm-1","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":42.07,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-rhythm-1","from":{"opacity":1},"to":{"opacity":0},"t":42.97,"dur":0.3,"ease":"none"},{"sel":"#cu-rhythm","from":{"x":504,"y":522.8},"to":{"x":812.2,"y":525.2},"t":42.52,"dur":0.6,"ease":"power2.inOut"},{"sel":"#rp-rhythm","from":null,"to":{"x":812.2,"y":525.2,"opacity":1,"scale":0.69},"t":43.02,"dur":0},{"sel":"#rp-rhythm i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":43.02,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-rhythm svg","from":{"scale":1},"to":{"scale":0.84},"t":42.96,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-rhythm svg","from":{"scale":0.84},"to":{"scale":1},"t":43.06,"dur":0.14,"ease":"power1.out"},{"sel":"#st-rhythm-rhythm-picker","from":{"opacity":0},"to":{"opacity":1},"t":43.14,"dur":0.2,"ease":"none"},{"sel":"#st-rhythm-rhythm","from":null,"to":{"opacity":0},"t":43.34,"dur":0},{"sel":"#cam-rhythm","from":{"x":-48,"y":-97.5,"scale":1.45},"to":{"x":-152.7,"y":-362,"scale":1.37},"t":43.32,"dur":1.1,"ease":"power2.inOut"},{"sel":"#cu-rhythm .arrow","from":{"scale":0.69},"to":{"scale":0.73},"t":43.32,"dur":1.1,"ease":"power2.inOut"},{"sel":"#cu-rhythm","from":{"x":812.2,"y":525.2},"to":{"x":1051.4,"y":522.8},"t":43.8,"dur":0.6,"ease":"power2.inOut"},{"sel":"#mk-rhythm-2","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":44.1,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-rhythm-2","from":{"opacity":1},"to":{"opacity":0},"t":45.1,"dur":0.3,"ease":"none"},{"sel":"#cam-rhythm","from":{"x":-152.7,"y":-362,"scale":1.37},"to":{"x":-263.2,"y":0,"scale":1.45},"t":44.82,"dur":0.6,"ease":"power2.inOut"},{"sel":"#cu-rhythm .arrow","from":{"scale":0.73},"to":{"scale":0.69},"t":44.82,"dur":0.6,"ease":"power2.inOut"},{"sel":"#st-rhythm-cal-month","from":{"opacity":0},"to":{"opacity":1},"t":44.92,"dur":0.45,"ease":"none"},{"sel":"#st-rhythm-rhythm-picker","from":null,"to":{"opacity":0},"t":45.37,"dur":0},{"sel":"#cu-rhythm","from":{"opacity":1},"to":{"opacity":0},"t":44.92,"dur":0.25,"ease":"none"},{"sel":"#mk-rhythm-3","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":45.52,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-rhythm-3","from":{"opacity":1},"to":{"opacity":0},"t":46.52,"dur":0.3,"ease":"none"},{"sel":"#mk-rhythm-4","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":46.72,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-rhythm-4","from":{"opacity":1},"to":{"opacity":0},"t":48.22,"dur":0.3,"ease":"none"},{"sel":"#mk-rhythm-5","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":48.27,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-rhythm-5","from":{"opacity":1},"to":{"opacity":0},"t":49.27,"dur":0.3,"ease":"none"},{"sel":"#mk-rhythm-6","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":49.34,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-rhythm-6","from":{"opacity":1},"to":{"opacity":0},"t":50.44,"dur":0.3,"ease":"none"},{"sel":"#cam-rhythm","from":{"x":-263.2,"y":0,"scale":1.45},"to":{"x":-1149,"y":-972,"scale":1.9},"t":51.33,"dur":1.4,"ease":"power2.inOut"},{"sel":"#cu-rhythm .arrow","from":{"scale":0.69},"to":{"scale":0.53},"t":51.33,"dur":1.4,"ease":"power2.inOut"},{"sel":"#mk-rhythm-7","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":52.13,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-rhythm-7","from":{"opacity":1},"to":{"opacity":0},"t":54.43,"dur":0.3,"ease":"none"},{"sel":"#mk-rhythm-8","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":52.53,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-rhythm-8","from":{"opacity":1},"to":{"opacity":0},"t":54.43,"dur":0.3,"ease":"none"},{"sel":"#mk-rhythm-9","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":53.6,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-rhythm-9","from":{"opacity":1},"to":{"opacity":0},"t":55.3,"dur":0.3,"ease":"none"},{"sel":"#kk-rhythm","from":{"opacity":0,"x":-16},"to":{"opacity":1,"x":0},"t":38.73,"dur":0.45,"ease":"power2.out"},{"sel":"#kk-rhythm","from":{"opacity":1},"to":{"opacity":0},"t":41.88,"dur":0.4,"ease":"none"},{"sel":"#st-desk-cal-month","from":null,"to":{"opacity":1},"t":56.01,"dur":0},{"sel":"#cam-desk","from":null,"to":{"x":0,"y":0,"scale":1},"t":56.01,"dur":0},{"sel":"#cu-desk .arrow","from":null,"to":{"scale":1},"t":56.01,"dur":0},{"sel":"#cu-desk","from":null,"to":{"x":768,"y":360},"t":56.01,"dur":0},{"sel":"#cu-desk","from":{"opacity":0},"to":{"opacity":1},"t":56.01,"dur":0.3,"ease":"none"},{"sel":"#cu-desk","from":{"x":768,"y":360},"to":{"x":1021.3,"y":614.5},"t":56.51,"dur":0.7,"ease":"power2.inOut"},{"sel":"#rp-desk","from":null,"to":{"x":1021.3,"y":614.5,"opacity":1,"scale":1},"t":57.26,"dur":0},{"sel":"#rp-desk i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":57.26,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-desk svg","from":{"scale":1},"to":{"scale":0.84},"t":57.2,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-desk svg","from":{"scale":0.84},"to":{"scale":1},"t":57.3,"dur":0.14,"ease":"power1.out"},{"sel":"#st-desk-desk","from":{"opacity":0},"to":{"opacity":1},"t":57.38,"dur":0.25,"ease":"none"},{"sel":"#st-desk-cal-month","from":null,"to":{"opacity":0},"t":57.63,"dur":0},{"sel":"#cam-desk","from":{"x":0,"y":0,"scale":1},"to":{"x":-787.1,"y":-441.3,"scale":1.41},"t":57.8,"dur":1.6,"ease":"power2.inOut"},{"sel":"#cu-desk .arrow","from":{"scale":1},"to":{"scale":0.71},"t":57.8,"dur":1.6,"ease":"power2.inOut"},{"sel":"#cu-desk","from":{"x":1021.3,"y":614.5},"to":{"x":1416,"y":912},"t":58,"dur":1.2,"ease":"power2.inOut"},{"sel":"#mk-desk-1","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":63.37,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-desk-1","from":{"opacity":1},"to":{"opacity":0},"t":65.27,"dur":0.3,"ease":"none"},{"sel":"#mk-desk-2","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":65.98,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-desk-2","from":{"opacity":1},"to":{"opacity":0},"t":67.48,"dur":0.3,"ease":"none"},{"sel":"#cam-desk","from":{"x":-787.1,"y":-441.3,"scale":1.41},"to":{"x":-960,"y":-540,"scale":1.5},"t":67.64,"dur":1,"ease":"power2.inOut"},{"sel":"#cu-desk .arrow","from":{"scale":0.71},"to":{"scale":0.67},"t":67.64,"dur":1,"ease":"power2.inOut"},{"sel":"#mk-desk-3","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":67.84,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-desk-3","from":{"opacity":1},"to":{"opacity":0},"t":69.54,"dur":0.3,"ease":"none"},{"sel":"#ov-desk-4","from":{"opacity":0,"y":14},"to":{"opacity":1,"y":0},"t":70.34,"dur":0.3,"ease":"power2.out"},{"sel":"#ov-desk-4","from":{"opacity":1},"to":{"opacity":0},"t":73.69,"dur":0.25,"ease":"none"},{"sel":"#cam-desk","from":{"x":-960,"y":-540,"scale":1.5},"to":{"x":-2304,"y":-671.4,"scale":2.2},"t":73.66,"dur":1.3,"ease":"power2.inOut"},{"sel":"#cu-desk .arrow","from":{"scale":0.67},"to":{"scale":0.45},"t":73.66,"dur":1.3,"ease":"power2.inOut"},{"sel":"#mk-desk-5","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":75,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-desk-5","from":{"opacity":1},"to":{"opacity":0},"t":76.9,"dur":0.3,"ease":"none"},{"sel":"#kk-desk","from":{"opacity":0,"x":-16},"to":{"opacity":1,"x":0},"t":56.46,"dur":0.45,"ease":"power2.out"},{"sel":"#kk-desk","from":{"opacity":1},"to":{"opacity":0},"t":59.61,"dur":0.4,"ease":"none"},{"sel":"#st-dayplan-desk","from":null,"to":{"opacity":1},"t":77.19,"dur":0},{"sel":"#cam-dayplan","from":null,"to":{"x":-787.1,"y":-204.4,"scale":1.41},"t":77.19,"dur":0},{"sel":"#cu-dayplan .arrow","from":null,"to":{"scale":0.71},"t":77.19,"dur":0},{"sel":"#cu-dayplan","from":null,"to":{"x":1416,"y":912},"t":77.19,"dur":0},{"sel":"#cu-dayplan","from":{"opacity":0},"to":{"opacity":1},"t":77.19,"dur":0.3,"ease":"none"},{"sel":"#cu-dayplan","from":{"x":1416,"y":912},"to":{"x":1585.4,"y":434.4},"t":79.06,"dur":0.7,"ease":"power2.inOut"},{"sel":"#rp-dayplan","from":null,"to":{"x":1585.4,"y":434.4,"opacity":1,"scale":0.71},"t":80.16,"dur":0},{"sel":"#rp-dayplan i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":80.16,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-dayplan svg","from":{"scale":1},"to":{"scale":0.84},"t":80.1,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-dayplan svg","from":{"scale":0.84},"to":{"scale":1},"t":80.2,"dur":0.14,"ease":"power1.out"},{"sel":"#st-dayplan-desk-ideas","from":{"opacity":0},"to":{"opacity":1},"t":80.31,"dur":0.3,"ease":"none"},{"sel":"#st-dayplan-desk","from":null,"to":{"opacity":0},"t":80.61,"dur":0},{"sel":"#cam-dayplan","from":{"x":-787.1,"y":-204.4,"scale":1.41},"to":{"x":-1152,"y":-938.4,"scale":1.6},"t":80.39,"dur":0.9,"ease":"power2.inOut"},{"sel":"#cu-dayplan .arrow","from":{"scale":0.71},"to":{"scale":0.63},"t":80.39,"dur":0.9,"ease":"power2.inOut"},{"sel":"#cam-dayplan","from":{"x":-1152,"y":-938.4,"scale":1.6},"to":{"x":-960,"y":-1296,"scale":1.5},"t":80.66,"dur":1.3,"ease":"power2.inOut"},{"sel":"#cu-dayplan .arrow","from":{"scale":0.63},"to":{"scale":0.67},"t":80.66,"dur":1.3,"ease":"power2.inOut"},{"sel":"#cu-dayplan","from":{"x":1585.4,"y":434.4},"to":{"x":1570.3,"y":910.8},"t":80.79,"dur":0.6,"ease":"power2.inOut"},{"sel":"#rp-dayplan","from":null,"to":{"x":1570.3,"y":910.8,"opacity":1,"scale":0.67},"t":81.63,"dur":0},{"sel":"#rp-dayplan i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":81.63,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-dayplan svg","from":{"scale":1},"to":{"scale":0.84},"t":81.57,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-dayplan svg","from":{"scale":0.84},"to":{"scale":1},"t":81.67,"dur":0.14,"ease":"power1.out"},{"sel":"#cam-dayplan","from":{"x":-960,"y":-1296,"scale":1.5},"to":{"x":-1152,"y":-170.4,"scale":1.6},"t":81.73,"dur":0.6,"ease":"power2.inOut"},{"sel":"#cu-dayplan .arrow","from":{"scale":0.67},"to":{"scale":0.63},"t":81.73,"dur":0.6,"ease":"power2.inOut"},{"sel":"#st-dayplan-plan","from":{"opacity":0},"to":{"opacity":1},"t":82.33,"dur":0.2,"ease":"none"},{"sel":"#st-dayplan-desk-ideas","from":null,"to":{"opacity":0},"t":82.53,"dur":0},{"sel":"#cu-dayplan","from":{"x":1570.3,"y":910.8},"to":{"x":1693.2,"y":330.4},"t":82.45,"dur":0.5,"ease":"power2.inOut"},{"sel":"#rp-dayplan","from":null,"to":{"x":1693.2,"y":330.4,"opacity":1,"scale":0.63},"t":82.92,"dur":0},{"sel":"#rp-dayplan i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":82.92,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-dayplan svg","from":{"scale":1},"to":{"scale":0.84},"t":82.86,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-dayplan svg","from":{"scale":0.84},"to":{"scale":1},"t":82.96,"dur":0.14,"ease":"power1.out"},{"sel":"#st-dayplan-plan-type-1","from":{"opacity":0},"to":{"opacity":1},"t":83.12,"dur":0.04,"ease":"none"},{"sel":"#st-dayplan-plan","from":null,"to":{"opacity":0},"t":83.16,"dur":0},{"sel":"#st-dayplan-plan-type-2","from":{"opacity":0},"to":{"opacity":1},"t":83.34,"dur":0.04,"ease":"none"},{"sel":"#st-dayplan-plan-type-1","from":null,"to":{"opacity":0},"t":83.38,"dur":0},{"sel":"#st-dayplan-plan-type-3","from":{"opacity":0},"to":{"opacity":1},"t":83.56,"dur":0.04,"ease":"none"},{"sel":"#st-dayplan-plan-type-2","from":null,"to":{"opacity":0},"t":83.6,"dur":0},{"sel":"#st-dayplan-plan-type-4","from":{"opacity":0},"to":{"opacity":1},"t":83.78,"dur":0.04,"ease":"none"},{"sel":"#st-dayplan-plan-type-3","from":null,"to":{"opacity":0},"t":83.82,"dur":0},{"sel":"#cu-dayplan","from":{"x":1693.2,"y":330.4},"to":{"x":1580.6,"y":419.8},"t":83.78,"dur":0.6,"ease":"power2.inOut"},{"sel":"#rp-dayplan","from":null,"to":{"x":1580.6,"y":419.8,"opacity":1,"scale":0.63},"t":84.44,"dur":0},{"sel":"#rp-dayplan i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":84.44,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-dayplan svg","from":{"scale":1},"to":{"scale":0.84},"t":84.38,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-dayplan svg","from":{"scale":0.84},"to":{"scale":1},"t":84.48,"dur":0.14,"ease":"power1.out"},{"sel":"#st-dayplan-plan-outline","from":{"opacity":0},"to":{"opacity":1},"t":84.74,"dur":0.3,"ease":"none"},{"sel":"#st-dayplan-plan-type-4","from":null,"to":{"opacity":0},"t":85.04,"dur":0},{"sel":"#cam-dayplan","from":{"x":-1152,"y":-170.4,"scale":1.6},"to":{"x":-1152,"y":-405.8,"scale":1.6},"t":84.74,"dur":1,"ease":"power2.inOut"},{"sel":"#cu-dayplan .arrow","from":{"scale":0.63},"to":{"scale":0.63},"t":84.74,"dur":1,"ease":"power2.inOut"},{"sel":"#mk-dayplan-1","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":85.68,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-dayplan-1","from":{"opacity":1},"to":{"opacity":0},"t":86.98,"dur":0.3,"ease":"none"},{"sel":"#cam-dayplan","from":{"x":-1152,"y":-405.8,"scale":1.6},"to":{"x":-1152,"y":-938.4,"scale":1.6},"t":86.63,"dur":0.8,"ease":"power2.inOut"},{"sel":"#cu-dayplan .arrow","from":{"scale":0.63},"to":{"scale":0.63},"t":86.63,"dur":0.8,"ease":"power2.inOut"},{"sel":"#cu-dayplan","from":{"x":1580.6,"y":419.8},"to":{"x":1617.4,"y":1105.3},"t":86.93,"dur":0.6,"ease":"power2.inOut"},{"sel":"#rp-dayplan","from":null,"to":{"x":1617.4,"y":1105.3,"opacity":1,"scale":0.63},"t":87.97,"dur":0},{"sel":"#rp-dayplan i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":87.97,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-dayplan svg","from":{"scale":1},"to":{"scale":0.84},"t":87.91,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-dayplan svg","from":{"scale":0.84},"to":{"scale":1},"t":88.01,"dur":0.14,"ease":"power1.out"},{"sel":"#cam-dayplan","from":{"x":-1152,"y":-938.4,"scale":1.6},"to":{"x":0,"y":0,"scale":1},"t":88.07,"dur":1,"ease":"power2.inOut"},{"sel":"#cu-dayplan .arrow","from":{"scale":0.63},"to":{"scale":1},"t":88.07,"dur":1,"ease":"power2.inOut"},{"sel":"#st-dayplan-plan-created","from":{"opacity":0},"to":{"opacity":1},"t":89.12,"dur":0.3,"ease":"none"},{"sel":"#st-dayplan-plan-outline","from":null,"to":{"opacity":0},"t":89.42,"dur":0},{"sel":"#cam-dayplan","from":{"x":0,"y":0,"scale":1},"to":{"x":-879.4,"y":-686,"scale":1.8},"t":90.47,"dur":1.2,"ease":"power2.inOut"},{"sel":"#cu-dayplan .arrow","from":{"scale":1},"to":{"scale":0.56},"t":90.47,"dur":1.2,"ease":"power2.inOut"},{"sel":"#mk-dayplan-2","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":90.97,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-dayplan-2","from":{"opacity":1},"to":{"opacity":0},"t":92.87,"dur":0.3,"ease":"none"},{"sel":"#kk-dayplan","from":{"opacity":0,"x":-16},"to":{"opacity":1,"x":0},"t":77.64,"dur":0.45,"ease":"power2.out"},{"sel":"#kk-dayplan","from":{"opacity":1},"to":{"opacity":0},"t":80.79,"dur":0.4,"ease":"none"},{"sel":"#st-reschedule-move","from":null,"to":{"opacity":1},"t":93.43,"dur":0},{"sel":"#cam-reschedule","from":null,"to":{"x":-178.8,"y":-378,"scale":1.35},"t":93.43,"dur":0},{"sel":"#cu-reschedule .arrow","from":null,"to":{"scale":0.74},"t":93.43,"dur":0},{"sel":"#cu-reschedule","from":null,"to":{"x":840,"y":564},"t":93.43,"dur":0},{"sel":"#cu-reschedule","from":{"opacity":0},"to":{"opacity":1},"t":93.43,"dur":0.3,"ease":"none"},{"sel":"#cu-reschedule","from":{"x":840,"y":564},"to":{"x":486.5,"y":664.1},"t":94.45,"dur":0.55,"ease":"power2.inOut"},{"sel":"#dg-reschedule","from":{"opacity":0,"scale":1},"to":{"opacity":1,"scale":1.06},"t":95.05,"dur":0.18,"ease":"power2.out"},{"sel":"#dg-reschedule","from":{"x":0,"y":0},"to":{"x":0,"y":174},"t":95.17,"dur":1.1,"ease":"power2.inOut"},{"sel":"#cu-reschedule svg","from":{"scale":1},"to":{"scale":0.86},"t":95.05,"dur":0.1,"ease":"power1.out"},{"sel":"#cu-reschedule","from":{"x":486.5,"y":664.1},"to":{"x":486.5,"y":838.1},"t":95.17,"dur":1.1,"ease":"power2.inOut"},{"sel":"#st-reschedule-move-over","from":{"opacity":0},"to":{"opacity":1},"t":95.78,"dur":0.15,"ease":"none"},{"sel":"#st-reschedule-move","from":null,"to":{"opacity":0},"t":95.93,"dur":0},{"sel":"#st-reschedule-move-dropped","from":{"opacity":0},"to":{"opacity":1},"t":96.27,"dur":0.2,"ease":"none"},{"sel":"#st-reschedule-move-over","from":null,"to":{"opacity":0},"t":96.47,"dur":0},{"sel":"#dg-reschedule","from":{"opacity":1,"scale":1.06},"to":{"opacity":0,"scale":1},"t":96.27,"dur":0.2,"ease":"none"},{"sel":"#cu-reschedule svg","from":{"scale":0.86},"to":{"scale":1},"t":96.27,"dur":0.14,"ease":"power1.out"},{"sel":"#cu-reschedule","from":{"opacity":1},"to":{"opacity":0},"t":96.4,"dur":0.25,"ease":"none"},{"sel":"#cam-reschedule","from":{"x":-178.8,"y":-378,"scale":1.35},"to":{"x":-1723.8,"y":-525.9,"scale":2.1},"t":96.4,"dur":0.8,"ease":"power2.inOut"},{"sel":"#cu-reschedule .arrow","from":{"scale":0.74},"to":{"scale":0.48},"t":96.4,"dur":0.8,"ease":"power2.inOut"},{"sel":"#ov-reschedule-1","from":{"opacity":0,"y":14},"to":{"opacity":1,"y":0},"t":96.75,"dur":0.3,"ease":"power2.out"},{"sel":"#ov-reschedule-1","from":{"opacity":1},"to":{"opacity":0},"t":97.3,"dur":0.25,"ease":"none"},{"sel":"#st-reschedule-kbd-open","from":{"opacity":0},"to":{"opacity":1},"t":96.9,"dur":0.15,"ease":"none"},{"sel":"#st-reschedule-move-dropped","from":null,"to":{"opacity":0},"t":97.05,"dur":0},{"sel":"#ov-reschedule-2","from":{"opacity":0,"y":14},"to":{"opacity":1,"y":0},"t":97.58,"dur":0.3,"ease":"power2.out"},{"sel":"#ov-reschedule-2","from":{"opacity":1},"to":{"opacity":0},"t":98.08,"dur":0.25,"ease":"none"},{"sel":"#st-reschedule-kbd-date","from":{"opacity":0},"to":{"opacity":1},"t":97.7,"dur":0.15,"ease":"none"},{"sel":"#st-reschedule-kbd-open","from":null,"to":{"opacity":0},"t":97.85,"dur":0},{"sel":"#ov-reschedule-3","from":{"opacity":0,"y":14},"to":{"opacity":1,"y":0},"t":98.34,"dur":0.3,"ease":"power2.out"},{"sel":"#ov-reschedule-3","from":{"opacity":1},"to":{"opacity":0},"t":98.84,"dur":0.25,"ease":"none"},{"sel":"#st-reschedule-kbd-moved","from":{"opacity":0},"to":{"opacity":1},"t":98.49,"dur":0.2,"ease":"none"},{"sel":"#st-reschedule-kbd-date","from":null,"to":{"opacity":0},"t":98.69,"dur":0},{"sel":"#cam-reschedule","from":{"x":-1723.8,"y":-525.9,"scale":2.1},"to":{"x":-537.6,"y":-648,"scale":1.6},"t":98.64,"dur":0.9,"ease":"power2.inOut"},{"sel":"#cu-reschedule .arrow","from":{"scale":0.48},"to":{"scale":0.63},"t":98.64,"dur":0.9,"ease":"power2.inOut"},{"sel":"#mk-reschedule-4","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":99.18,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-reschedule-4","from":{"opacity":1},"to":{"opacity":0},"t":101.28,"dur":0.3,"ease":"none"},{"sel":"#mk-reschedule-5","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":99.38,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-reschedule-5","from":{"opacity":1},"to":{"opacity":0},"t":101.28,"dur":0.3,"ease":"none"},{"sel":"#kk-reschedule","from":{"opacity":0,"x":-16},"to":{"opacity":1,"x":0},"t":93.88,"dur":0.45,"ease":"power2.out"},{"sel":"#kk-reschedule","from":{"opacity":1},"to":{"opacity":0},"t":97.03,"dur":0.4,"ease":"none"},{"sel":"#st-series-ask","from":null,"to":{"opacity":1},"t":102.93,"dur":0},{"sel":"#cam-series","from":null,"to":{"x":0,"y":0,"scale":1},"t":102.93,"dur":0},{"sel":"#cu-series .arrow","from":null,"to":{"scale":1},"t":102.93,"dur":0},{"sel":"#cu-series","from":null,"to":{"x":1080,"y":600},"t":102.93,"dur":0},{"sel":"#cu-series","from":{"opacity":0},"to":{"opacity":1},"t":102.93,"dur":0.3,"ease":"none"},{"sel":"#cam-series","from":{"x":0,"y":0,"scale":1},"to":{"x":-1920,"y":-463.2,"scale":2},"t":103.23,"dur":1.4,"ease":"power2.inOut"},{"sel":"#cu-series .arrow","from":{"scale":1},"to":{"scale":0.5},"t":103.23,"dur":1.4,"ease":"power2.inOut"},{"sel":"#cu-series","from":{"x":1080,"y":600},"to":{"x":1693.2,"y":492.6},"t":104.92,"dur":0.6,"ease":"power2.inOut"},{"sel":"#rp-series","from":null,"to":{"x":1693.2,"y":492.6,"opacity":1,"scale":0.5},"t":105.52,"dur":0},{"sel":"#rp-series i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":105.52,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-series svg","from":{"scale":1},"to":{"scale":0.84},"t":105.46,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-series svg","from":{"scale":0.84},"to":{"scale":1},"t":105.56,"dur":0.14,"ease":"power1.out"},{"sel":"#st-series-ask-type-1","from":{"opacity":0},"to":{"opacity":1},"t":106.48,"dur":0.04,"ease":"none"},{"sel":"#st-series-ask","from":null,"to":{"opacity":0},"t":106.52,"dur":0},{"sel":"#st-series-ask-type-2","from":{"opacity":0},"to":{"opacity":1},"t":106.78,"dur":0.04,"ease":"none"},{"sel":"#st-series-ask-type-1","from":null,"to":{"opacity":0},"t":106.82,"dur":0},{"sel":"#st-series-ask-type-3","from":{"opacity":0},"to":{"opacity":1},"t":107.08,"dur":0.04,"ease":"none"},{"sel":"#st-series-ask-type-2","from":null,"to":{"opacity":0},"t":107.12,"dur":0},{"sel":"#st-series-ask-type-4","from":{"opacity":0},"to":{"opacity":1},"t":107.38,"dur":0.04,"ease":"none"},{"sel":"#st-series-ask-type-3","from":null,"to":{"opacity":0},"t":107.42,"dur":0},{"sel":"#cu-series","from":{"x":1693.2,"y":492.6},"to":{"x":1689.2,"y":550.2},"t":107.46,"dur":0.4,"ease":"power2.inOut"},{"sel":"#cu-series","from":{"x":1689.2,"y":550.2},"to":{"x":1847,"y":550.2},"t":107.74,"dur":0.4,"ease":"power2.inOut"},{"sel":"#st-series-ask-start","from":{"opacity":0},"to":{"opacity":1},"t":107.76,"dur":0.15,"ease":"none"},{"sel":"#st-series-ask-type-4","from":null,"to":{"opacity":0},"t":107.91,"dur":0},{"sel":"#rp-series","from":null,"to":{"x":1847,"y":550.2,"opacity":1,"scale":0.5},"t":108.09,"dur":0},{"sel":"#rp-series i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":108.09,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-series svg","from":{"scale":1},"to":{"scale":0.84},"t":108.03,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-series svg","from":{"scale":0.84},"to":{"scale":1},"t":108.13,"dur":0.14,"ease":"power1.out"},{"sel":"#cam-series","from":{"x":-1920,"y":-463.2,"scale":2},"to":{"x":-1228.7,"y":-906.4,"scale":1.64},"t":108.53,"dur":1.4,"ease":"power2.inOut"},{"sel":"#cu-series .arrow","from":{"scale":0.5},"to":{"scale":0.61},"t":108.53,"dur":1.4,"ease":"power2.inOut"},{"sel":"#st-series-ask-proposal","from":{"opacity":0},"to":{"opacity":1},"t":108.63,"dur":0.3,"ease":"none"},{"sel":"#st-series-ask-start","from":null,"to":{"opacity":0},"t":108.93,"dur":0},{"sel":"#cam-series","from":{"x":-1228.7,"y":-906.4,"scale":1.64},"to":{"x":-249.5,"y":-769.4,"scale":1.13},"t":110.5,"dur":1.6,"ease":"power2.inOut"},{"sel":"#cu-series .arrow","from":{"scale":0.61},"to":{"scale":0.88},"t":110.5,"dur":1.6,"ease":"power2.inOut"},{"sel":"#mk-series-1","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":110.8,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-series-1","from":{"opacity":1},"to":{"opacity":0},"t":112.1,"dur":0.3,"ease":"none"},{"sel":"#mk-series-2","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":111.94,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-series-2","from":{"opacity":1},"to":{"opacity":0},"t":113.24,"dur":0.3,"ease":"none"},{"sel":"#mk-series-3","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":113.12,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-series-3","from":{"opacity":1},"to":{"opacity":0},"t":114.32,"dur":0.3,"ease":"none"},{"sel":"#cu-series","from":{"x":1847,"y":550.2},"to":{"x":1576.2,"y":1621.6},"t":114.58,"dur":0.6,"ease":"power2.inOut"},{"sel":"#rp-series","from":null,"to":{"x":1576.2,"y":1621.6,"opacity":1,"scale":0.88},"t":115.23,"dur":0},{"sel":"#rp-series i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":115.23,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-series svg","from":{"scale":1},"to":{"scale":0.84},"t":115.17,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-series svg","from":{"scale":0.84},"to":{"scale":1},"t":115.27,"dur":0.14,"ease":"power1.out"},{"sel":"#cam-series","from":{"x":-249.5,"y":-769.4,"scale":1.13},"to":{"x":0,"y":0,"scale":1},"t":115.33,"dur":0.9,"ease":"power2.inOut"},{"sel":"#cu-series .arrow","from":{"scale":0.88},"to":{"scale":1},"t":115.33,"dur":0.9,"ease":"power2.inOut"},{"sel":"#cu-series","from":{"x":1576.2,"y":1621.6},"to":{"x":464.4,"y":151.1},"t":115.72,"dur":0.6,"ease":"power2.inOut"},{"sel":"#rp-series","from":null,"to":{"x":464.4,"y":151.1,"opacity":1,"scale":1},"t":116.14,"dur":0},{"sel":"#rp-series i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":116.14,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-series svg","from":{"scale":1},"to":{"scale":0.84},"t":116.08,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-series svg","from":{"scale":0.84},"to":{"scale":1},"t":116.18,"dur":0.14,"ease":"power1.out"},{"sel":"#st-series-ask-dec","from":{"opacity":0},"to":{"opacity":1},"t":116.24,"dur":0.15,"ease":"none"},{"sel":"#st-series-ask-proposal","from":null,"to":{"opacity":0},"t":116.39,"dur":0},{"sel":"#st-series-ask-created","from":{"opacity":0},"to":{"opacity":1},"t":116.28,"dur":0.25,"ease":"none"},{"sel":"#st-series-ask-dec","from":null,"to":{"opacity":0},"t":116.53,"dur":0},{"sel":"#rp-series","from":null,"to":{"x":464.4,"y":151.1,"opacity":1,"scale":1},"t":116.51,"dur":0},{"sel":"#rp-series i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":116.51,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-series svg","from":{"scale":1},"to":{"scale":0.84},"t":116.45,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-series svg","from":{"scale":0.84},"to":{"scale":1},"t":116.55,"dur":0.14,"ease":"power1.out"},{"sel":"#st-series-ask-january","from":{"opacity":0},"to":{"opacity":1},"t":116.61,"dur":0.2,"ease":"none"},{"sel":"#st-series-ask-created","from":null,"to":{"opacity":0},"t":116.81,"dur":0},{"sel":"#cam-series","from":{"x":0,"y":0,"scale":1},"to":{"x":-560.6,"y":-505.4,"scale":1.32},"t":116.86,"dur":1.4,"ease":"power2.inOut"},{"sel":"#cu-series .arrow","from":{"scale":1},"to":{"scale":0.76},"t":116.86,"dur":1.4,"ease":"power2.inOut"},{"sel":"#mk-series-4","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":117.26,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-series-4","from":{"opacity":1},"to":{"opacity":0},"t":119.16,"dur":0.3,"ease":"none"},{"sel":"#mk-series-5","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":117.41,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-series-5","from":{"opacity":1},"to":{"opacity":0},"t":119.16,"dur":0.3,"ease":"none"},{"sel":"#mk-series-6","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":117.56,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-series-6","from":{"opacity":1},"to":{"opacity":0},"t":119.16,"dur":0.3,"ease":"none"},{"sel":"#mk-series-7","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":117.71,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-series-7","from":{"opacity":1},"to":{"opacity":0},"t":119.16,"dur":0.3,"ease":"none"},{"sel":"#kk-series","from":{"opacity":0,"x":-16},"to":{"opacity":1,"x":0},"t":103.38,"dur":0.45,"ease":"power2.out"},{"sel":"#kk-series","from":{"opacity":1},"to":{"opacity":0},"t":106.53,"dur":0.4,"ease":"none"},{"sel":"#st-swap-swap-list","from":null,"to":{"opacity":1},"t":119.41,"dur":0},{"sel":"#cam-swap","from":null,"to":{"x":0,"y":0,"scale":1},"t":119.41,"dur":0},{"sel":"#cu-swap .arrow","from":null,"to":{"scale":1},"t":119.41,"dur":0},{"sel":"#cu-swap","from":null,"to":{"x":840,"y":1080},"t":119.41,"dur":0},{"sel":"#cu-swap","from":{"opacity":0},"to":{"opacity":1},"t":119.41,"dur":0.3,"ease":"none"},{"sel":"#cam-swap","from":{"x":0,"y":0,"scale":1},"to":{"x":-157.2,"y":-206.9,"scale":1.33},"t":119.71,"dur":2.4,"ease":"power2.inOut"},{"sel":"#cu-swap .arrow","from":{"scale":1},"to":{"scale":0.75},"t":119.71,"dur":2.4,"ease":"power2.inOut"},{"sel":"#mk-swap-1","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":121.45,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-swap-1","from":{"opacity":1},"to":{"opacity":0},"t":122.95,"dur":0.3,"ease":"none"},{"sel":"#cam-swap","from":{"x":-157.2,"y":-206.9,"scale":1.33},"to":{"x":-157.2,"y":-611.7,"scale":1.33},"t":123.03,"dur":1.2,"ease":"power2.inOut"},{"sel":"#cu-swap .arrow","from":{"scale":0.75},"to":{"scale":0.75},"t":123.03,"dur":1.2,"ease":"power2.inOut"},{"sel":"#cu-swap","from":{"x":840,"y":1080},"to":{"x":843.6,"y":777.5},"t":125.15,"dur":0.6,"ease":"power2.inOut"},{"sel":"#rp-swap","from":null,"to":{"x":843.6,"y":777.5,"opacity":1,"scale":0.75},"t":125.75,"dur":0},{"sel":"#rp-swap i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":125.75,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-swap svg","from":{"scale":1},"to":{"scale":0.84},"t":125.69,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-swap svg","from":{"scale":0.84},"to":{"scale":1},"t":125.79,"dur":0.14,"ease":"power1.out"},{"sel":"#st-swap-swap-panel","from":{"opacity":0},"to":{"opacity":1},"t":125.9,"dur":0.25,"ease":"none"},{"sel":"#st-swap-swap-list","from":null,"to":{"opacity":0},"t":126.15,"dur":0},{"sel":"#cam-swap","from":{"x":-157.2,"y":-611.7,"scale":1.33},"to":{"x":-902.4,"y":-230.8,"scale":1.47},"t":125.95,"dur":1,"ease":"power2.inOut"},{"sel":"#cu-swap .arrow","from":{"scale":0.75},"to":{"scale":0.68},"t":125.95,"dur":1,"ease":"power2.inOut"},{"sel":"#mk-swap-2","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":126.25,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-swap-2","from":{"opacity":1},"to":{"opacity":0},"t":127.55,"dur":0.3,"ease":"none"},{"sel":"#cam-swap","from":{"x":-902.4,"y":-230.8,"scale":1.47},"to":{"x":-157.2,"y":-611.7,"scale":1.33},"t":126.4,"dur":0.9,"ease":"power2.inOut"},{"sel":"#cu-swap .arrow","from":{"scale":0.68},"to":{"scale":0.75},"t":126.4,"dur":0.9,"ease":"power2.inOut"},{"sel":"#mk-swap-3","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":126.8,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-swap-3","from":{"opacity":1},"to":{"opacity":0},"t":128.1,"dur":0.3,"ease":"none"},{"sel":"#mk-swap-4","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":126.8,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-swap-4","from":{"opacity":1},"to":{"opacity":0},"t":128.1,"dur":0.3,"ease":"none"},{"sel":"#cam-swap","from":{"x":-157.2,"y":-611.7,"scale":1.33},"to":{"x":-1920,"y":-372,"scale":2},"t":128.59,"dur":1,"ease":"power2.inOut"},{"sel":"#cu-swap .arrow","from":{"scale":0.75},"to":{"scale":0.5},"t":128.59,"dur":1,"ease":"power2.inOut"},{"sel":"#mk-swap-5","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":129.29,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-swap-5","from":{"opacity":1},"to":{"opacity":0},"t":131.19,"dur":0.3,"ease":"none"},{"sel":"#mk-swap-6","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":131.79,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-swap-6","from":{"opacity":1},"to":{"opacity":0},"t":133.09,"dur":0.3,"ease":"none"},{"sel":"#cu-swap","from":{"x":843.6,"y":777.5},"to":{"x":1595.1,"y":576.4},"t":133.71,"dur":0.7,"ease":"power2.inOut"},{"sel":"#rp-swap","from":null,"to":{"x":1595.1,"y":576.4,"opacity":1,"scale":0.5},"t":135.15,"dur":0},{"sel":"#rp-swap i","from":{"scale":0.3,"opacity":0.95},"to":{"scale":1.5,"opacity":0},"t":135.15,"dur":0.55,"ease":"power1.out"},{"sel":"#cu-swap svg","from":{"scale":1},"to":{"scale":0.84},"t":135.09,"dur":0.08,"ease":"power1.out"},{"sel":"#cu-swap svg","from":{"scale":0.84},"to":{"scale":1},"t":135.19,"dur":0.14,"ease":"power1.out"},{"sel":"#st-swap-swap-fixed","from":{"opacity":0},"to":{"opacity":1},"t":135.35,"dur":0.3,"ease":"none"},{"sel":"#st-swap-swap-panel","from":null,"to":{"opacity":0},"t":135.65,"dur":0},{"sel":"#cu-swap","from":{"opacity":1},"to":{"opacity":0},"t":135.75,"dur":0.25,"ease":"none"},{"sel":"#cam-swap","from":{"x":-1920,"y":-372,"scale":2},"to":{"x":-257.5,"y":-267.1,"scale":1.14},"t":136.2,"dur":1.2,"ease":"power2.inOut"},{"sel":"#cu-swap .arrow","from":{"scale":0.5},"to":{"scale":0.88},"t":136.2,"dur":1.2,"ease":"power2.inOut"},{"sel":"#mk-swap-7","from":{"opacity":0,"scale":1.05},"to":{"opacity":1,"scale":1},"t":136.8,"dur":0.3,"ease":"power2.out"},{"sel":"#mk-swap-7","from":{"opacity":1},"to":{"opacity":0},"t":138.9,"dur":0.3,"ease":"none"},{"sel":"#kk-swap","from":{"opacity":0,"x":-16},"to":{"opacity":1,"x":0},"t":119.86,"dur":0.45,"ease":"power2.out"},{"sel":"#kk-swap","from":{"opacity":1},"to":{"opacity":0},"t":123.01,"dur":0.4,"ease":"none"}]; /* timing:end */
+
+      const tl = gsap.timeline({ paused: true });
+      const ease = 'power2.inOut';
+
+      // Every scene but the first fades up over the one before it.
+      for (const id of Object.keys(T).slice(1)) {
+        tl.fromTo(`[data-scene="${id}"]`, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'none' }, T[id].start);
+      }
+
+      // Footage: the beats build.mjs resolved from lib/plan.mjs (cross-fades, camera, pointer, marks).
+      for (const op of OPS) {
+        if (op.dur > 0) {
+          // immediateRender off: an element with two tweens (a mark's fade in and out) must not show early.
+          tl.fromTo(op.sel, op.from, { ...op.to, duration: op.dur, ease: op.ease || ease, immediateRender: false }, op.t);
+        } else {
+          tl.set(op.sel, op.to, op.t);
+        }
+      }
+
+      // 1. Title: the rules draw, the name lands, the colours of the rhythm fall in on "rhythm".
+      const o = T.open.start;
+      tl.fromTo(['#open-r1', '#open-r2', '#open-r3'], { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: 'power3.out', stagger: 0.08 }, o + 0.2);
+      tl.fromTo('#open-word', { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, o + 0.45);
+      tl.fromTo('#open-ears', { opacity: 0 }, { opacity: 1, duration: 0.8 }, o + 0.9);
+      tl.fromTo('#open-tag', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, o + CUE.open.calendar);
+      tl.fromTo('#open-colors i', { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: 'power2.out', stagger: 0.09 }, o + CUE.open.rhythm - 0.25);
+
+      // 10. Honest by design: one rule per sentence.
+      const h = T.honest.start;
+      tl.fromTo('#honest-head', { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' }, h + 0.3);
+      document.querySelectorAll('.rules li').forEach((li, i) => {
+        tl.fromTo(li, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.6, ease: 'power3.out' }, h + CUE.honest.rules[i] - 0.15);
+      });
+
+      // 11. Abilities: the command, its table, then the same question over MCP.
+      const m = T.mcp.start;
+      tl.fromTo('#mcp-head', { opacity: 0, y: -16 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, m + 0.3);
+      tl.fromTo('.term', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, m + 0.5);
+      tl.fromTo('#term-cmd .ch', { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 0.035, ease: 'none' }, m + CUE.mcp.cli - 0.6);
+      tl.set('.term .caret', { opacity: 0 }, m + CUE.mcp.cli + 0.9);
+      tl.fromTo('.term .out', { opacity: 0 }, { opacity: 1, duration: 0.05, stagger: 0.06 }, m + CUE.mcp.cli + 0.95);
+      tl.fromTo('.chat', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, m + CUE.mcp.assistants - 0.2);
+      tl.fromTo('.bubble.me', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.45 }, m + CUE.mcp.ask - 0.2);
+      tl.fromTo('.tool', { opacity: 0 }, { opacity: 1, duration: 0.35 }, m + CUE.mcp.ask + 0.9);
+      tl.fromTo('.bubble.ai', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 }, m + CUE.mcp.ask + 1.6);
+      tl.fromTo('#chat-friday i', { opacity: 0 }, { opacity: 1, duration: 0.35 }, m + CUE.mcp.friday - 0.1);
+
+      // 12. Close: the nameplate again, then the address.
+      const c = T.close.start;
+      tl.fromTo(['#close-r1', '#close-r2', '#close-r3'], { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: 'power3.out', stagger: 0.08 }, c + 0.3);
+      tl.fromTo('#close-word', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, c + 0.5);
+      tl.fromTo('#close-colors i', { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: 'power2.out', stagger: 0.07 }, c + 0.9);
+      tl.fromTo('#close-links', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, c + CUE.close.free - 0.2);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines['main'] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

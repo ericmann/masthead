@@ -1,0 +1,87 @@
+{
+	"voice": "Alice",
+	"voiceId": "Xb7hH8MSUJpSbSDYk0k2",
+	"ttsModel": "eleven_multilingual_v2",
+	"voiceSettings": {
+		"stability": 0.55,
+		"similarity_boost": 0.75,
+		"style": 0.1,
+		"speed": 0.97
+	},
+	"seed": 20261110,
+	"voiceVolume": 1.4,
+	"music": {
+		"model": "music_v1",
+		"prompt": "Light, unhurried instrumental bed for a calm software walkthrough. Soft felt piano, muted plucked strings, warm pads, brushed percussion, gentle pulse around 92 BPM. Thoughtful and optimistic, no vocals, no big drops, leaves room for narration, ends on a resolved chord.",
+		"volume": 0.15,
+		"fadeIn": 2,
+		"fadeOut": 3
+	},
+	"lead": 0.5,
+	"tail": 0.8,
+	"scenes": [
+		{
+			"id": "open",
+			"music": false,
+			"min": 6,
+			"text": "This is Masthead: an editorial calendar for WordPress that knows your rhythm."
+		},
+		{
+			"id": "problem",
+			"min": 13,
+			"text": "If you publish on a schedule, you know how it goes. The hard posts get written. It's the easy ones that slip: the Tuesday nobody noticed was empty, the series part that drifted a week, the good post from last spring that nobody has seen since."
+		},
+		{
+			"id": "calendar",
+			"min": 12,
+			"text": "Masthead adds a calendar under Posts. Everything you've published, scheduled and planned, on one screen, coloured by category. Switch to a week, or a list, whenever you need a closer look."
+		},
+		{
+			"id": "rhythm",
+			"min": 13,
+			"text": "The secret is the rhythm. Give each weekday a lane, with its categories and a default time. Business on Monday, technical posts on Tuesday and Thursday, fiction on Saturday. Now every open slot on the calendar knows what it's for."
+		},
+		{
+			"id": "desk",
+			"min": 15,
+			"text": "Click a day and the Desk gets to work. It looks at what you already have before suggesting anything new: an unscheduled draft that fits the lane, the next part of a series, a category that's gone quiet, and, with Jetpack connected, a post worth sharing again. Every suggestion tells you why."
+		},
+		{
+			"id": "dayplan",
+			"min": 14,
+			"text": "Want something new? Ask the Desk for ideas, or plan your own. Give it a title, ask for an outline if you'd like a head start, and Masthead creates a real, dated WordPress draft, right there on the calendar."
+		},
+		{
+			"id": "reschedule",
+			"min": 9.5,
+			"text": "Plans change. Drag a post to another day, or move it with the keyboard. Its status never changes behind your back."
+		},
+		{
+			"id": "series",
+			"min": 14,
+			"text": "Planning a series? Ask the Desk. Describe it in a sentence, and the AI proposes the parts while Masthead picks the dates, on your rhythm and the series cadence. One click turns the proposal into drafts."
+		},
+		{
+			"id": "swap",
+			"min": 15,
+			"text": "Every night, Masthead reads the upcoming schedule and flags anything that fits badly: a post in the wrong lane, two posts on one day, a series part that broke its cadence. Each finding explains itself, and when there's a fix, it's one click away. Nothing moves until you say so."
+		},
+		{
+			"id": "honest",
+			"min": 13,
+			"text": "That's the rule throughout. Masthead never publishes, moves or shares on its own. Traffic numbers come from Jetpack Stats, or not at all. The AI writes ideas and outlines, never claims about your site. And nothing touches your public pages."
+		},
+		{
+			"id": "mcp",
+			"min": 13,
+			"text": "Every action is a WordPress Ability, so the same calendar is open to WP-CLI, and to AI assistants like Claude over MCP. Ask what's on next week, or have it plan Friday's post, with the same permissions as the screen.",
+			"speak": "Every action is a WordPress Ability, so the same calendar is open to W-P-C-L-I, and to AI assistants like Claude over M-C-P. Ask what's on next week, or have it plan Friday's post, with the same permissions as the screen."
+		},
+		{
+			"id": "close",
+			"min": 7,
+			"text": "Masthead. Free and open source, for WordPress 7.1 and later. Find it on GitHub.",
+			"speak": "Masthead. Free and open source, for WordPress seven point one and later. Find it on GitHub."
+		}
+	]
+}
