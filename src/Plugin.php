@@ -9,10 +9,13 @@ declare(strict_types=1);
 
 namespace Masthead;
 
+use Masthead\Abilities\GetPlan;
+use Masthead\Abilities\Registrar;
 use Masthead\Admin\Assets;
 use Masthead\Admin\CalendarPage;
 use Masthead\Admin\Notices;
 use Masthead\Plan\Colors;
+use Masthead\Plan\PlanReader;
 use Masthead\Plan\Rhythm;
 use Masthead\Plan\SeriesSource;
 use Masthead\Plan\Slots;
@@ -56,6 +59,26 @@ final class Plugin {
 
 		$slots = new Slots( $series );
 		add_action( 'init', array( $slots, 'register_meta' ) );
+
+		$reader    = new PlanReader( $clock, $series );
+		$registrar = new Registrar( new GetPlan( $reader ) );
+		add_action( 'wp_abilities_api_categories_init', array( $registrar, 'register_category' ) );
+		add_action( 'wp_abilities_api_init', array( $registrar, 'register' ) );
+		$assets->add_boot_data( 'abilities', array( $registrar, 'describe' ) );
+		$assets->add_boot_data(
+			'run',
+			static fn() => array(
+				'path'     => '/wp-abilities/v1/abilities/%s/run',
+				'readonly' => array(
+					'method' => 'GET',
+					'input'  => 'query',
+				),
+				'write'    => array(
+					'method' => 'POST',
+					'input'  => 'body',
+				),
+			)
+		);
 	}
 
 	/**
