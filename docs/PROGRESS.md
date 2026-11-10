@@ -70,7 +70,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-15 Nightly cron, masthead/swap-check ability and wp masthead swap-check
 - [x] P4-16 Swap panel and queue verdicts
 - [x] P4-17 Tune the swap assumptions
-- [ ] P4-18 Phase 4 push and manual checks
+- [x] P4-18 Phase 4 push and manual checks
 - [ ] P5-01 Spike — WordPress AI Client surface and model metadata
 - [ ] P5-02 AiClient interface, Schemas and the schema validator
 - [ ] P5-03 Prompts
@@ -354,3 +354,7 @@ Tests: SwapPanel.test.js(6), useFindings.test.js(3), ListView.test.js(+2), e2e s
 ### P4-17 — c744934
 
 Tuning the swap assumptions (docs/tuning/P4-17.md); all defaults kept, Config unchanged. Measurement (before = after): swap.lookahead_days=60 -> 9 lane_mismatch / 4 collision / 1 cadence_break / 2 better_candidate, 0.025 s, Mantle acceptance pass (30: Mantle FAILS because part 2 is 35 days out, 92: pass, 0.030 s); swap.min_score_delta=0.25 -> 0 in-lane posts with better_candidate with NullStats (0.15, 0.35 also 0); swap.candidate_window_days=3 -> 0 of 10 in-lane posts with better_candidate with fixture stats (2, 5 also 0); swap.weights 0.5/0.3/0.2 -> 0 of 90 in-lane posts outscored on their own day (0.6/0.2/0.2 and 0.4/0.4/0.2 also 0). NOT MEASURED against real Jetpack Stats (human). Harness SwapBench.php (group tuning). Full unit and integration suites green.
+
+### P4-18 — cc28f18
+
+Docs only: Phase 4 section appended to docs/manual-checks.md. kukulu_verify (full): green (228 PHP unit, 122 JS unit). composer audit: no advisories. npm audit --audit-level=high: still transitive dev advisories (5 high; see P0-02). Push: pushed build/2026-11-10 to origin. Manual check: NOT VERIFIED (human).
