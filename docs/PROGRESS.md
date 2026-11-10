@@ -25,7 +25,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-09 Spike — Abilities REST execution and exposure flags
 - [x] P1-10 Abilities Registrar, category and masthead/get-plan
 - [x] P1-11 masthead/create-planned-draft ability
-- [ ] P1-12 masthead/reschedule ability
+- [x] P1-12 masthead/reschedule ability
 - [ ] P1-13 REST contract for running abilities
 - [ ] P1-14 wp masthead seed
 - [ ] P1-15 wp masthead plan
@@ -174,3 +174,7 @@ Tests: unit RegistrarTest(4), integration GetPlanTest(6). Abilities\Ability inte
 ### P1-11 — bd3143c
 
 Tests: integration CreatePlannedDraftTest(6). new CreatePlannedDraft( Slots, SeriesSource ), added to the Registrar(...) call in Plugin::boot (multi-line args; add new abilities as further arguments). Interpretation: empty title -> masthead_missing_title (400). Ability pattern used (copy for later abilities): final class implements Ability, private const BAD_REQUEST = 400, annotations non-readonly/non-destructive/non-idempotent.
+
+### P1-12 — 5f6c218
+
+Tests: integration Abilities\RescheduleTest(5). Abilities\Reschedule( Plan\Reschedule as PlanReschedule ), added to Registrar args in Plugin. Annotations idempotent only (POST route). Permission: current_user_can('edit_post', post_id). Output {post_id, date ISO, status}; errors pass through from Plan\Reschedule.
