@@ -1,6 +1,8 @@
 import { gmdateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
 
+import CategoryPicker from './CategoryPicker';
+
 const DAYS_IN_WEEK = 7;
 // 1970-01-04 was a Sunday.
 const SUNDAY_1970 = Date.UTC( 1970, 0, 4 );
@@ -24,7 +26,7 @@ export function slugify( label ) {
  *
  * @param {Object}   props              Props.
  * @param {Object}   props.rhythm       Rhythm keyed by weekday "0".."6".
- * @param {Object[]} props.categories   { slug, name } options.
+ * @param {Object[]} props.categories   { slug, name, color } options.
  * @param {number}   props.weekStartsOn First weekday, 0 = Sunday.
  * @param {Function} props.setRhythm    Called with the whole new rhythm.
  * @return {Element} The table.
@@ -87,37 +89,15 @@ export default function RhythmTable( {
 							/>
 						</td>
 						<td>
-							<select
-								multiple
+							<CategoryPicker
+								idPrefix={ `masthead-rhythm-${ weekday }` }
+								dayName={ name }
+								categories={ categories }
 								value={ day.categories }
-								aria-label={ sprintf(
-									/* translators: %s: weekday name. */
-									__( '%s categories', 'masthead' ),
-									name
-								) }
-								onChange={ ( event ) =>
-									update( weekday, {
-										categories: Array.from(
-											event.target.selectedOptions,
-											( option ) => option.value
-										),
-									} )
+								onChange={ ( next ) =>
+									update( weekday, { categories: next } )
 								}
-							>
-								{ categories.map( ( category ) => (
-									<option
-										key={ category.slug }
-										value={ category.slug }
-									>
-										{ category.name }
-									</option>
-								) ) }
-							</select>
-							{ day.categories.length === 0 ? (
-								<span className="masthead-rhythm__any">
-									{ __( 'Any category', 'masthead' ) }
-								</span>
-							) : null }
+							/>
 						</td>
 						<td>
 							<input

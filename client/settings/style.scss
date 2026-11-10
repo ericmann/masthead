@@ -1,35 +1,308 @@
 .masthead-settings {
-	max-width: 960px;
+	max-width: 1200px;
 
-	&__section {
-		margin: 16px 0;
+	> h1 {
+		margin-bottom: 12px;
+	}
+
+	.notice.inline {
+		margin: 0 0 16px;
+	}
+
+	&__grid {
+		display: grid;
+		grid-template-areas:
+			"rhythm rhythm series"
+			"rhythm rhythm exposure"
+			"ai ai ai"
+			"desk desk desk";
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-rows: auto 1fr auto auto;
+		align-items: start;
+		gap: 16px;
+	}
+
+	&__rhythm {
+		grid-area: rhythm;
+	}
+
+	&__series {
+		grid-area: series;
+	}
+
+	&__exposure {
+		grid-area: exposure;
+	}
+
+	&__ai {
+		grid-area: ai;
+	}
+
+	&__desk {
+		grid-area: desk;
+	}
+
+	&__columns {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: 16px 24px;
+	}
+
+	&__column {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		min-width: 0;
+
+		h3 {
+			margin: 0;
+			font-size: 13px;
+		}
+
+		p {
+			margin: 0;
+		}
+	}
+
+	&__group {
+		min-width: 0;
+		margin: 0 0 16px;
+		padding: 0;
+		border: 0;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		legend {
+			margin-bottom: 8px;
+			padding: 0;
+			font-size: 13px;
+			font-weight: 600;
+		}
+
+		> .description {
+			margin: 8px 0 0;
+		}
+	}
+
+	&__fields {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+		gap: 12px 16px;
+	}
+
+	.submit {
+		margin-top: 16px;
+		padding: 0;
 	}
 }
 
-.masthead-rhythm {
+.masthead-ai-notice {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0 16px;
 
-	input[type="text"],
-	input[type="time"] {
-		width: 100%;
-		max-width: 260px;
+	a {
+		font-weight: 600;
+	}
+}
+
+.masthead-card {
+	min-width: 0;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+
+	&__head {
+		padding: 14px 16px 10px;
+		border-bottom: 1px solid #f0f0f1;
+
+		h2 {
+			margin: 0;
+			font-size: 15px;
+		}
+
+		.description {
+			margin: 4px 0 0;
+		}
 	}
 
-	select {
-		min-width: 160px;
+	&__body {
+		padding: 12px 16px 16px;
 	}
 
-	&__any {
-		display: block;
+	.description {
 		color: #50575e;
 		font-size: 12px;
 	}
 }
 
-@media (max-width: 782px) {
+.masthead-field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
 
-	.masthead-rhythm {
-		display: block;
-		overflow-x: auto;
+	label {
+		font-weight: 600;
+	}
+
+	input[type="number"] {
+		width: 120px;
+	}
+
+	input[type="text"] {
+		width: 100%;
+	}
+
+	.description {
+		margin: 0;
+	}
+}
+
+.masthead-checkbox {
+	margin: 0;
+
+	label {
+		display: inline-flex;
+		align-items: flex-start;
+		gap: 6px;
+	}
+
+	input[type="checkbox"] {
+		margin: 2px 0 0;
+	}
+}
+
+.masthead-exposure {
+	margin: 0;
+	padding: 0;
+	border: 0;
+
+	.description {
+		margin: 4px 0 12px 24px;
+	}
+}
+
+.masthead-rhythm.widefat {
+	width: calc(100% + 32px);
+	margin: -12px -16px -16px;
+	border: 0;
+	box-shadow: none;
+
+	th,
+	td {
+		padding: 8px 16px;
+		vertical-align: top;
+	}
+
+	tbody th {
+		line-height: 32px;
+	}
+
+	input[type="text"],
+	input[type="time"] {
+		min-height: 32px;
+		padding-top: 0;
+		padding-bottom: 0;
+		line-height: 30px;
+	}
+
+	thead th {
+		color: #1d2327;
+		font-weight: 600;
+	}
+
+	tbody th {
+		font-weight: 400;
+	}
+
+	tbody tr + tr > * {
+		border-top: 1px solid #f0f0f1;
+	}
+
+	input[type="text"] {
+		width: 100%;
+		max-width: 220px;
+	}
+
+	input[type="time"] {
+		width: 130px;
+	}
+
+	&__any {
+		color: #50575e;
+	}
+}
+
+.masthead-picker {
+	position: relative;
+
+	summary {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 4px 10px;
+		min-height: 32px;
+		padding: 2px 24px 2px 0;
+		border-radius: 2px;
+		cursor: pointer;
+		list-style: none;
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+
+		// A chevron that turns when the list is open.
+		&::after {
+			content: "";
+			position: absolute;
+			top: 12px;
+			right: 6px;
+			width: 6px;
+			height: 6px;
+			border-right: 1.5px solid #50575e;
+			border-bottom: 1.5px solid #50575e;
+			transform: rotate(45deg);
+		}
+
+		&:hover {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+			outline-offset: 2px;
+		}
+	}
+
+	&[open] summary::after {
+		top: 15px;
+		transform: rotate(225deg);
+	}
+
+	fieldset {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+		gap: 6px 12px;
+		margin: 6px 0 4px;
+		padding: 8px 10px;
+		border: 1px solid #dcdcde;
+		border-radius: 4px;
+		background: #f6f7f7;
+
+		label {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		input[type="checkbox"] {
+			margin: 0;
+		}
 	}
 }
 
@@ -39,35 +312,105 @@
 	list-style: none;
 
 	&__item {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 8px 16px;
-		padding: 8px 0;
-		border-top: 1px solid #dcdcde;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-auto-flow: dense;
+		gap: 8px 12px;
+		padding: 12px 0;
+		border-top: 1px solid #f0f0f1;
 
-		strong {
-			flex: 1 1 100%;
+		&:first-child {
+			padding-top: 0;
+			border-top: 0;
 		}
 
 		label {
-			display: inline-flex;
+			display: flex;
 			flex-direction: column;
-			gap: 2px;
+			gap: 4px;
+			min-width: 0;
 			font-size: 12px;
+			font-weight: 600;
 		}
+
+		input[type="number"],
+		input[type="time"],
+		select {
+			width: 100%;
+			max-width: 100%;
+		}
+	}
+
+	&__name,
+	&__weekday {
+		grid-column: 1 / -1;
+	}
+
+	label.masthead-series__exception {
+		flex-direction: row;
+		align-items: center;
+		align-self: end;
+		gap: 6px;
+		min-height: 40px;
+		font-weight: 400;
 	}
 }
 
-.masthead-desk-settings,
-.masthead-ai {
+@media (max-width: 1100px) {
 
-	input[type="number"] {
-		width: 90px;
+	.masthead-settings__grid {
+		grid-template-areas:
+			"rhythm"
+			"series"
+			"exposure"
+			"ai"
+			"desk";
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: none;
 	}
+}
 
-	input[type="text"] {
-		width: 100%;
-		max-width: 320px;
+@media (max-width: 782px) {
+
+	// One weekday per block: every input already names its day.
+	.masthead-rhythm.widefat {
+		display: block;
+		width: auto;
+
+		thead {
+			display: none;
+		}
+
+		tbody,
+		tr,
+		th,
+		td {
+			display: block;
+		}
+
+		tr {
+			padding: 8px 16px;
+		}
+
+		tbody tr + tr {
+			border-top: 1px solid #f0f0f1;
+
+			> * {
+				border-top: 0;
+			}
+		}
+
+		th,
+		td {
+			padding: 4px 0;
+		}
+
+		tbody th {
+			font-weight: 600;
+		}
+
+		input[type="text"] {
+			max-width: none;
+		}
 	}
 }

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import RhythmTable, { slugify } from '../../../client/settings/RhythmTable';
@@ -75,9 +75,14 @@ describe( 'RhythmTable', () => {
 		expect( screen.getByLabelText( 'Friday default time' ).value ).toBe(
 			'08:00'
 		);
-		const thursday = screen.getByLabelText( 'Thursday categories' );
+		const thursday = screen.getByRole( 'group', {
+			name: 'Thursday categories',
+		} );
 		expect(
-			[ ...thursday.selectedOptions ].map( ( o ) => o.value )
+			within( thursday )
+				.getAllByRole( 'checkbox' )
+				.filter( ( box ) => box.checked )
+				.map( ( box ) => box.value )
 		).toEqual( [ 'technology', 'security' ] );
 		expect(
 			container.querySelector( 'tbody tr' ).getAttribute( 'data-weekday' )
@@ -93,12 +98,25 @@ describe( 'RhythmTable', () => {
 		expect( rows[ 6 ].getAttribute( 'data-weekday' ) ).toBe( '0' );
 	} );
 
+	it( 'a stored category the site does not list stays visible and can be removed', async () => {
+		const setRhythm = jest.fn();
+		renderTable( { setRhythm } );
+		const monday = within(
+			screen.getByRole( 'group', { name: 'Monday categories' } )
+		);
+		const business = monday.getByRole( 'checkbox', { name: 'business' } );
+		expect( business.checked ).toBe( true );
+		await userEvent.click( business );
+		expect( setRhythm.mock.calls[ 0 ][ 0 ][ 1 ].categories ).toEqual( [] );
+	} );
+
 	it( 'an empty category selection reads Any category', () => {
 		renderTable();
 		expect( screen.getAllByText( 'Any category' ) ).toHaveLength( 1 );
 		expect(
-			screen.getByLabelText( 'Wednesday categories' ).closest( 'td' )
-				.textContent
+			screen
+				.getByRole( 'group', { name: 'Wednesday categories' } )
+				.closest( 'td' ).textContent
 		).toContain( 'Any category' );
 	} );
 
@@ -124,6 +142,41 @@ describe( 'RhythmTable', () => {
 		} );
 		expect( slugify( ' Journal & build log ' ) ).toBe(
 			'journal-build-log'
+		);
+	} );
+
+	it( 'ticking a category saves the lane in site category order', async () => {
+		const setRhythm = jest.fn();
+		renderTable( { setRhythm } );
+		const sunday = within(
+			screen.getByRole( 'group', { name: 'Sunday categories' } )
+		);
+		await userEvent.click(
+			sunday.getByRole( 'checkbox', { name: 'Technology' } )
+		);
+		expect( setRhythm.mock.calls[ 0 ][ 0 ][ 0 ].categories ).toEqual( [
+			'technology',
+			'faith',
+		] );
+	} );
+
+	it( 'unticking the last category leaves the lane open to any category', async () => {
+		const setRhythm = jest.fn();
+		renderTable( { setRhythm } );
+		const tuesday = within(
+			screen.getByRole( 'group', { name: 'Tuesday categories' } )
+		);
+		await userEvent.click(
+			tuesday.getByRole( 'checkbox', { name: 'Technology' } )
+		);
+		expect( setRhythm.mock.calls[ 0 ][ 0 ][ 2 ].categories ).toEqual( [] );
+	} );
+
+	it( "the closed picker names the day's categories for screen readers", () => {
+		const { container } = renderTable();
+		const summary = container.querySelector( '[data-weekday="4"] summary' );
+		expect( summary.textContent ).toBe(
+			'Thursday categories: TechnologySecurity'
 		);
 	} );
 } );
