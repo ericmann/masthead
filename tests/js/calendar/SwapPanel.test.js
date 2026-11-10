@@ -179,13 +179,13 @@ describe( 'SwapPanel', () => {
 		expect( runAbility ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	it( 'the lane exception option posts term meta to the series endpoint', async () => {
+	it( 'the lane exception option posts term meta to the series endpoint in the edit context', async () => {
 		renderPanel( [ lane ] );
 		await userEvent.click(
 			screen.getByRole( 'button', { name: lane.options[ 1 ].label } )
 		);
 		expect( apiFetch ).toHaveBeenCalledWith( {
-			path: '/wp/v2/masthead_series/3',
+			path: '/wp/v2/masthead_series/3?context=edit',
 			method: 'POST',
 			data: { meta: { masthead_lane_exception: true } },
 		} );

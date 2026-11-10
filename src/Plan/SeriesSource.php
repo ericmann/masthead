@@ -22,6 +22,16 @@ class SeriesSource {
 	public const OWN_TAXONOMY = 'masthead_series';
 
 	/**
+	 * Planning meta that a REST response carries only in the edit context.
+	 */
+	public const EDIT_ONLY_META = array( 'masthead_cadence', 'masthead_lane_exception' );
+
+	/**
+	 * Arguments rest_prepare_{taxonomy} passes that hide_planning_meta() reads. Structural, not a tunable.
+	 */
+	private const PREPARE_ARGS = 3;
+
+	/**
 	 * Resolved taxonomy name.
 	 *
 	 * @return string
@@ -68,7 +78,8 @@ class SeriesSource {
 	}
 
 	/**
-	 * Registers the taxonomy (when needed) and Masthead's series meta. Hooked on init, last.
+	 * Registers the taxonomy (when needed) and Masthead's series meta, and keeps the planning meta out of
+	 * view-context REST responses. Hooked on init, last.
 	 *
 	 * @return void
 	 */
@@ -114,6 +125,7 @@ class SeriesSource {
 				'auth_callback' => $auth,
 			)
 		);
+		add_filter( 'rest_prepare_' . $taxonomy, array( $this, 'hide_planning_meta' ), PHP_INT_MAX, self::PREPARE_ARGS );
 
 		if ( self::OWN_TAXONOMY === $taxonomy ) {
 			register_term_meta(
@@ -138,6 +150,35 @@ class SeriesSource {
 				);
 			}
 		}
+	}
+
+	/**
+	 * Removes the planning meta from a series term response unless the request's context is edit, which core allows
+	 * only to users who can edit terms. ttm-core's series taxonomy is public, and SPEC 2 promises nothing is added to the
+	 * REST responses the theme uses.
+	 *
+	 * @param mixed  $response Response from the terms controller (WP_REST_Response).
+	 * @param mixed  $term     Term (unused).
+	 * @param object $request  Request (WP_REST_Request).
+	 * @return mixed The response.
+	 */
+	public function hide_planning_meta( $response, $term, $request ) {
+		if ( ! is_object( $response ) || ! method_exists( $response, 'get_data' ) || ! method_exists( $response, 'set_data' ) ) {
+			return $response;
+		}
+		$context = ( $request instanceof \ArrayAccess ) ? ( $request['context'] ?? null ) : null;
+		if ( 'edit' === $context ) {
+			return $response;
+		}
+		$data = $response->get_data();
+		if ( ! is_array( $data ) || ! isset( $data['meta'] ) || ! is_array( $data['meta'] ) ) {
+			return $response;
+		}
+		foreach ( self::EDIT_ONLY_META as $key ) {
+			unset( $data['meta'][ $key ] );
+		}
+		$response->set_data( $data );
+		return $response;
 	}
 
 	/**

@@ -1,6 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 
 import StatValue from '../components/StatValue';
 import { runAbility } from '../data/useAbility';
@@ -26,13 +27,18 @@ const STAT_LABELS = [
 
 /**
  * Runs one option: its ability then each also call in order (stopping at the first error), or a wp/v2 request.
+ * The wp/v2 request writes series planning meta, which the REST API returns only in the edit context.
  *
  * @param {Object} option Finding option.
  */
 async function applyOption( option ) {
 	if ( option.ability === null && option.input?.rest ) {
 		const { path, method, data } = option.input.rest;
-		await apiFetch( { path, method, data } );
+		await apiFetch( {
+			path: addQueryArgs( path, { context: 'edit' } ),
+			method,
+			data,
+		} );
 		return;
 	}
 	await runAbility( option.ability, option.input );
