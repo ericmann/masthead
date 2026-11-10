@@ -7,7 +7,7 @@ Started: 2026-11-10T00:40:38.244Z
 
 - [x] P0-01 PHP toolchain, plugin bootstrap, Config, Clock and Plugin
 - [x] P0-02 JS toolchain and client shell
-- [ ] P0-03 Structural checks script and module boundaries test
+- [x] P0-03 Structural checks script and module boundaries test
 - [ ] P0-04 Posts › Calendar page and asset loading
 - [ ] P0-05 wp-env and the integration test harness
 - [ ] P0-06 Playwright and axe smoke harness, e2e mu-plugin loader
@@ -102,3 +102,7 @@ Tests: ConfigTest (8), ClockTest (6). Interpretation: autoload-dev also maps Mas
 ### P0-02 — 2d2a6a9
 
 Tests: index.test.js (2), App.test.js (1). index.js exports ROUTES and mountAll(doc); domReady calls mountAll. Build emits build/index.js, index.asset.php and build/style-index.css (+rtl) -- NOT index.css: wp-scripts names files called style.* "style-index". Later Assets task must enqueue style-index.css. Testing-library (react, dom, user-event, jest-dom) added as devDeps. npm audit: overrides fixed serialize-javascript, linkify-it, uuid; remaining high advisories in transitive dev packages with no non-breaking fix: minimatch (GHSA-3ppc-4f35-3m26, GHSA-7r86-cg39-jmmj, GHSA-23c5-xmqv-rm74, GHSA-g3hv-75wg-m249), markdown-it/deepmerge (via eslint/stylelint tooling). eslint prints legacy eslintrc warning only.
+
+### P0-03 — 61c8c0d
+
+Tests: BoundariesTest (4); script self-test builds good/bad trees per check (6 checks). BoundariesTest::scan( $path, $source ) is public static, returns violation strings; comments and the namespace line are stripped before matching. Top-level Masthead\Config allowed for all modules but Config; SLUG/VERSION allowed everywhere. Note: kukulu_verify output is very long because composer prints PHP 8.4 deprecation notices from its own phar; harmless.
