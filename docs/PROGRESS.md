@@ -31,7 +31,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-15 wp masthead plan
 - [x] P1-16 Tune calendar.max_posts_per_range
 - [x] P1-17 Phase 1 push and manual checks
-- [ ] P2-01 Boot data and the client data layer
+- [x] P2-01 Boot data and the client data layer
 - [ ] P2-02 Shared components: StatValue, LaneDot, CategoryLegend
 - [ ] P2-03 PostChip, OpenSlot and DayCell
 - [ ] P2-04 Calendar app: toolbar, hash routing and MonthGrid
@@ -198,3 +198,7 @@ Tuning calendar.max_posts_per_range (docs/tuning/P1-16.md). Measurement: before 
 ### P1-17 — a66a769
 
 Docs only: Phase 1 section appended to docs/manual-checks.md. kukulu_verify (full, no files): green. composer audit: no advisories. npm audit --audit-level=high: still reports transitive dev advisories (5 high, no non-breaking fix; see P0-02). Push: pushed build/2026-11-09... branch build/2026-11-10 to origin. Manual check: NOT VERIFIED (human).
+
+### P2-01 — d968648
+
+Tests: AssetsTest +1, dates.test.js(6), useAbility.test.js(3), usePlan.test.js(3). PHP: Assets::add_planning_boot_data( SeriesSource ) adds config/caps/urls/series/categories/rhythm/ai providers (Plugin calls it). urls.settings = admin_url('options-general.php?page=masthead-settings') (P2-09 must use slug masthead-settings), connectors = options-connectors.php. Client API: data/boot.js getBoot()/resetBoot(); clock.js now()/today(); dates.js addDays/diffDays/weekday/weekRange/monthGrid/monthLabel/dayLabel/timeLabel (UTC math, labels via gmdateI18n); useAbility.js runAbility(name,input)/useAbility(name)->{run,isRunning,error}, rejects {code,message}; usePlan(from,to)->{days,unscheduled,truncated,isLoading,error,refresh,applyMove(postId,date)->token,rollback(token)}. Jest note: jest.mock factories may only reference variables prefixed `mock`. @wordpress/url added as devDependency. Did not run e2e here (no UI change yet; client not imported into index).
