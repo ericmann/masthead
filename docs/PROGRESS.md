@@ -36,7 +36,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P2-03 PostChip, OpenSlot and DayCell
 - [x] P2-04 Calendar app: toolbar, hash routing and MonthGrid
 - [x] P2-05 WeekGrid and ListView
-- [ ] P2-06 Legend visibility toggles and Draft tray
+- [x] P2-06 Legend visibility toggles and Draft tray
 - [ ] P2-07 Drag to reschedule and the "Move to…" alternative
 - [ ] P2-08 Responsive layout at 390 px and accessibility gates
 - [ ] P2-09 Settings › Calendar page and registered settings
@@ -218,3 +218,7 @@ Tests: App.test.js(6), MonthGrid.test.js(4), e2e calendar.spec.js (5 specs x des
 ### P2-05 — 2ffcc82
 
 Tests: WeekGrid.test.js(2), ListView.test.js(4), App.test.js(+1), e2e calendar.spec.js (+2 specs; full npm run test:e2e = 24 passed). WeekGrid({anchor,weekStartsOn,days,today,selectedDate,hidden,onSelectDay,onSelectPost}); ListView({days,hidden,onSelectPost}) rows .masthead-list__row[data-post-id]; dates.js gained shortDayLabel and rangeLabel; Toolbar labels: month/week/page. List range = anchor .. anchor+boot.config.maxRangeDays-1 (reads getBoot().config.maxRangeDays, so unit-test boots need config.maxRangeDays). Codebase note: wp-env default start_of_week is 1 (Monday); the fixture expects Sunday weeks, so e2e specs that depend on weeks must `wp option update start_of_week 0` (done in calendar.spec.js seedCalendar()). Also learned: prettier reformats files so scripted string replacements may silently not match - assert the old text exists.
+
+### P2-06 — 207406f
+
+Tests: DraftTray.test.js(3), App.test.js(+1), e2e calendar.spec.js(+2); npm run test:e2e = 28 passed before the final lint-only edits. DraftTray({unscheduled}) rows .masthead-tray__row[data-post-id]; Toolbar now takes categories/hidden/onToggleCategory and renders CategoryLegend; App holds hidden as a Set via toggleCategory. DraftTray sits in aside.masthead-rail (later rail content goes there too). dates.js gained monthDayLabel.
