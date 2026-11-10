@@ -19,7 +19,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-03 Primary category and Colors
 - [x] P1-04 Cadence
 - [x] P1-05 SeriesSource adapter and series term meta
-- [ ] P1-06 Slots (non-floating dated drafts)
+- [x] P1-06 Slots (non-floating dated drafts)
 - [ ] P1-07 Reschedule
 - [ ] P1-08 PlanReader
 - [ ] P1-09 Spike — Abilities REST execution and exposure flags
@@ -150,3 +150,7 @@ Tests: CadenceTest(7). Cadence static: sanitize/from_json/to_json/sanitize_json/
 ### P1-05 — 0af1a14
 
 Tests: unit SeriesSourceTest(4), integration SeriesSourceTest(4). SeriesSource is an INSTANCE class, `new SeriesSource()` (stateless). Public: taxonomy(), part_meta(), total_meta(), register() (init, PHP_INT_MAX in Plugin), for_post, terms, parts(term_id) -> [{post_id, part, status, date (null if undated), dated}], cadence, lane_exception, rest_base, set_part. Codebase note: WP_UnitTestCase clears registered meta between tests, so integration tests must call ->register() themselves; term meta over REST needs a term of the taxonomy and admin user. Unregister a stub taxonomy with unregister_taxonomy in finally.
+
+### P1-06 — d90645d
+
+Tests: unit SlotsTest(6), integration SlotsTest(5). Slots is an instance class: new Slots( SeriesSource ). Methods: register_meta (init), insert( postarr, status ) (pins status via wp_insert_post_data filter, supports import_id in postarr), delete( id ), create( input ), static is_dated( post ), static outline_markup( items ). Interpretation: invalid explicit time -> masthead_invalid_date; empty time -> lane time. Verified: a 'future' insert with a 2020 date stays future; REST title update keeps both dates.
