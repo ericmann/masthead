@@ -48,7 +48,9 @@ You stay the editor. Masthead never publishes, moves or shares anything without 
 
 ## See it in action
 
-<!-- DEMO VIDEO: poster image linking to the video, added once the demo is recorded. -->
+[![Watch the three-minute demo: the calendar, the weekly rhythm, the Desk, day plans, series and the nightly swap check, on a sample blog](docs/screenshots/demo-poster.png)](https://github.com/ericmann/masthead/releases/latest)
+
+<p align="center"><b>▶ Watch the three-minute demo</b> (the video is attached to the latest release). It runs on a demo site with sample data.</p>
 
 | Turn a suggestion into a dated draft | Fix a schedule the swap check flagged |
 |---|---|

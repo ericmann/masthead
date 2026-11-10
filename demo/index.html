@@ -71,11 +71,11 @@
       .colors i { flex: 1; transform-origin: 0 50%; }
       .tagline { font-family: Newsreader, Georgia, serif; font-style: italic; font-variation-settings: 'opsz' 36; font-weight: 400; text-align: center; color: var(--ink); }
 
-      .honest-head { position: absolute; left: 150px; top: 230px; width: 620px; }
+      .honest-head { position: absolute; left: 150px; top: 290px; width: 620px; }
       .honest-head small { display: block; font-weight: 600; font-size: 20px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--writing); }
       .honest-head h2 { margin: 18px 0 26px; font-family: Newsreader, Georgia, serif; font-variation-settings: 'opsz' 72; font-weight: 520; font-size: 104px; line-height: 0.98; letter-spacing: -0.02em; }
       .honest-head p { font-size: 27px; line-height: 1.4; color: var(--muted); }
-      .rules { position: absolute; left: 880px; right: 140px; top: 200px; list-style: none; }
+      .rules { position: absolute; left: 880px; right: 140px; top: 250px; list-style: none; }
       .rules li { display: flex; align-items: baseline; gap: 34px; padding: 30px 0 32px; border-top: 1.5px solid #cfc8b8; opacity: 0; }
       .rules li:last-child { border-bottom: 1.5px solid #cfc8b8; }
       .rules b { width: 46px; font-family: Newsreader, Georgia, serif; font-variation-settings: 'opsz' 72; font-weight: 600; font-size: 64px; line-height: 1; }
@@ -105,7 +105,8 @@
       .bubble.ai li i { position: absolute; left: 0; top: 0.42em; width: 9px; height: 9px; border-radius: 50%; }
       .bubble.ai p.open { font-size: 20px; color: var(--muted); }
       .bubble.ai .hl { position: relative; white-space: nowrap; isolation: isolate; }
-      .bubble.ai .hl i { position: absolute; left: -5px; right: -5px; top: -2px; bottom: -2px; z-index: -1; border-radius: 5px; background: #ffe7a3; opacity: 0; }
+      .bubble.ai .hl i { position: absolute; left: -5px; right: -5px; top: -2px; bottom: -2px; border-radius: 5px; background: #ffe7a3; opacity: 0; }
+      .bubble.ai .hl span { position: relative; }
       .tool { align-self: flex-start; padding: 9px 14px; border-radius: 8px; border: 1px dashed #b9b3a5; font-family: PlexMono, monospace; font-size: 17px; color: var(--muted); opacity: 0; }
       .tool b { color: var(--ink); font-weight: 500; }
 
@@ -120,7 +121,7 @@
       <!-- 1. Title: a nameplate, no music yet -->
       <div id="scene-open" class="scene clip" data-scene="open" data-start="0" data-duration="6.81" data-track-index="0">
         <div class="card">
-          <div class="nameplate" style="top: 250px">
+          <div class="nameplate" style="top: 290px">
             <div id="open-ears" class="ears"><span>Est. 2026</span><span>An editorial calendar for WordPress</span><span>Version 1.0</span></div>
             <div id="open-r1" class="rule thick" style="margin-top: 22px"></div>
             <div id="open-r2" class="rule thin" style="margin-top: 5px"></div>
@@ -342,7 +343,7 @@
                   <li><i style="background: #0f6e7a"></i><b>Thu, Nov 19</b> · A Family Security Checkup <span style="color: var(--muted)">(draft, Security)</span></li>
                   <li><i style="background: #b8325a"></i><b>Sat, Nov 21</b> · The Mantle – Part 2 of 4 <span style="color: var(--muted)">(scheduled, Writing)</span></li>
                 </ul>
-                <p class="open">Open: Sun, Nov 15 (Faith) · Mon, Nov 16 (Business &amp; leadership) · Tue, Nov 17 (Technical series) · Wed, Nov 18 (Standalone) · <span id="chat-friday" class="hl"><i></i>Fri, Nov 20 (Journal &amp; build log)</span></p>
+                <p class="open">Open: Sun, Nov 15 (Faith) · Mon, Nov 16 (Business &amp; leadership) · Tue, Nov 17 (Technical series) · Wed, Nov 18 (Standalone) · <span id="chat-friday" class="hl"><i></i><span>Fri, Nov 20 (Journal &amp; build log)</span></span></p>
               </div>
             </div>
           </div>
@@ -354,7 +355,7 @@
       <!-- 12. Close -->
       <div id="scene-close" class="scene clip" data-scene="close" data-start="175.94" data-duration="8.12" data-track-index="0">
         <div class="card">
-          <div class="nameplate" style="top: 230px">
+          <div class="nameplate" style="top: 250px">
             <div id="close-r1" class="rule thick"></div>
             <div id="close-r2" class="rule thin" style="margin-top: 5px"></div>
             <h1 id="close-word" class="wordmark" style="margin: 30px 0 26px; font-size: 210px">Masthead</h1>
@@ -383,7 +384,7 @@
       <audio id="vo-honest" src="audio/vo-honest.mp3" data-start="140.04" data-duration="17.27" data-volume="1.4" data-track-index="10"></audio>
       <audio id="vo-mcp" src="audio/vo-mcp.mp3" data-start="158.61" data-duration="16.54" data-volume="1.4" data-track-index="10"></audio>
       <audio id="vo-close" src="audio/vo-close.mp3" data-start="176.44" data-duration="6.82" data-volume="1.4" data-track-index="10"></audio>
-      <audio id="music" src="audio/music.mp3" data-start="6.81" data-duration="177.25" data-media-start="1.7" data-volume="0.15" data-fade-in="2" data-fade-out="3" data-track-index="11"></audio>
+      <audio id="music" src="audio/music.mp3" data-start="6.81" data-duration="176.85" data-media-start="4.53" data-volume="0.15" data-fade-in="2" data-fade-out="1.5" data-track-index="11"></audio>
       <!-- audio:end -->
     </div>
 

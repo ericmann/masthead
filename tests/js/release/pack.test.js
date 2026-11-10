@@ -92,7 +92,7 @@ describe( 'release pack', () => {
 			path.join( process.cwd(), 'README.md' ),
 			'utf8'
 		);
-		[ 'calendar-month', 'day-plan', 'swap-panel', 'settings' ].forEach(
+		[ 'calendar-month', 'day-plan', 'swap-panel', 'demo-poster' ].forEach(
 			( name ) => {
 				const relative = `docs/screenshots/${ name }.png`;
 				expect( readme ).toContain( relative );

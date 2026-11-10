@@ -15,8 +15,9 @@ plugin: `scripts/release/pack.mjs` packs an allowlist, and `demo/` is not on it.
 | `script.json` | Narration per scene, voice, music prompt and levels. Edit words here. |
 | `tts.mjs` | Voice-over per scene (with character timings) and the music bed. |
 | `lib/plan.mjs` | The shot list: per scene, which still, where the camera and pointer go, and on which words. |
-| `build.mjs` | Downscales the stills, resolves the plan into timed GSAP operations, writes them, the MCP panels, timing and audio into `index.html`. Warns if the camera ever shows past a still's edge. |
+| `build.mjs` | Downscales the stills, resolves the plan into timed GSAP operations, writes them, the MCP panels, timing and audio into `index.html`. Warns if the camera ever shows past a still's edge, and lines up the music bed's last chord with the last frame. |
 | `index.html` | The composition. Title, "honest by design", MCP and end cards are written by hand; the footage scenes are generated between the `footage` markers. |
+| `master.mjs` | Masters the render's sound to -16 LUFS (true peak under -1 dBTP) without re-encoding the picture. |
 | `assets/fonts/` | Newsreader and IBM Plex Sans/Mono (SIL Open Font License, `OFL-*.txt`). |
 
 Generated and ignored: `node_modules/`, `audio/`, `assets/shots/`, `assets/frames/`, `assets/vendor/`,
@@ -34,8 +35,11 @@ node tts.mjs            # needs the ElevenLabs key; skip for a silent draft with
 node build.mjs
 npx hyperframes check   # lint, runtime, layout and contrast
 npx hyperframes snapshot --at 30,75,137 --describe false   # spot-check frames
-npx hyperframes render -q high -o renders/masthead-demo.mp4
+npm run render          # renders/masthead-demo-raw.mp4, then master.mjs -> renders/masthead-demo.mp4
 ```
+
+The render takes about six minutes on eight cores. `renders/masthead-demo.mp4` is the file to publish:
+1920×1080, 30 fps, H.264 and AAC, about 3:04.
 
 `tts.mjs` reads the key from `~/.config/news-blog/elevenlabs-key` and sends it only as the
 `xi-api-key` header. Changing a scene's words means `node tts.mjs <scene>` then `node tts.mjs music`

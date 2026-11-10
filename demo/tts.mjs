@@ -67,10 +67,11 @@ if ( wantVo ) {
 if ( wantMusic ) {
 	const file = `${ AUDIO }music.mp3`;
 	if ( force || named.includes( 'music' ) || ! ( await exists( file ) ) ) {
-		// Length: every scene the music plays under, from the voice-over just made, plus a little to trim.
+		// Length: every scene the music plays under, from the voice-over just made, plus room for the
+		// silence music_v1 tends to leave after its last chord (build.mjs aligns the audible ending).
 		const { timeline } = await import( './lib/timeline.mjs' );
 		const t = await timeline( script );
-		const ms = Math.ceil( ( t.total - t.musicStart + 2 ) * 1000 );
+		const ms = Math.ceil( ( t.total - t.musicStart + 10 ) * 1000 );
 		const res = await call( '/music?output_format=mp3_44100_128', {
 			prompt: script.music.prompt,
 			model_id: script.music.model,

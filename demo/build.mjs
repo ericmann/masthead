@@ -11,7 +11,7 @@ import { readFile, writeFile, mkdir, copyFile, access } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { timeline, cue } from './lib/timeline.mjs';
-import { durationOf } from './lib/media.mjs';
+import { audibleEnd } from './lib/media.mjs';
 import { FOOTAGE } from './lib/plan.mjs';
 
 const run = promisify( execFile );
@@ -363,7 +363,7 @@ const mcpHtml = [
 	`      <p class="open">Open: ${ open
 		.map( ( d ) => {
 			const text = `${ esc( day( d.date ) ) } (${ esc( d.lane.label ) })`;
-			return new Date( `${ d.date }T12:00:00Z` ).getUTCDay() === 5 ? `<span id="chat-friday" class="hl"><i></i>${ text }</span>` : text;
+			return new Date( `${ d.date }T12:00:00Z` ).getUTCDay() === 5 ? `<span id="chat-friday" class="hl"><i></i><span>${ text }</span></span>` : text;
 		} )
 		.join( ' · ' ) }</p>`,
 	'    </div>',
@@ -405,10 +405,16 @@ for ( const s of t.scenes ) {
 }
 if ( await exists( here( 'audio/music.mp3' ) ) ) {
 	const m = script.music;
-	const length = r2( t.total - t.musicStart );
-	// Trim the bed's start so its resolved ending lands on the last frame.
-	const skip = r2( Math.max( 0, ( await durationOf( here( 'audio/music.mp3' ) ) ) - length - 0.3 ) );
-	tracks.push( `<audio id="music" src="audio/music.mp3" data-start="${ t.musicStart }" data-duration="${ length }" data-media-start="${ skip }" data-volume="${ m.volume }" data-fade-in="${ m.fadeIn }" data-fade-out="${ m.fadeOut }" data-track-index="11"></audio>` );
+	// Land the bed's last chord just before the last frame: trim its start by the difference, or,
+	// if the piece is shorter than the scenes it plays under, bring it in a little later.
+	const ending = await audibleEnd( here( 'audio/music.mp3' ) );
+	const end = t.total - ( m.endBefore ?? 0.4 );
+	const skip = r2( Math.max( 0, ending - ( end - t.musicStart ) ) );
+	const start = r2( Math.max( t.musicStart, end - ending ) );
+	if ( start > t.musicStart ) {
+		console.warn( `music: the bed is ${ r2( ending ) }s long, so it starts at ${ start }s instead of ${ t.musicStart }s (node tts.mjs music for a longer one)` );
+	}
+	tracks.push( `<audio id="music" src="audio/music.mp3" data-start="${ start }" data-duration="${ r2( end - start ) }" data-media-start="${ skip }" data-volume="${ m.volume }" data-fade-in="${ m.fadeIn }" data-fade-out="${ m.fadeOut }" data-track-index="11"></audio>` );
 }
 html = html.replace( /<!-- audio:start -->[\s\S]*?<!-- audio:end -->/, () => `<!-- audio:start -->\n      ${ tracks.join( '\n      ' ) }\n      <!-- audio:end -->` );
 

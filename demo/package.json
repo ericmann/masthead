@@ -9,7 +9,8 @@
     "build": "node build.mjs",
     "check": "hyperframes lint && hyperframes validate",
     "preview": "hyperframes preview",
-    "render": "hyperframes render -q high -o renders/masthead-demo.mp4"
+    "render": "hyperframes render -q high -o renders/masthead-demo-raw.mp4 && node master.mjs",
+    "master": "node master.mjs"
   },
   "dependencies": {
     "hyperframes": "0.8.173"

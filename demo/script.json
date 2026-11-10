@@ -15,7 +15,8 @@
 		"prompt": "Light, unhurried instrumental bed for a calm software walkthrough. Soft felt piano, muted plucked strings, warm pads, brushed percussion, gentle pulse around 92 BPM. Thoughtful and optimistic, no vocals, no big drops, leaves room for narration, ends on a resolved chord.",
 		"volume": 0.15,
 		"fadeIn": 2,
-		"fadeOut": 3
+		"fadeOut": 1.5,
+		"endBefore": 0.4
 	},
 	"lead": 0.5,
 	"tail": 0.8,
