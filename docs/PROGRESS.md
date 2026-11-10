@@ -34,7 +34,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P2-01 Boot data and the client data layer
 - [x] P2-02 Shared components: StatValue, LaneDot, CategoryLegend
 - [x] P2-03 PostChip, OpenSlot and DayCell
-- [ ] P2-04 Calendar app: toolbar, hash routing and MonthGrid
+- [x] P2-04 Calendar app: toolbar, hash routing and MonthGrid
 - [ ] P2-05 WeekGrid and ListView
 - [ ] P2-06 Legend visibility toggles and Draft tray
 - [ ] P2-07 Drag to reschedule and the "Move to…" alternative
@@ -210,3 +210,7 @@ Tests: StatValue.test.js(4), CategoryLegend.test.js(3). Components: StatValue({n
 ### P2-03 — d6459c8
 
 Tests: PostChip.test.js(4), DayCell.test.js(5). Components: PostChip({post,onSelect}) (button, data-post-id, data-status, status styles via inline style), OpenSlot({laneLabel}) "Open · <lane>", DayCell({day,isToday,isSelected,inMonth,hidden:Set,onSelectDay,onSelectPost}) with data-date, header button aria-label per spec, TODAY marker. Interpretation: aria count uses visible posts only. SCSS partial client/calendar/style.scss added via `@use "./calendar/style" as calendar;` in client/style.scss.
+
+### P2-04 — be38e08
+
+Tests: App.test.js(6), MonthGrid.test.js(4), e2e calendar.spec.js (5 specs x desktop/mobile) - full npm run test:e2e passes (20 tests incl. axe on month view). Components: Toolbar({view,title,onPrev,onNext,onToday,onView}), MonthGrid({anchor,weekStartsOn,days,today,selectedDate,hidden,onSelectDay,onSelectPost}), App (view from hash, anchor, selection, hidden Set, usePlan range; aside.masthead-rail is empty). Week/List render <div data-view>. Interpretation: plain `notice notice-*` markup (no @wordpress/components Notice). Codebase notes: (1) importing @wordpress/components or @wordpress/core-data in jest pulls ESM-only deps -> jest.config.js maps core-data to tests/js/stubs/core-data.js and setup.js polyfills TextEncoder; avoid @wordpress/components in unit-tested client code or add a mapper. (2) uuid override changed to ^11.1.1 (v14 is ESM-only). (3) axe label-content-name-mismatch: visible button text must be inside aria-label. (4) Playwright getByText is substring/case-insensitive: use {exact:true}. (5) boot `rhythm` is a JSON array (PHP list) - index by weekday works.
