@@ -39,7 +39,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P2-06 Legend visibility toggles and Draft tray
 - [x] P2-07 Drag to reschedule and the "Move to…" alternative
 - [x] P2-08 Responsive layout at 390 px and accessibility gates
-- [ ] P2-09 Settings › Calendar page and registered settings
+- [x] P2-09 Settings › Calendar page and registered settings
 - [ ] P2-10 Settings app and RhythmTable
 - [ ] P2-11 Settings: SeriesCadence, Exposure and AI provider status
 - [ ] P2-12 Phase 2 push and manual checks
@@ -230,3 +230,7 @@ Tests: useReschedule.test.js(3), MoveTo.test.js(3), e2e reschedule.spec.js (3; d
 ### P2-08 — 2c85370
 
 Tests: e2e responsive.spec.js (5, one mobile-only); full npm run test:e2e = 42 passed, 2 skipped. CSS: at max-width 782px month grid is one column, outside-month days hidden, per-day meta line (DayCell .masthead-day__meta, aria-hidden, hidden on desktop) shows "Mon · Lane", toolbar title wraps first, rail stacks below. axe passes for month/week/list/tray at 1280 and 390.
+
+### P2-09 — 68e9be6
+
+Tests: SettingsPageTest(3), ConfigTest(+3), integration SettingsTest(5). Admin\SettingsPage( Assets ): register (options page slug masthead-settings, manage_options), render (#masthead-settings-root), register_settings (admin_init + rest_api_init) for masthead_rhythm (sanitize Rhythm::sanitize) and masthead_settings (Config::sanitize_overrides) with REST schemas. Config::sanitize_overrides(raw) -> nested array of settable keys only (ints >=1 except ai.monthly_request_cap >=0, floats 0..1, weights all-or-nothing, model lists non-empty string lists, bools). Interpretation: core's wp/v2/settings forces additionalProperties=false on object settings, so unknown keys in a REST save give 400 rather than being silently ignored; the sanitiser still drops them on other write paths. Rhythm setting is stored with int keys; REST object keys "0".."6".
