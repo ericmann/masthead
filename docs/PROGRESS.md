@@ -56,7 +56,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-01 Candidate shape and DraftMatch
 - [x] P4-02 SeriesNext candidates
 - [x] P4-03 CategoryGap candidates
-- [ ] P4-04 Reshare candidates
+- [x] P4-04 Reshare candidates
 - [ ] P4-05 Ranker and Dismissals
 - [ ] P4-06 Reasons templates and the Suggester
 - [ ] P4-07 suggest-for-date and dismiss-suggestion abilities, wp masthead suggest
@@ -298,3 +298,7 @@ Tests: SeriesNextTest(7). Desk\Candidates\SeriesNext( SeriesSource )->for_date(d
 ### P4-03 — a006b47
 
 Tests: CategoryGapTest(7). Desk\Candidates\CategoryGap( Clock ): gaps() (all gaps sorted: never-published first, then most days, then slug) and for_date(date, lane) (lane categories, or all when the lane has none). One get_posts per category ('cat' => term id, numberposts 1, no_found_rows, publish, date_query before today). Interpretation: gap when days since last publish > desk.gap_days (strict). score 1.0 never-published else days/(days+gap_days); key gap:<term id>; sort_id 0; tiebreak slug; title "Something under <Name>"; data {last_published, category_name}.
+
+### P4-04 — 89df536
+
+Tests: ReshareTest(7). Desk\Candidates\Reshare( StatsSource, ShareSource, Clock ) [Clock added to the spec'd constructor, needed for today]. for_date: [] unless stats->available() and share->available() and top_posts( stats.window_days, desk.candidate_pool ) non-null; keeps publish posts in lane categories (any when lane empty), age > desk.reshare_min_age_days, last share (masthead_last_shared) absent or > desk.reshare_cooldown_days old; score = views / max kept views; key reshare:<id>; data {published}; no view count in the candidate. Candidate order follows the stats top_posts order.
