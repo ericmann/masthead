@@ -20,6 +20,7 @@ use Masthead\Admin\SettingsPage;
 use Masthead\Cli\Commands;
 use Masthead\Cli\PlanCommand;
 use Masthead\Cli\SeedCommand;
+use Masthead\Cli\StatsProbeCommand;
 use Masthead\Cli\Seeder;
 use Masthead\Plan\Colors;
 use Masthead\Plan\PlanReader;
@@ -27,6 +28,7 @@ use Masthead\Plan\Reschedule as PlanReschedule;
 use Masthead\Plan\Rhythm;
 use Masthead\Plan\SeriesSource;
 use Masthead\Plan\Slots;
+use Masthead\Stats\Factory as StatsFactory;
 use Masthead\Support\Clock;
 
 /**
@@ -88,6 +90,7 @@ final class Plugin {
 				array(
 					'seed' => new SeedCommand( new Seeder( $slots, $series ) ),
 					'plan' => new PlanCommand( $registrar->get( 'masthead/get-plan' ), $clock ),
+					'stats:probe' => new StatsProbeCommand( StatsFactory::make() ),
 				)
 			);
 		}

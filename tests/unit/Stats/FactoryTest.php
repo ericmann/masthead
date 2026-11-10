@@ -11,6 +11,7 @@ namespace Masthead\Tests\Unit\Stats;
 
 use Masthead\Stats\Factory;
 use Masthead\Stats\FixtureStats;
+use Masthead\Stats\JetpackStats;
 use Masthead\Stats\NullStats;
 use PHPUnit\Framework\TestCase;
 
@@ -43,5 +44,12 @@ final class FactoryTest extends TestCase {
 		$this->assertInstanceOf( NullStats::class, Factory::make( 'local', '/nonexistent/stats.json' ) );
 		$this->assertInstanceOf( NullStats::class, Factory::make( 'local', dirname( __DIR__ ) ) );
 		$this->assertInstanceOf( NullStats::class, Factory::make( 'local', '' ) );
+	}
+
+	public function test_production_with_usable_jetpack_returns_jetpack_stats(): void {
+		$this->assertInstanceOf( JetpackStats::class, Factory::make( 'production', null, true ) );
+		$this->assertInstanceOf( NullStats::class, Factory::make( 'production', null, false ) );
+		$this->assertInstanceOf( FixtureStats::class, Factory::make( 'local', $this->fixture(), true ), 'the fixture branch is first, local only' );
+		$this->assertInstanceOf( JetpackStats::class, Factory::make( 'local', '/nonexistent/stats.json', true ) );
 	}
 }
