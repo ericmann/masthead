@@ -56,6 +56,13 @@ You stay the editor. Masthead never publishes, moves or shares anything without 
 |---|---|
 | ![The Day plan: title, category, outline and time for a new dated draft](docs/screenshots/day-plan.png) | ![The swap check explaining a lane mismatch and a cadence break, with one-click fixes](docs/screenshots/swap-panel.png) |
 
+<details>
+<summary><b>Settings › Calendar</b>: the weekly rhythm, series cadence, MCP exposure, AI budget and the Desk's thresholds</summary>
+
+![Settings › Calendar: a lane, categories and default time for each weekday, series cadence, MCP switches, AI model preferences and budget, and the Desk's thresholds](docs/screenshots/settings.png)
+
+</details>
+
 ## Honest by design
 
 Masthead is built on a few rules it does not bend. Most of them are enforced by automated checks on every commit.
