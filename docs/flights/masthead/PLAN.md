@@ -1812,7 +1812,7 @@ Planner decisions (each is restated in the task that needs it):
 
 **Out of scope:** the mockups, which still show real planned titles and series ideas (a human decision, listed in the Phase 6 manual checks); rewriting git history; changing the fixture's structure.
 
-**Verification:** `composer lint`, `composer test:unit`, `npm run lint`, `npm run test:unit`; `npm run test:integration` and `npm run test:e2e` run through `kukulu_verify`. `grep -rn "Craftsmen\|DailyMedToday\|Embeddings Reveal\|Nineteen Years\|Voice to Vectors\|RAG Over Markdown" docs/fixtures tests` prints nothing.
+**Verification:** `composer lint`, `composer test:unit`, `npm run lint`, `npm run test:unit`; `npm run test:integration` and `npm run test:e2e` run through `kukulu_verify`. A `grep -rn` over `docs/fixtures` and `tests` for each retired title (the list is kept, split so it does not match itself, in `tests/unit/FixtureTest.php`) prints nothing.
 
 **Depends on:** P1-14
 
