@@ -29,7 +29,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-13 REST contract for running abilities
 - [x] P1-14 wp masthead seed
 - [x] P1-15 wp masthead plan
-- [ ] P1-16 Tune calendar.max_posts_per_range
+- [x] P1-16 Tune calendar.max_posts_per_range
 - [ ] P1-17 Phase 1 push and manual checks
 - [ ] P2-01 Boot data and the client data layer
 - [ ] P2-02 Shared components: StatValue, LaneDot, CategoryLegend
@@ -190,3 +190,7 @@ Tests: unit SeederTest(3), integration SeederTest(7), e2e seed.spec.js (2 specs 
 ### P1-15 — 0fc4499
 
 Tests: PlanCommandTest(3) with tests/unit/stubs/WP_CLI.php (WP_CLI::$lines/$errors recorder, WP_CLI\Utils\format_items stub; require_once it in tests). PlanCommand( Ability, Clock ): rows() public. Registered in Plugin beside seed. Manual run verified: `wp masthead plan 2026-11-01 2026-11-30 --format=table --now=...` lists 12155, 10193, 12177, 10194. Note: P1-14 had left a phpcs error (lowercase file docblock) that I only saw now; fixed here. Lesson: always read the phpcs section of my check script output in full.
+
+### P1-16 — aa7f6d5
+
+Tuning calendar.max_posts_per_range (docs/tuning/P1-16.md). Measurement: before cap=500 median 48.9 ms, peak 56.5 MB (rule: <1 s and <64 MB -> passes); alt 250: 24.9 ms / 52.5 MB; alt 1000: 92.9 ms / 60.5 MB; after cap=500 unchanged (rerun 50.1 ms / 56.5 MB). Config unchanged. Harness: tests/integration/Tuning/PlanRangeBench.php (class suffix Bench.php; phpunit.integration.xml.dist now also collects tests/integration/Tuning/*Bench.php; run with --group tuning). Output via echo esc_html (VIP sniffs forbid fwrite). Later tuning tasks: copy this pattern.
