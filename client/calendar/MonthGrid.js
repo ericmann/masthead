@@ -24,6 +24,7 @@ const DAYS_IN_WEEK = 7;
  * @param {Function}    props.onSelectPost Called with a post.
  * @param {Function}    props.onMovePost   Called with a post and a date (Move to).
  * @param {Function}    props.onDropPost   Called with a post ID and a date after a drop.
+ * @param {Object}      props.ghosts       Ghost { suggestion, color } by date.
  * @return {Element} The grid.
  */
 export default function MonthGrid( {
@@ -37,6 +38,7 @@ export default function MonthGrid( {
 	onSelectPost,
 	onMovePost,
 	onDropPost,
+	ghosts = {},
 } ) {
 	const rhythm = getBoot().rhythm || {};
 	const byDate = new Map( days.map( ( day ) => [ day.date, day ] ) );
@@ -97,6 +99,7 @@ export default function MonthGrid( {
 								onSelectPost={ onSelectPost }
 								onMovePost={ onMovePost }
 								onDropPost={ onDropPost }
+								ghost={ ghosts[ date ] || null }
 							/>
 						);
 					} ) }

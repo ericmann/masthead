@@ -3,6 +3,7 @@ import { gmdateI18n } from '@wordpress/date';
 import { __, _n, sprintf } from '@wordpress/i18n';
 
 import { dayLabel } from '../data/dates';
+import GhostCard from './GhostCard';
 import OpenSlot from './OpenSlot';
 import PostChip from './PostChip';
 
@@ -19,6 +20,7 @@ import PostChip from './PostChip';
  * @param {Function}    props.onSelectPost Called with a post.
  * @param {Function}    props.onMovePost   Called with a post and a date (Move to).
  * @param {Function}    props.onDropPost   Called with a post ID and this date after a drop.
+ * @param {Object|null} props.ghost        { suggestion, color } shown instead of the open slot.
  * @return {Element} The cell.
  */
 export default function DayCell( {
@@ -31,6 +33,7 @@ export default function DayCell( {
 	onSelectPost,
 	onMovePost,
 	onDropPost,
+	ghost = null,
 } ) {
 	const [ isOver, setIsOver ] = useState( false );
 	const posts = day.posts.filter(
@@ -44,24 +47,36 @@ export default function DayCell( {
 				dayLabel( day.date )
 			)
 		: dayLabel( day.date );
-	const ariaLabel = day.open
-		? sprintf(
-				/* translators: 1: weekday, month and day; 2: lane label. */
-				__( '%1$s: open %2$s slot', 'masthead' ),
-				label,
-				day.lane.label
-			)
-		: sprintf(
-				/* translators: 1: weekday, month and day; 2: number of posts. */
-				_n(
-					'%1$s: %2$d post',
-					'%1$s: %2$d posts',
-					posts.length,
-					'masthead'
-				),
-				label,
-				posts.length
-			);
+	const showGhost = day.open && ghost;
+	let ariaLabel;
+	if ( showGhost ) {
+		ariaLabel = sprintf(
+			/* translators: 1: weekday, month and day; 2: suggestion kind; 3: suggestion title. */
+			__( '%1$s: suggested %2$s, %3$s', 'masthead' ),
+			label,
+			ghost.suggestion.kind,
+			ghost.suggestion.title
+		);
+	} else if ( day.open ) {
+		ariaLabel = sprintf(
+			/* translators: 1: weekday, month and day; 2: lane label. */
+			__( '%1$s: open %2$s slot', 'masthead' ),
+			label,
+			day.lane.label
+		);
+	} else {
+		ariaLabel = sprintf(
+			/* translators: 1: weekday, month and day; 2: number of posts. */
+			_n(
+				'%1$s: %2$d post',
+				'%1$s: %2$d posts',
+				posts.length,
+				'masthead'
+			),
+			label,
+			posts.length
+		);
+	}
 
 	const classes = [
 		'masthead-day',
@@ -129,7 +144,16 @@ export default function DayCell( {
 					onMove={ onMovePost }
 				/>
 			) ) }
-			{ day.open ? <OpenSlot laneLabel={ day.lane.label } /> : null }
+			{ showGhost ? (
+				<GhostCard
+					suggestion={ ghost.suggestion }
+					color={ ghost.color }
+					onSelect={ () => onSelectDay( day.date ) }
+				/>
+			) : null }
+			{ day.open && ! showGhost ? (
+				<OpenSlot laneLabel={ day.lane.label } />
+			) : null }
 		</div>
 	);
 }

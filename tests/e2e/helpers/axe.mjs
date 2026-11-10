@@ -15,6 +15,11 @@ export async function expectNoSeriousViolations( page, rootSelector ) {
 		[ 'serious', 'critical' ].includes( violation.impact )
 	);
 	expect(
-		serious.map( ( violation ) => `${ violation.id }: ${ violation.help }` )
+		serious.map(
+			( violation ) =>
+				`${ violation.id }: ${ violation.help } ${ violation.nodes
+					.map( ( node ) => node.target.join( ' ' ) )
+					.join( ', ' ) }`
+		)
 	).toEqual( [] );
 }

@@ -21,6 +21,9 @@ const VIEWS = [
  * @param {Object[]}    props.categories       Legend categories { slug, name, color }.
  * @param {Set<string>} props.hidden           Hidden category slugs.
  * @param {Function}    props.onToggleCategory Called with a slug.
+ * @param {Function}    props.onFillOpenDays   Runs suggestions for every open day in view.
+ * @param {string}      props.fillStatus       Progress text for the live region.
+ * @param {boolean}     props.filling          Whether Fill open days is running.
  * @return {Element} The toolbar.
  */
 export default function Toolbar( {
@@ -33,6 +36,9 @@ export default function Toolbar( {
 	categories = [],
 	hidden = new Set(),
 	onToggleCategory = () => {},
+	onFillOpenDays = null,
+	fillStatus = '',
+	filling = false,
 } ) {
 	const labels = {
 		month: [
@@ -83,6 +89,21 @@ export default function Toolbar( {
 					</button>
 				) ) }
 			</div>
+			{ onFillOpenDays ? (
+				<div className="masthead-toolbar__fill">
+					<button
+						type="button"
+						className="button"
+						disabled={ filling }
+						onClick={ onFillOpenDays }
+					>
+						{ __( 'Fill open days', 'masthead' ) }
+					</button>
+					<span className="screen-reader-text" aria-live="polite">
+						{ fillStatus }
+					</span>
+				</div>
+			) : null }
 			{ categories.length > 0 ? (
 				<CategoryLegend
 					categories={ categories }

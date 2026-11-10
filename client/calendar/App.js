@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { getBoot } from '../data/boot';
 import { today as bootToday } from '../data/clock';
@@ -14,6 +14,7 @@ import { usePlan } from '../data/usePlan';
 import DraftTray from './DraftTray';
 import SharePanel from './SharePanel';
 import { useReschedule } from './useReschedule';
+import { useSuggestions } from './useSuggestions';
 import ListView from './ListView';
 import MonthGrid from './MonthGrid';
 import Toolbar from './Toolbar';
@@ -78,6 +79,50 @@ export default function App() {
 		[ view, anchor, weekStartsOn ]
 	);
 	const plan = usePlan( from, to );
+	const suggestions = useSuggestions();
+	const boot = getBoot();
+	const today = bootToday();
+	const ghostEnd = addDays( today, Number( boot.config?.ghostDays ) );
+	const horizonEnd = addDays( today, Number( boot.config?.horizonDays ) );
+	const ghostDates = plan.days
+		.filter(
+			( day ) => day.open && day.date >= today && day.date <= ghostEnd
+		)
+		.map( ( day ) => day.date );
+	const ghostKey = ghostDates.join( ',' );
+	const { loadMany } = suggestions;
+	useEffect( () => {
+		if ( ghostKey ) {
+			loadMany( ghostKey.split( ',' ) );
+		}
+	}, [ ghostKey, loadMany ] );
+
+	const ghosts = {};
+	plan.days.forEach( ( day ) => {
+		const first = suggestions.get( day.date )?.suggestions?.[ 0 ];
+		if ( first ) {
+			const slug = day.lane?.categories?.[ 0 ];
+			const color =
+				( boot.categories || [] ).find(
+					( category ) => category.slug === slug
+				)?.color || '#646970';
+			ghosts[ day.date ] = { suggestion: first, color };
+		}
+	} );
+	const fillOpenDays = () =>
+		suggestions.loadMany(
+			plan.days
+				.filter( ( day ) => day.open && day.date <= horizonEnd )
+				.map( ( day ) => day.date )
+		);
+	const fillStatus = suggestions.isRunning
+		? sprintf(
+				/* translators: 1: number done, 2: total. */
+				__( 'Suggesting for open days: %1$d of %2$d', 'masthead' ),
+				suggestions.progress.done,
+				suggestions.progress.total
+			)
+		: '';
 	const { move, error: moveError, clearError } = useReschedule( plan );
 	const onDropPost = useCallback(
 		( postId, date ) => {
@@ -135,6 +180,9 @@ export default function App() {
 				categories={ getBoot().categories || [] }
 				hidden={ hidden }
 				onToggleCategory={ toggleCategory }
+				onFillOpenDays={ fillOpenDays }
+				fillStatus={ fillStatus }
+				filling={ suggestions.isRunning }
 			/>
 			{ plan.error ? (
 				<div className="notice notice-error inline" role="alert">
@@ -183,6 +231,7 @@ export default function App() {
 							}
 							onMovePost={ move }
 							onDropPost={ onDropPost }
+							ghosts={ ghosts }
 						/>
 					) : null }
 					{ view === 'week' ? (
@@ -201,6 +250,7 @@ export default function App() {
 							}
 							onMovePost={ move }
 							onDropPost={ onDropPost }
+							ghosts={ ghosts }
 						/>
 					) : null }
 					{ view === 'list' ? (
@@ -212,6 +262,7 @@ export default function App() {
 							}
 							onMovePost={ move }
 							onDropPost={ onDropPost }
+							ghosts={ ghosts }
 						/>
 					) : null }
 				</div>

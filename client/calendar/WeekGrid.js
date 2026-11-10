@@ -18,6 +18,7 @@ import DayCell from './DayCell';
  * @param {Function}    props.onSelectPost Called with a post.
  * @param {Function}    props.onMovePost   Called with a post and a date (Move to).
  * @param {Function}    props.onDropPost   Called with a post ID and a date after a drop.
+ * @param {Object}      props.ghosts       Ghost { suggestion, color } by date.
  * @return {Element} The week.
  */
 export default function WeekGrid( {
@@ -31,6 +32,7 @@ export default function WeekGrid( {
 	onSelectPost,
 	onMovePost,
 	onDropPost,
+	ghosts = {},
 } ) {
 	const byDate = new Map( days.map( ( day ) => [ day.date, day ] ) );
 	const dates = weekRange( anchor, weekStartsOn );
@@ -71,6 +73,7 @@ export default function WeekGrid( {
 							onSelectPost={ onSelectPost }
 							onMovePost={ onMovePost }
 							onDropPost={ onDropPost }
+							ghost={ ghosts[ date ] || null }
 						/>
 					</div>
 				);

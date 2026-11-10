@@ -27,7 +27,7 @@ describe( 'calendar App', () => {
 			now: '2026-11-09T14:00:00-08:00',
 			weekStartsOn: 0,
 			rhythm: [],
-			config: { maxRangeDays: 92 },
+			config: { maxRangeDays: 92, ghostDays: 14, horizonDays: 21 },
 		};
 		resetBoot();
 		usePlan.mockReset();

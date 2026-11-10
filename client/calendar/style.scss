@@ -366,3 +366,41 @@
 		color: #b32d2e;
 	}
 }
+
+.masthead-ghost {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	width: 100%;
+	padding: 4px 6px;
+	border: 1.5px dashed #787c82;
+	border-radius: 4px;
+	background: #fff;
+	text-align: left;
+	cursor: pointer;
+
+	&__kind {
+		font-size: 10px;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+	}
+
+	&__title {
+		display: -webkit-box;
+		overflow: hidden;
+		color: #1d2327;
+		font-size: 12px;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+	}
+
+	&:focus-visible {
+		outline: 2px solid #2271b1;
+		outline-offset: 2px;
+	}
+}
+
+.masthead-toolbar__fill {
+	display: flex;
+	align-items: center;
+}

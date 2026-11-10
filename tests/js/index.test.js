@@ -14,7 +14,7 @@ window.mastheadBoot = {
 	today: '2026-11-09',
 	weekStartsOn: 0,
 	rhythm: [],
-	config: { maxRangeDays: 92 },
+	config: { maxRangeDays: 92, ghostDays: 14, horizonDays: 21 },
 };
 
 jest.mock( '@wordpress/dom-ready', () => ( {
