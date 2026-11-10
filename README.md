@@ -16,7 +16,7 @@ Plan a month of posts in WordPress on a weekly rhythm, with a Desk that tells yo
 
 [Quick start](#quick-start) · [Features](#what-you-get) · [Honest by design](#honest-by-design) · [MCP](#works-with-your-ai-assistant) · [FAQ](#faq)
 
-![Masthead's month view in wp-admin: posts coloured by category, a lane for each weekday, and the Desk suggesting what to put on Wednesday](docs/screenshots/calendar-month.png)
+![Masthead's month view in wp-admin on a demo blog: posts coloured by category, a lane for each weekday, and the Desk suggesting what to put on Thursday](docs/screenshots/calendar-month.png)
 
 </div>
 

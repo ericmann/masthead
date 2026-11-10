@@ -6,9 +6,20 @@
 // Local only: `wp masthead seed` refuses to run outside a local environment, and the fake AI client
 // and fixture stats come from the e2e mu-plugins, which wp-env maps only in development.
 import { execFileSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 
-const ROOT = fileURLToPath( new URL( '../../', import.meta.url ) );
+// The repository root (where .wp-env.json lives), found from the working directory: this module is
+// also imported by tests/e2e/screenshots/capture.spec.js, which Playwright loads as CommonJS, so it
+// cannot use import.meta.
+function repositoryRoot() {
+	for ( let dir = process.cwd(); dir !== path.dirname( dir ); dir = path.dirname( dir ) ) {
+		if ( existsSync( path.join( dir, '.wp-env.json' ) ) ) {
+			return dir;
+		}
+	}
+	throw new Error( 'Run this from inside the masthead repository (no .wp-env.json found).' );
+}
 
 /** The pinned clock of the demo: Tuesday, 9 a.m. in Los Angeles. */
 export const DEMO_NOW = '2026-11-10 09:00:00';
@@ -30,7 +41,7 @@ export function wp( commands, { tables = false } = {} ) {
 	const prefix = tables ? 'SHELL_PIPE=0 COLUMNS=120 ' : '';
 	const script = commands.map( ( args ) => prefix + [ 'wp', ...args ].map( quote ).join( ' ' ) ).join( ' && ' );
 	return execFileSync( 'npx', [ 'wp-env', 'run', 'cli', 'bash', '-c', script ], {
-		cwd: ROOT,
+		cwd: repositoryRoot(),
 		encoding: 'utf8',
 		stdio: [ 'ignore', 'pipe', 'pipe' ],
 	} );
@@ -60,7 +71,7 @@ export function restoreDefaults() {
 	] );
 }
 
-if ( process.argv[ 1 ] === fileURLToPath( import.meta.url ) ) {
+if ( process.argv[ 1 ] && process.argv[ 1 ].endsWith( 'seed.mjs' ) ) {
 	const out = process.argv.includes( '--restore' ) ? restoreDefaults() : seedDemo();
 	process.stdout.write( out );
 }
