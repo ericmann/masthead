@@ -44,9 +44,16 @@ describe( 'WeekGrid', () => {
 		expect(
 			container.querySelectorAll( '.masthead-week__column' )
 		).toHaveLength( 7 );
-		expect( screen.getByText( 'Sun 8 · Faith' ) ).toBeTruthy();
-		expect( screen.getByText( 'Wed 11 · Standalone' ) ).toBeTruthy();
-		expect( screen.getByText( 'Sat 14 · Fiction' ) ).toBeTruthy();
+		const heads = [
+			...container.querySelectorAll( '.masthead-week__head' ),
+		].map( ( head ) => head.textContent );
+		expect( heads[ 0 ] ).toBe( 'Sun 8 · Faith' );
+		expect( heads[ 3 ] ).toBe( 'Wed 11 · Standalone' );
+		expect( heads[ 6 ] ).toBe( 'Sat 14 · Fiction' );
+		// The day is bold and the lane muted, as in the mockup.
+		expect( screen.getByText( 'Wed 11' ).className ).toBe(
+			'masthead-grid__dow'
+		);
 		expect(
 			container.querySelector( '[data-date="2026-11-09"]' ).className
 		).toContain( 'is-today' );

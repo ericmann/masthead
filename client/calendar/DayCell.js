@@ -13,6 +13,7 @@ import PostChip from './PostChip';
  * @param {Object}      props              Props.
  * @param {Object}      props.day          Day { date, lane, posts, open }.
  * @param {boolean}     props.isToday      Whether the day is today.
+ * @param {boolean}     props.isPast       Whether the day is before today.
  * @param {boolean}     props.isSelected   Whether the day is selected.
  * @param {boolean}     props.inMonth      Whether the day belongs to the shown month.
  * @param {Set<string>} props.hidden       Hidden category slugs.
@@ -26,6 +27,7 @@ import PostChip from './PostChip';
 export default function DayCell( {
 	day,
 	isToday,
+	isPast = false,
 	isSelected,
 	inMonth = true,
 	hidden = new Set(),
@@ -81,6 +83,7 @@ export default function DayCell( {
 	const classes = [
 		'masthead-day',
 		isToday ? 'is-today' : '',
+		isPast ? 'is-past' : '',
 		isSelected ? 'is-selected' : '',
 		inMonth ? '' : 'is-outside',
 		isOver ? 'is-drop-target' : '',

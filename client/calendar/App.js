@@ -3,6 +3,7 @@ import { __, sprintf } from '@wordpress/i18n';
 
 import { legendCategories } from '../components/CategoryLegend';
 import { getBoot } from '../data/boot';
+import { laneColor } from '../data/colors';
 import { today as bootToday } from '../data/clock';
 import {
 	addDays,
@@ -110,12 +111,10 @@ export default function App() {
 	plan.days.forEach( ( day ) => {
 		const first = suggestions.get( day.date )?.suggestions?.[ 0 ];
 		if ( first ) {
-			const slug = day.lane?.categories?.[ 0 ];
-			const color =
-				( boot.categories || [] ).find(
-					( category ) => category.slug === slug
-				)?.color || '#646970';
-			ghosts[ day.date ] = { suggestion: first, color };
+			ghosts[ day.date ] = {
+				suggestion: first,
+				color: laneColor( day.lane, first ),
+			};
 		}
 	} );
 	const selectedDay = selection?.type === 'day' ? selection.date : null;
@@ -218,10 +217,7 @@ export default function App() {
 
 	const selectedDate = selection?.type === 'day' ? selection.date : null;
 	const usedCategories = new Set(
-		[
-			...plan.days.flatMap( ( day ) => day.posts ),
-			...plan.unscheduled,
-		]
+		[ ...plan.days.flatMap( ( day ) => day.posts ), ...plan.unscheduled ]
 			.flatMap( ( post ) => post.categories || [] )
 			.concat(
 				Object.values( boot.rhythm || {} ).flatMap(

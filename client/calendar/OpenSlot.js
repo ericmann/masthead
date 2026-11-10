@@ -8,13 +8,14 @@ import { __, sprintf } from '@wordpress/i18n';
  * @return {Element} The marker.
  */
 export default function OpenSlot( { laneLabel } ) {
+	const text = sprintf(
+		/* translators: %s: lane label, such as "Standalone". */
+		__( 'Open · %s', 'masthead' ),
+		laneLabel
+	);
 	return (
-		<div className="masthead-open-slot">
-			{ sprintf(
-				/* translators: %s: lane label, such as "Standalone". */
-				__( 'Open · %s', 'masthead' ),
-				laneLabel
-			) }
+		<div className="masthead-open-slot" title={ text }>
+			{ text }
 		</div>
 	);
 }
