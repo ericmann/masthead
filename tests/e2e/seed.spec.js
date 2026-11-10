@@ -1,8 +1,14 @@
 import { test, expect } from '@playwright/test';
 
+import { seedFixture } from './helpers/wp.mjs';
+
 const CALENDAR = '/wp-admin/edit.php?page=masthead';
 
 test.describe( 'seeded fixture', () => {
+	test.beforeAll( () => {
+		seedFixture();
+	} );
+
 	test( 'seeded post 12177 is scheduled for 2026-11-11', async ( {
 		page,
 		request,

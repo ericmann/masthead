@@ -16,6 +16,8 @@ import DayCell from './DayCell';
  * @param {Set<string>} props.hidden       Hidden category slugs.
  * @param {Function}    props.onSelectDay  Called with a date.
  * @param {Function}    props.onSelectPost Called with a post.
+ * @param {Function}    props.onMovePost   Called with a post and a date (Move to).
+ * @param {Function}    props.onDropPost   Called with a post ID and a date after a drop.
  * @return {Element} The week.
  */
 export default function WeekGrid( {
@@ -27,6 +29,8 @@ export default function WeekGrid( {
 	hidden,
 	onSelectDay,
 	onSelectPost,
+	onMovePost,
+	onDropPost,
 } ) {
 	const byDate = new Map( days.map( ( day ) => [ day.date, day ] ) );
 	const dates = weekRange( anchor, weekStartsOn );
@@ -65,6 +69,8 @@ export default function WeekGrid( {
 							hidden={ hidden }
 							onSelectDay={ onSelectDay }
 							onSelectPost={ onSelectPost }
+							onMovePost={ onMovePost }
+							onDropPost={ onDropPost }
 						/>
 					</div>
 				);

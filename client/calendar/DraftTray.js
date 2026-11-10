@@ -2,15 +2,17 @@ import { __, sprintf } from '@wordpress/i18n';
 
 import LaneDot from '../components/LaneDot';
 import { monthDayLabel } from '../data/dates';
+import MoveTo from './MoveTo';
 
 /**
  * Unscheduled (undated) drafts.
  *
  * @param {Object}   props             Props.
  * @param {Object[]} props.unscheduled PlanPost records of undated drafts.
+ * @param {Function} props.onMove      Called with a post and a date; enables dragging and Move to.
  * @return {Element} The tray.
  */
-export default function DraftTray( { unscheduled } ) {
+export default function DraftTray( { unscheduled, onMove } ) {
 	return (
 		<section
 			className="masthead-tray"
@@ -32,6 +34,19 @@ export default function DraftTray( { unscheduled } ) {
 							key={ post.id }
 							className="masthead-tray__row"
 							data-post-id={ post.id }
+							draggable={ Boolean( onMove ) }
+							onDragStart={
+								onMove
+									? ( event ) => {
+											event.dataTransfer.setData(
+												'text/plain',
+												String( post.id )
+											);
+											event.dataTransfer.effectAllowed =
+												'move';
+										}
+									: undefined
+							}
 						>
 							<LaneDot color={ post.color || '#50575e' } />
 							<span className="masthead-tray__title">
@@ -47,6 +62,9 @@ export default function DraftTray( { unscheduled } ) {
 										)
 									) }
 								</span>
+							) : null }
+							{ onMove ? (
+								<MoveTo post={ post } onMove={ onMove } />
 							) : null }
 							<a href={ post.edit_url }>
 								{ __( 'Open draft', 'masthead' ) }

@@ -270,3 +270,34 @@
 		grid-template-columns: minmax(0, 1fr);
 	}
 }
+
+.masthead-day.is-drop-target {
+	background: #f0f6fc;
+	box-shadow: inset 0 0 0 2px #72aee6;
+}
+
+.masthead-chip[draggable="true"],
+.masthead-tray__row[draggable="true"] {
+	cursor: grab;
+}
+
+.masthead-move,
+.masthead-move__open {
+	font-size: 11px;
+}
+
+.masthead-move__open {
+	align-self: flex-start;
+	padding: 0 4px;
+	border: 0;
+	background: transparent;
+	color: #135e96;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.masthead-move {
+	display: flex;
+	gap: 4px;
+	align-items: center;
+}

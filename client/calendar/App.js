@@ -12,6 +12,7 @@ import {
 } from '../data/dates';
 import { usePlan } from '../data/usePlan';
 import DraftTray from './DraftTray';
+import { useReschedule } from './useReschedule';
 import ListView from './ListView';
 import MonthGrid from './MonthGrid';
 import Toolbar from './Toolbar';
@@ -76,6 +77,20 @@ export default function App() {
 		[ view, anchor, weekStartsOn ]
 	);
 	const plan = usePlan( from, to );
+	const { move, error: moveError, clearError } = useReschedule( plan );
+	const onDropPost = useCallback(
+		( postId, date ) => {
+			const post =
+				plan.unscheduled.find( ( item ) => item.id === postId ) ||
+				plan.days
+					.flatMap( ( day ) => day.posts )
+					.find( ( item ) => item.id === postId );
+			if ( post ) {
+				move( post, date );
+			}
+		},
+		[ plan, move ]
+	);
 
 	const step = useCallback(
 		( direction ) => {
@@ -135,6 +150,20 @@ export default function App() {
 					</p>
 				</div>
 			) : null }
+			{ moveError ? (
+				<div className="notice notice-error inline" role="alert">
+					<p>{ moveError.message }</p>
+					<button
+						type="button"
+						className="notice-dismiss"
+						onClick={ clearError }
+					>
+						<span className="screen-reader-text">
+							{ __( 'Dismiss this notice.', 'masthead' ) }
+						</span>
+					</button>
+				</div>
+			) : null }
 			<div className="masthead-layout">
 				<div className="masthead-main">
 					{ view === 'month' ? (
@@ -151,6 +180,8 @@ export default function App() {
 							onSelectPost={ ( post ) =>
 								setSelection( { type: 'post', post } )
 							}
+							onMovePost={ move }
+							onDropPost={ onDropPost }
 						/>
 					) : null }
 					{ view === 'week' ? (
@@ -167,6 +198,8 @@ export default function App() {
 							onSelectPost={ ( post ) =>
 								setSelection( { type: 'post', post } )
 							}
+							onMovePost={ move }
+							onDropPost={ onDropPost }
 						/>
 					) : null }
 					{ view === 'list' ? (
@@ -176,6 +209,8 @@ export default function App() {
 							onSelectPost={ ( post ) =>
 								setSelection( { type: 'post', post } )
 							}
+							onMovePost={ move }
+							onDropPost={ onDropPost }
 						/>
 					) : null }
 				</div>
@@ -183,7 +218,10 @@ export default function App() {
 					className="masthead-rail"
 					aria-label={ __( 'Desk', 'masthead' ) }
 				>
-					<DraftTray unscheduled={ plan.unscheduled } />
+					<DraftTray
+						unscheduled={ plan.unscheduled }
+						onMove={ move }
+					/>
 				</aside>
 			</div>
 		</div>

@@ -22,6 +22,8 @@ const DAYS_IN_WEEK = 7;
  * @param {Set<string>} props.hidden       Hidden category slugs.
  * @param {Function}    props.onSelectDay  Called with a date.
  * @param {Function}    props.onSelectPost Called with a post.
+ * @param {Function}    props.onMovePost   Called with a post and a date (Move to).
+ * @param {Function}    props.onDropPost   Called with a post ID and a date after a drop.
  * @return {Element} The grid.
  */
 export default function MonthGrid( {
@@ -33,6 +35,8 @@ export default function MonthGrid( {
 	hidden,
 	onSelectDay,
 	onSelectPost,
+	onMovePost,
+	onDropPost,
 } ) {
 	const rhythm = getBoot().rhythm || {};
 	const byDate = new Map( days.map( ( day ) => [ day.date, day ] ) );
@@ -91,6 +95,8 @@ export default function MonthGrid( {
 								hidden={ hidden }
 								onSelectDay={ onSelectDay }
 								onSelectPost={ onSelectPost }
+								onMovePost={ onMovePost }
+								onDropPost={ onDropPost }
 							/>
 						);
 					} ) }

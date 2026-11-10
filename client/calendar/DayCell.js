@@ -1,3 +1,4 @@
+import { useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 
 import { dayLabel } from '../data/dates';
@@ -15,6 +16,8 @@ import PostChip from './PostChip';
  * @param {Set<string>} props.hidden       Hidden category slugs.
  * @param {Function}    props.onSelectDay  Called with the date.
  * @param {Function}    props.onSelectPost Called with a post.
+ * @param {Function}    props.onMovePost   Called with a post and a date (Move to).
+ * @param {Function}    props.onDropPost   Called with a post ID and this date after a drop.
  * @return {Element} The cell.
  */
 export default function DayCell( {
@@ -25,7 +28,10 @@ export default function DayCell( {
 	hidden = new Set(),
 	onSelectDay,
 	onSelectPost,
+	onMovePost,
+	onDropPost,
 } ) {
+	const [ isOver, setIsOver ] = useState( false );
 	const posts = day.posts.filter(
 		( post ) =>
 			! post.primary_category || ! hidden.has( post.primary_category )
@@ -61,12 +67,35 @@ export default function DayCell( {
 		isToday ? 'is-today' : '',
 		isSelected ? 'is-selected' : '',
 		inMonth ? '' : 'is-outside',
+		isOver ? 'is-drop-target' : '',
 	]
 		.filter( Boolean )
 		.join( ' ' );
 
 	return (
-		<div className={ classes } data-date={ day.date }>
+		<div
+			className={ classes }
+			data-date={ day.date }
+			onDragOver={
+				onDropPost ? ( event ) => event.preventDefault() : undefined
+			}
+			onDragEnter={ onDropPost ? () => setIsOver( true ) : undefined }
+			onDragLeave={ onDropPost ? () => setIsOver( false ) : undefined }
+			onDrop={
+				onDropPost
+					? ( event ) => {
+							event.preventDefault();
+							setIsOver( false );
+							const id = Number(
+								event.dataTransfer.getData( 'text/plain' )
+							);
+							if ( id ) {
+								onDropPost( id, day.date );
+							}
+						}
+					: undefined
+			}
+		>
 			<button
 				type="button"
 				className="masthead-day__button"
@@ -88,6 +117,7 @@ export default function DayCell( {
 					key={ post.id }
 					post={ post }
 					onSelect={ onSelectPost }
+					onMove={ onMovePost }
 				/>
 			) ) }
 			{ day.open ? <OpenSlot laneLabel={ day.lane.label } /> : null }
