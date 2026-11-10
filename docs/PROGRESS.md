@@ -17,7 +17,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-01 Support\Dates and Support\Json
 - [x] P1-02 Rhythm option, activation defaults and Lanes
 - [x] P1-03 Primary category and Colors
-- [ ] P1-04 Cadence
+- [x] P1-04 Cadence
 - [ ] P1-05 SeriesSource adapter and series term meta
 - [ ] P1-06 Slots (non-floating dated drafts)
 - [ ] P1-07 Reschedule
@@ -142,3 +142,7 @@ Tests: RhythmTest(5), LanesTest(8), RhythmActivationTest(1 integration). Rhythm 
 ### P1-03 — 532508c
 
 Tests: CategoriesTest(4), ColorsTest(4). Interpretation: primary category = category term with lowest term_id. API: Categories::primary(terms)/for_post(id)->{slugs,primary}/all() (get_terms bounded by desk.candidate_pool); Colors::DEFAULTS/PALETTE/for_term(id,slug)/legend()/register_meta() (hooked on init in Plugin). Stored colour validated through sanitize_hex_color.
+
+### P1-04 — 71021ed
+
+Tests: CadenceTest(7). Cadence static: sanitize/from_json/to_json/sanitize_json/expected_date/is_break/schedule. sanitize rejects missing/invalid time (no default). Digit strings accepted for every_weeks/weekday. expected_date with weekday picks the nearest date with that weekday (ties impossible).
