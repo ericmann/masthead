@@ -1,0 +1,630 @@
+{
+  "verify": [
+    "composer lint",
+    "composer test:unit",
+    {
+      "cmd": "npm run lint",
+      "from": "P0-02"
+    },
+    {
+      "cmd": "npm run test:unit",
+      "from": "P0-02"
+    },
+    {
+      "cmd": "bash scripts/forbidden-patterns.sh",
+      "from": "P0-03"
+    }
+  ],
+  "extraVerify": {
+    "src/": [
+      {
+        "cmd": "npm run test:integration",
+        "timeoutMs": 1500000,
+        "exclusive": true,
+        "from": "P0-05"
+      }
+    ],
+    "masthead.php": [
+      {
+        "cmd": "npm run test:integration",
+        "timeoutMs": 1500000,
+        "exclusive": true,
+        "from": "P0-05"
+      }
+    ],
+    "tests/integration/": [
+      {
+        "cmd": "npm run test:integration",
+        "timeoutMs": 1500000,
+        "exclusive": true,
+        "from": "P0-05"
+      }
+    ],
+    "client/": [
+      {
+        "cmd": "npm run build",
+        "from": "P0-02"
+      },
+      {
+        "cmd": "npm run test:e2e",
+        "timeoutMs": 2400000,
+        "exclusive": true,
+        "from": "P1-14"
+      }
+    ],
+    "tests/e2e/": [
+      {
+        "cmd": "npm run test:e2e",
+        "timeoutMs": 2400000,
+        "exclusive": true,
+        "from": "P1-14"
+      }
+    ],
+    "tests/e2e/smoke/": [
+      {
+        "cmd": "npm run test:e2e:smoke",
+        "timeoutMs": 2400000,
+        "exclusive": true,
+        "from": "P0-06"
+      }
+    ],
+    "scripts/release/": [
+      {
+        "cmd": "npm run release:pack",
+        "timeoutMs": 900000,
+        "from": "P0-07"
+      }
+    ]
+  },
+  "build": [
+    "npm run build"
+  ],
+  "baseBranch": "main",
+  "branchPrefix": "build/",
+  "maxRounds": 3,
+  "maxRoundsHard": 6,
+  "policies": {
+    "signing": "required"
+  },
+  "flight": "masthead",
+  "mutation": {
+    "targeted": {
+      "php": {
+        "cmd": "vendor/bin/phpunit -c phpunit.xml.dist --filter {filter}"
+      }
+    }
+  },
+  "constraints": [
+    {
+      "id": "no-front-end",
+      "description": "SPEC 3.1: Masthead adds nothing to public pages. No front-end hook name may appear as a word in PHP (get_the_excerpt() and admin_enqueue_scripts stay legal).",
+      "paths": [
+        "src/",
+        "masthead.php"
+      ],
+      "from": "P0-01",
+      "pattern": "(?<![\\w])(wp_head|wp_footer|wp_enqueue_scripts|template_redirect|the_content|the_excerpt|render_block\\w*|pre_get_posts)(?![\\w])",
+      "shouldMatch": [
+        "add_action( 'wp_head', array( $this, 'head' ) );",
+        "add_filter( \"the_content\", $callback );",
+        "add_action( 'wp_enqueue_scripts', $callback );",
+        "add_filter( 'render_block_core/list', $callback );",
+        "add_action( 'pre_get_posts', array( $this, 'filter_query' ) );",
+        "$html = apply_filters( 'the_excerpt', $text );",
+        "add_action( 'template_redirect', $callback );",
+        "add_action( 'wp_footer', $callback );"
+      ],
+      "shouldNotMatch": [
+        "add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );",
+        "$excerpt = get_the_excerpt( $post );",
+        "wp_enqueue_script( 'masthead' );",
+        "$text = $post->post_excerpt;"
+      ]
+    },
+    {
+      "id": "stats-confined",
+      "description": "SPEC 3.1: WPCOM_Stats and every Automattic\\Jetpack\\Stats symbol appear only in src/Stats/JetpackStats.php.",
+      "paths": [
+        "src/",
+        "masthead.php"
+      ],
+      "exclude": [
+        "src/Stats/JetpackStats.php"
+      ],
+      "from": "P0-01",
+      "pattern": "WPCOM_Stats|Jetpack\\\\+Stats",
+      "flags": "i",
+      "shouldMatch": [
+        "use Automattic\\Jetpack\\Stats\\WPCOM_Stats;",
+        "$client = new \\Automattic\\Jetpack\\Stats\\WPCOM_Stats();",
+        "if ( class_exists( 'Automattic\\\\Jetpack\\\\Stats\\\\WPCOM_Stats' ) ) {",
+        "$stats = new WPCOM_Stats();",
+        "use Automattic\\Jetpack\\Stats\\Options;"
+      ],
+      "shouldNotMatch": [
+        "use Masthead\\Stats\\StatsSource;",
+        "$source = Factory::make();",
+        "return new JetpackStats();",
+        "'source' => __( 'Jetpack Stats', 'masthead' ),"
+      ]
+    },
+    {
+      "id": "social-confined",
+      "description": "SPEC 3.1: the word publicize (any case) appears only in src/Social/JetpackSocial.php.",
+      "paths": [
+        "src/",
+        "masthead.php"
+      ],
+      "exclude": [
+        "src/Social/JetpackSocial.php"
+      ],
+      "from": "P0-01",
+      "pattern": "publicize",
+      "flags": "i",
+      "shouldMatch": [
+        "$request = new \\WP_REST_Request( 'GET', '/wpcom/v2/publicize/connections' );",
+        "use Automattic\\Jetpack\\Publicize\\Connections;",
+        "if ( ! class_exists( 'Jetpack_Publicize' ) ) {",
+        "// Asks Publicize for the connection list."
+      ],
+      "shouldNotMatch": [
+        "use Masthead\\Social\\ShareSource;",
+        "$share = $this->share->share_now( $post_id, $message, $ids );",
+        "return new JetpackSocial();"
+      ]
+    },
+    {
+      "id": "ai-confined",
+      "description": "SPEC 3.1: wp_ai_client_prompt is called only in src/Ai/WpAiClient.php.",
+      "paths": [
+        "src/",
+        "masthead.php"
+      ],
+      "exclude": [
+        "src/Ai/WpAiClient.php"
+      ],
+      "from": "P0-01",
+      "pattern": "wp_ai_client_prompt",
+      "shouldMatch": [
+        "$builder = wp_ai_client_prompt( $user );",
+        "return \\wp_ai_client_prompt( $user )->generate_text();",
+        "if ( function_exists( 'wp_ai_client_prompt' ) ) {"
+      ],
+      "shouldNotMatch": [
+        "$result = $this->ai->json( $system, $user, $schema, 'fast' );",
+        "return current_user_can( 'prompt_ai' );",
+        "use Masthead\\Ai\\AiClient;"
+      ]
+    },
+    {
+      "id": "no-direct-http",
+      "description": "SPEC 3.1: no direct HTTP in the plugin; all network traffic goes through Jetpack or the WordPress AI Client.",
+      "paths": [
+        "src/",
+        "masthead.php"
+      ],
+      "from": "P0-01",
+      "pattern": "(?<![\\w])(wp_remote_|wp_safe_remote_|curl_|fsockopen|stream_socket_client)|(file_get_contents|fopen)\\s*\\(\\s*['\"]\\s*https?",
+      "shouldMatch": [
+        "$response = wp_remote_get( $url );",
+        "$response = wp_safe_remote_post( $url, $args );",
+        "$handle = curl_init( $url );",
+        "$socket = fsockopen( $host, $port );",
+        "$body = file_get_contents( 'https://example.com/a.json' );",
+        "$handle = fopen( \"http://example.com\", 'r' );",
+        "$code = \\wp_remote_retrieve_response_code( $response );"
+      ],
+      "shouldNotMatch": [
+        "$json = file_get_contents( $path );",
+        "$response = rest_do_request( $request );",
+        "$handle = fopen( $file, 'r' );"
+      ]
+    },
+    {
+      "id": "client-endpoints",
+      "description": "SPEC 3.1: client JS talks only to wp/v2/* and the core Abilities run endpoint.",
+      "paths": [
+        "client/"
+      ],
+      "from": "P0-01",
+      "pattern": "wpcom/|jetpack/|admin-ajax\\.php",
+      "flags": "i",
+      "shouldMatch": [
+        "apiFetch( { path: '/wpcom/v2/publicize/connections' } );",
+        "const path = '/jetpack/v4/module/stats';",
+        "fetch( ajaxurl || '/wp-admin/admin-ajax.php' );",
+        "const url = `${ root }wpcom/v3/stats`;"
+      ],
+      "shouldNotMatch": [
+        "apiFetch( { path: '/wp/v2/posts/' + id, method: 'POST', data } );",
+        "const path = `/wp-abilities/v1/abilities/${ name }/run`;",
+        "const label = __( 'Connections come from Jetpack Social', 'masthead' );"
+      ]
+    },
+    {
+      "id": "writes-confined",
+      "description": "SPEC 3.1: wp_insert_post, wp_update_post and wp_delete_post appear only in src/Plan/Slots.php and src/Plan/Reschedule.php.",
+      "paths": [
+        "src/",
+        "masthead.php"
+      ],
+      "exclude": [
+        "src/Plan/Slots.php",
+        "src/Plan/Reschedule.php"
+      ],
+      "from": "P0-01",
+      "pattern": "(?<![\\w])wp_(insert|update|delete|trash|publish)_post(?![\\w])",
+      "shouldMatch": [
+        "$post_id = wp_insert_post( $postarr, true );",
+        "wp_update_post( array( 'ID' => $post_id, 'post_date' => $date ) );",
+        "\\wp_delete_post( $post_id, true );",
+        "wp_trash_post( $post_id );",
+        "wp_publish_post( $post_id );",
+        "$callback = 'wp_insert_post';"
+      ],
+      "shouldNotMatch": [
+        "$post_id = $this->slots->create( $input );",
+        "update_post_meta( $post_id, 'masthead_last_shared', $iso );",
+        "add_filter( 'wp_insert_post_data', $callback );",
+        "$result = $this->reschedule->move( $post_id, $date, $time );"
+      ]
+    },
+    {
+      "id": "cron-read-only",
+      "description": "SPEC 3.1: nothing under src/Cron/ writes posts, post meta or terms, runs an ability, or imports a module that can. The reviewer also reads src/Cron/Nightly.php.",
+      "paths": [
+        "src/Cron/"
+      ],
+      "from": "P0-01",
+      "pattern": "(?<![\\w])(wp_(insert|update|delete|trash|publish)_post|wp_set_(post|object)_terms|wp_insert_term|wp_update_term|(update|add|delete)_(post|term)_meta|wp_get_ability)(?![\\w])|Masthead\\\\+(Abilities|Plan|Social|Ai|Cli|Admin)\\\\|->(execute|share_now|share_at|create|move)\\s*\\(",
+      "shouldMatch": [
+        "wp_update_post( array( 'ID' => $id ) );",
+        "update_post_meta( $id, 'masthead_planned', true );",
+        "$ability = wp_get_ability( 'masthead/reschedule' );",
+        "$ability->execute( $input );",
+        "use Masthead\\Plan\\Reschedule;",
+        "use Masthead\\Abilities\\Registrar;",
+        "$this->share->share_now( $post_id, $message, $ids );",
+        "wp_set_post_terms( $id, $terms, 'category' );",
+        "update_term_meta( $term_id, 'masthead_lane_exception', true );"
+      ],
+      "shouldNotMatch": [
+        "use Masthead\\Desk\\SwapCheck;",
+        "use Masthead\\Stats\\StatsSource;",
+        "update_option( self::OPTION, $payload, false );",
+        "$findings = $this->swap_check->run( $from, $to );",
+        "do_action( 'masthead_findings_updated', count( $findings ) );"
+      ]
+    },
+    {
+      "id": "no-secrets-stored",
+      "description": "SPEC 3.1: no option, meta or transient name contains key, token, secret or password. Covers the name argument of the option, transient, meta and register_setting calls and name constants; the reviewer also reads names built at runtime.",
+      "paths": [
+        "src/",
+        "masthead.php"
+      ],
+      "from": "P0-01",
+      "pattern": "\\w*(option|transient)\\s*\\(\\s*['\"][^'\"]*(key|token|secret|password)|\\w*_meta\\s*\\(\\s*[^,()]+,\\s*['\"][^'\"]*(key|token|secret|password)|register_setting\\s*\\(\\s*['\"][^'\"]*['\"]\\s*,\\s*['\"][^'\"]*(key|token|secret|password)|(option|meta|transient)\\w*\\s*=\\s*['\"][^'\"]*(key|token|secret|password)",
+      "flags": "i",
+      "shouldMatch": [
+        "$value = get_option( 'masthead_api_key' );",
+        "update_option( \"masthead_ai_token\", $token );",
+        "set_transient( 'masthead_secret_cache', $data, $ttl );",
+        "update_post_meta( $post_id, 'masthead_share_token', $value );",
+        "register_post_meta( 'post', 'masthead_password_hint', $args );",
+        "register_setting( 'masthead', 'masthead_provider_key', $args );",
+        "private const OPTION = 'masthead_api_secret';",
+        "$meta_name = 'masthead_token';",
+        "$data = get_user_meta( $user_id, 'masthead_dismissed_keys', true );"
+      ],
+      "shouldNotMatch": [
+        "$value = get_option( 'masthead_settings', array() );",
+        "$meta = get_post_meta( $post_id, $key, true );",
+        "set_transient( $transient, $data, Config::get( 'stats.cache_ttl' ) );",
+        "private const OPTION = 'masthead_findings';",
+        "$max = Config::get( 'ai.max_tokens' );",
+        "$data = get_user_meta( $user_id, 'masthead_dismissed', true );",
+        "register_setting( 'masthead', 'masthead_rhythm', $args );"
+      ]
+    },
+    {
+      "id": "no-key-reads",
+      "description": "SPEC 3.1: Masthead never reads provider credentials or the process environment. Use wp_get_environment_type() for the environment type.",
+      "paths": [
+        "src/",
+        "client/",
+        "masthead.php"
+      ],
+      "from": "P0-01",
+      "pattern": "ANTHROPIC_API_KEY|OPENROUTER_API_KEY|(?<![\\w])getenv\\s*\\(|\\$_ENV\\b|process\\.env",
+      "shouldMatch": [
+        "$key = getenv( 'ANTHROPIC_API_KEY' );",
+        "if ( defined( 'OPENROUTER_API_KEY' ) ) {",
+        "$type = getenv( 'WP_ENVIRONMENT_TYPE' );",
+        "$type = \\getenv( 'WP_ENVIRONMENT_TYPE' );",
+        "$value = $_ENV['WP_ENVIRONMENT_TYPE'];",
+        "const key = process.env.ANTHROPIC_API_KEY;"
+      ],
+      "shouldNotMatch": [
+        "$type = wp_get_environment_type();",
+        "return current_user_can( 'prompt_ai' );",
+        "$supported = $this->ai->supported();"
+      ]
+    },
+    {
+      "id": "one-clock",
+      "description": "SPEC 3.2: the only clock is Masthead\\Support\\Clock. No PHP time or date function, no `new DateTime*` and no createFromFormat() without a leading ! (which would fill missing fields from the wall clock) outside src/Support/Clock.php. DateTimeImmutable::createFromFormat( '!...' ) and ->format() or ->modify() on an existing object stay legal; methods named date() or time() do not. The reviewer also reads for relative strings such as 'now' passed to ->modify().",
+      "paths": [
+        "src/",
+        "masthead.php"
+      ],
+      "exclude": [
+        "src/Support/Clock.php"
+      ],
+      "from": "P0-01",
+      "pattern": "(?<![\\w>:$])(time|date|gmdate|wp_date|date_i18n|current_time|current_datetime|strtotime|mktime|gmmktime|microtime|hrtime|date_create|date_create_immutable|getdate|localtime|idate|human_time_diff)\\s*\\(|new\\s+\\\\?DateTime|createFromFormat\\s*\\(\\s*['\"][^!]",
+      "shouldMatch": [
+        "$now = time();",
+        "$today = date( 'Y-m-d' );",
+        "$stamp = gmdate( 'c' );",
+        "$label = wp_date( 'M j', $timestamp );",
+        "$now = current_time( 'mysql' );",
+        "$now = current_datetime();",
+        "$ts = strtotime( $date );",
+        "$dt = new DateTime( $date );",
+        "$dt = new \\DateTimeImmutable( 'now', wp_timezone() );",
+        "$tz = new DateTimeZone( 'UTC' );",
+        "$started = microtime( true );",
+        "$dt = date_create( $date );",
+        "$ts = \\time();",
+        "public function date( string $value ): string {",
+        "$dt = \\DateTimeImmutable::createFromFormat( 'Y-m-d', $date, wp_timezone() );",
+        "$ago = human_time_diff( $then );"
+      ],
+      "shouldNotMatch": [
+        "$now = Clock::now();",
+        "$dt = \\DateTimeImmutable::createFromFormat( '!Y-m-d', $date, wp_timezone() );",
+        "$label = $dt->format( 'Y-m-d' );",
+        "$gmt = get_gmt_from_date( $local );",
+        "$next = $dt->modify( '+1 day' );",
+        "$version = filemtime( $path );",
+        "$label = Clock::format( $dt, 'M j' );",
+        "$iso = mysql2date( 'c', $post->post_date, false );",
+        "$ttl = Config::get( 'stats.cache_ttl' );",
+        "$now = apply_filters( 'masthead_now', $real );",
+        "if ( ! $this->validate( $input ) ) {",
+        "$ok = checkdate( $month, $day, $year );",
+        "$modified = get_post_time( 'Y-m-d', false, $post );",
+        "$pin = $assoc_args['now'] ?? null;",
+        "'now' => Dates::to_iso( Clock::now() ),"
+      ]
+    },
+    {
+      "id": "client-clock",
+      "description": "SPEC 3.2 applied to the client: 'now' and 'today' come from boot data (client/data/clock.js), so the pinned e2e clock is honoured. No argument-less Date construction elsewhere under client/.",
+      "paths": [
+        "client/"
+      ],
+      "exclude": [
+        "client/data/clock.js"
+      ],
+      "from": "P0-01",
+      "pattern": "Date\\.now\\s*\\(|new\\s+Date\\s*\\(\\s*\\)|new\\s+Date\\s*(;|,|\\)|$)|performance\\.now\\s*\\(",
+      "shouldMatch": [
+        "const now = Date.now();",
+        "const today = new Date();",
+        "const today = new Date;",
+        "const started = performance.now();",
+        "const stamp = new Date().toISOString();"
+      ],
+      "shouldNotMatch": [
+        "const day = new Date( Date.UTC( year, month, date ) );",
+        "const today = clock.today();",
+        "const d = new Date( iso );",
+        "const label = dateI18n( 'M j', iso );"
+      ]
+    },
+    {
+      "id": "no-rng",
+      "description": "SPEC 3.2: no randomness in suggestion ordering or anywhere else in PHP.",
+      "paths": [
+        "src/",
+        "masthead.php"
+      ],
+      "from": "P0-01",
+      "pattern": "(?<![\\w])(rand|mt_rand|wp_rand|shuffle|str_shuffle|array_rand|random_int|random_bytes|uniqid|lcg_value)\\s*\\(",
+      "shouldMatch": [
+        "$pick = rand( 0, $max );",
+        "$pick = mt_rand();",
+        "shuffle( $candidates );",
+        "$index = array_rand( $candidates );",
+        "$n = random_int( 0, $max );",
+        "$n = wp_rand( 0, $max );",
+        "$id = uniqid( 'masthead', true );",
+        "$n = \\mt_rand();"
+      ],
+      "shouldNotMatch": [
+        "usort( $candidates, array( $this, 'compare' ) );",
+        "$operand = $left;",
+        "$hash = sha1( $title );",
+        "$brand = $post->post_title;"
+      ]
+    },
+    {
+      "id": "hard-coded-tunable",
+      "description": "SPEC 3.2: no bare numeric literal >= 2 in PHP outside src/Config.php. Exempt: comment lines, lines carrying an HTTP 'status' or 'response' code, array indices ([2]), weekday arithmetic (7), digits inside strings such as dates, colours, formats and regex quantifiers, and a number that is named by a `const` declaration (not bare; the reviewer reads every such const and rejects one that is a tunable).",
+      "paths": [
+        "src/",
+        "masthead.php"
+      ],
+      "exclude": [
+        "src/Config.php"
+      ],
+      "from": "P0-01",
+      "pattern": "^(?!\\s*(\\*|//|/\\*|#))(?!.*['\"](status|response)['\"])(?!\\s*((public|private|protected|final)\\s+)*const\\s).*(?<![\\w.'\"#$%{\\[/:-])(?!7(?![\\w.]))([2-9]|[1-9][0-9]+)(?![\\w'\"%}\\]:/-])",
+      "shouldMatch": [
+        "$limit = 5;",
+        "'posts_per_page' => 20,",
+        "add_filter( 'masthead_suggestions', $callback, 10, 2 );",
+        "return $views * 2.5;",
+        "if ( count( $items ) > 3 ) {",
+        "$ttl = 6 * HOUR_IN_SECONDS;",
+        "$suggestions = array_slice( $ranked, 0, 3 );",
+        "$horizon = $input['days'] ?? 21;",
+        "$week = 70;",
+        "return round( $score, 2 );",
+        "$pad = str_pad( $hour, 2, '0', STR_PAD_LEFT );"
+      ],
+      "shouldNotMatch": [
+        "$first = $parts[2];",
+        "return new \\WP_Error( 'masthead_forbidden', $message, array( 'status' => 403 ) );",
+        "$next = ( $weekday + 1 ) % 7;",
+        "private const ACCEPTED_ARGS = 2;",
+        "public const DAYS_IN_WEEK = 7;",
+        " * Returns at most 3 suggestions.",
+        "// Keeps the top 10 posts.",
+        "$color = '#2f5fd0';",
+        "$date = '2026-11-09 06:30:00';",
+        "$limit = Config::get( 'desk.max_suggestions' );",
+        "$text = sprintf( __( '%1$s is your %2$s slot.', 'masthead' ), $day, $lane );",
+        "declare(strict_types=1);",
+        "$partial = 0.5;",
+        "$time = sprintf( '%02d:%02d', $hour, $minute );",
+        "'pattern' => '^[0-9]{4}-[0-9]{2}-[0-9]{2}$',",
+        "$hash = sha1( $title );",
+        "$path = '/wp/v2/posts';",
+        "add_action( 'init', array( $this, 'register' ), PHP_INT_MAX );",
+        "$zero = '0000-00-00 00:00:00';",
+        "$time = '06:30';"
+      ]
+    },
+    {
+      "id": "tunable-by-name",
+      "description": "SPEC 3.2 and every ASSUMPTION key in SPEC 5.4: a Config tunable is never assigned a literal outside src/Config.php, in PHP or in client JS (snake_case and camelCase, as variable, array key or object key). Client code reads these values from boot data.",
+      "paths": [
+        "src/",
+        "client/",
+        "masthead.php"
+      ],
+      "exclude": [
+        "src/Config.php"
+      ],
+      "from": "P0-01",
+      "pattern": "(max_?posts_?per_?range|max_?range_?days|horizon_?days|ghost_?days|max_?suggestions|ideas_?per_?request|gap_?days|min_?age_?days|cooldown_?days|window_?days|candidate_?pool|lookahead_?days|min_?score_?delta|cache_?ttl|top_?posts_?limit|request_?cap|temperature|max_?tokens|context_?days|context_?max_?posts|series_?max_?parts|nightly_?hour)['\"]?\\s*(=|:|=>)\\s*-?\\.?[0-9]|['\"](lane|category|weekday)['\"]\\s*=>\\s*[0-9]*\\.[0-9]",
+      "flags": "i",
+      "shouldMatch": [
+        "$horizon_days = 21;",
+        "'gap_days' => 45,",
+        "const ghostDays = 14;",
+        "maxSuggestions: 3,",
+        "'desk.reshare_cooldown_days' => 180,",
+        "$cache_ttl = 21600;",
+        "'temperature' => 0.4,",
+        "const MAX_TOKENS = 1200;",
+        "'lane' => 0.5,",
+        "\"weekday\" => .2,",
+        "$series_window_days = 3;",
+        "const minScoreDelta = 0.25;",
+        "$swap_lookahead_days = 60;"
+      ],
+      "shouldNotMatch": [
+        "$horizon_days = Config::get( 'desk.horizon_days' );",
+        "const ghostDays = boot.config.ghostDays;",
+        "'gap_days' => $gap_days,",
+        "maxSuggestions: config.maxSuggestions,",
+        "'lane' => $lane_term,",
+        "'weekday' => null,",
+        "$terms['category'] = $views / $max;"
+      ]
+    },
+    {
+      "id": "bounded-queries",
+      "description": "SPEC 3.2: every query is bounded. The reviewer also checks by reading that each WP_Query sets no_found_rows => true unless it paginates.",
+      "paths": [
+        "src/",
+        "client/",
+        "masthead.php"
+      ],
+      "from": "P0-01",
+      "pattern": "(posts_per_page|numberposts|per_page|perPage)['\"]?\\s*\\]?\\s*(=>|:|=)\\s*-\\s*1|nopaging['\"]?\\s*\\]?\\s*(=>|:|=)\\s*(true|1)|['\"]number['\"]\\s*\\]?\\s*(=>|=)\\s*(0|''|\"\"|false|null)(?![\\w.])",
+      "flags": "i",
+      "shouldMatch": [
+        "'posts_per_page' => -1,",
+        "\"posts_per_page\" => - 1,",
+        "'nopaging' => true,",
+        "'numberposts' => -1,",
+        "'number' => 0,",
+        "$args['posts_per_page'] = -1;",
+        "per_page: -1,",
+        "const query = { perPage: -1 };",
+        "'number' => '',",
+        "$args['nopaging'] = true;"
+      ],
+      "shouldNotMatch": [
+        "'posts_per_page' => Config::get( 'calendar.max_posts_per_range' ),",
+        "'no_found_rows' => true,",
+        "'number' => Config::get( 'desk.candidate_pool' ),",
+        "per_page: boot.config.maxPostsPerRange,",
+        "'nopaging' => false,"
+      ]
+    },
+    {
+      "id": "stat-render-confined",
+      "description": "SPEC 3.3: every stat value in the UI renders through client/components/StatValue.js; no other client file reads views, visitors or visits.",
+      "paths": [
+        "client/"
+      ],
+      "exclude": [
+        "client/components/StatValue.js"
+      ],
+      "from": "P0-01",
+      "pattern": "\\??\\.\\s*(avg_?)?(views|visitors|visits)\\b|\\[\\s*['\"](avg_)?(views|visitors|visits)['\"]\\s*\\]|(const|let|var)\\s*\\{[^}]*\\b(avg_?)?(views|visitors|visits)\\b",
+      "flags": "i",
+      "shouldMatch": [
+        "const n = stat.views;",
+        "return <span>{ post.views }</span>;",
+        "const v = finding.numbers?.values?.visitors;",
+        "const n = row[ 'visits' ];",
+        "const { views } = stat;",
+        "const { source, avg_views } = day;",
+        "total += day.avgViews;"
+      ],
+      "shouldNotMatch": [
+        "return <StatValue stat={ finding.numbers } name=\"category\" />;",
+        "const numbers = finding.numbers;",
+        "import StatValue from '../components/StatValue';",
+        "const label = __( 'Views come from Jetpack Stats', 'masthead' );"
+      ]
+    },
+    {
+      "id": "dangerous-php",
+      "description": "SPEC 3.4: no eval, unserialize, extract, create_function, assert, system, exec, shell_exec, passthru or proc_open in the plugin.",
+      "paths": [
+        "src/",
+        "masthead.php"
+      ],
+      "from": "P0-01",
+      "pattern": "(?<![\\w])(eval|unserialize|maybe_unserialize|extract|create_function|assert|system|exec|shell_exec|passthru|proc_open|popen|pcntl_exec)\\s*\\(",
+      "shouldMatch": [
+        "eval( $code );",
+        "$data = unserialize( $raw );",
+        "extract( $args );",
+        "$fn = create_function( '$a', 'return $a;' );",
+        "assert( $value > 0 );",
+        "system( 'ls' );",
+        "exec( $command, $output );",
+        "$out = shell_exec( $command );",
+        "passthru( $command );",
+        "$proc = proc_open( $command, $spec, $pipes );",
+        "$data = maybe_unserialize( $raw );",
+        "$out = \\shell_exec( $command );"
+      ],
+      "shouldNotMatch": [
+        "$result = $ability->execute( $input );",
+        "$data = json_decode( $raw, true );",
+        "$this->assert_valid( $input );",
+        "$ecosystem = get_option( 'masthead_settings' );"
+      ]
+    }
+  ]
+}
