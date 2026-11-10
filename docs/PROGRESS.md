@@ -41,7 +41,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P2-08 Responsive layout at 390 px and accessibility gates
 - [x] P2-09 Settings › Calendar page and registered settings
 - [x] P2-10 Settings app and RhythmTable
-- [ ] P2-11 Settings: SeriesCadence, Exposure and AI provider status
+- [x] P2-11 Settings: SeriesCadence, Exposure and AI provider status
 - [ ] P2-12 Phase 2 push and manual checks
 - [ ] P3-01 Spike — Jetpack Stats methods, payloads and probe design
 - [ ] P3-02 Stats core: StatsSource, NullStats, Payloads, FixtureStats, Cache, Factory
@@ -238,3 +238,7 @@ Tests: SettingsPageTest(3), ConfigTest(+3), integration SettingsTest(5). Admin\S
 ### P2-10 — 29262de
 
 Tests: RhythmTable.test.js(5), useSettings.test.js(2), e2e settings.spec.js (3 x2); full npm run test:e2e = 48 passed, 2 skipped. Client: settings/App (h1 "Calendar Settings", Weekly rhythm section, Save changes, success/error notices), RhythmTable({rhythm,categories,weekStartsOn,setRhythm}) + exported slugify, useSettings()->{rhythm,settings,setRhythm,setSetting(dotted path,value),save,isSaving,isSaved,error} via core-data root/site entity. index.js ROUTES gained 'masthead-settings-root'. client/settings/style.scss added via @use in client/style.scss. Interpretation: category options come from boot `categories` rather than a core-data request. P2-11 adds sections to settings/App (use setSetting for masthead_settings). Jest: mock @wordpress/data (useSelect/useDispatch) with `mock`-prefixed variables; fireEvent.change for controlled time inputs.
+
+### P2-11 — 4a42b76
+
+Tests: SeriesCadence.test.js(5), Exposure.test.js(1), AiSettings.test.js(2), AssetsTest exposure assertion, e2e settings.spec.js(+3); full npm run test:e2e = 54 passed, 2 skipped. Client: settings/SeriesCadence (presentational {terms,onChange}) + exported hook useSeries() (core-data taxonomy entity with meta, per_page 100 context edit); Exposure({values,setSetting}); AiSettings({supported,connectorsUrl}); App wires all and Save runs site save then series.saveAll. Interpretation: PHP boot data `exposure` {exposeMcp, exposeShare} added in Assets::add_planning_boot_data because the settings entity only holds overrides. Codebase note: this eslint config (jsx-a11y label-has-associated-control) needs BOTH htmlFor/id and nesting on labels whose text is an expression.
