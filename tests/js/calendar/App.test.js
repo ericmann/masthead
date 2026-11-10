@@ -174,6 +174,15 @@ describe( 'calendar App', () => {
 		).toBeTruthy();
 	} );
 
+	it( 'keeps Fill open days disabled with a visible reason when no open day is in view', () => {
+		render( <App /> );
+		const fill = screen.getByRole( 'button', { name: 'Fill open days' } );
+		expect( fill.disabled ).toBe( true );
+		expect(
+			screen.getByText( 'No open days in view through Nov 30.' )
+		).toBeTruthy();
+	} );
+
 	it( 'shows a notice when the range is truncated or the request fails', () => {
 		usePlan.mockReturnValue( plan( { truncated: true } ) );
 		const { unmount } = render( <App /> );

@@ -5,6 +5,7 @@ import { getBoot } from '../data/boot';
 import { today as bootToday } from '../data/clock';
 import {
 	addDays,
+	monthDayLabel,
 	monthGrid,
 	monthLabel,
 	rangeLabel,
@@ -148,12 +149,25 @@ export default function App() {
 				date: null,
 			},
 		} );
-	const fillOpenDays = () =>
-		suggestions.loadMany(
-			plan.days
-				.filter( ( day ) => day.open && day.date <= horizonEnd )
-				.map( ( day ) => day.date )
-		);
+	const fillDates = plan.days
+		.filter( ( day ) => day.open && day.date <= horizonEnd )
+		.map( ( day ) => day.date );
+	const fillOpenDays = () => suggestions.loadMany( fillDates );
+	let fillBlocked = '';
+	if ( ! plan.isLoading && ! suggestions.isRunning ) {
+		if ( fillDates.length === 0 ) {
+			fillBlocked = sprintf(
+				/* translators: %s: last date the Desk plans for, such as "Nov 30". */
+				__( 'No open days in view through %s.', 'masthead' ),
+				monthDayLabel( horizonEnd )
+			);
+		} else if ( fillDates.every( ( date ) => suggestions.get( date ) ) ) {
+			fillBlocked = __(
+				'Every open day in view has suggestions.',
+				'masthead'
+			);
+		}
+	}
 	const fillStatus = suggestions.isRunning
 		? sprintf(
 				/* translators: 1: number done, 2: total. */
@@ -222,6 +236,7 @@ export default function App() {
 				onFillOpenDays={ fillOpenDays }
 				fillStatus={ fillStatus }
 				filling={ suggestions.isRunning }
+				fillBlocked={ fillBlocked }
 			/>
 			{ plan.error ? (
 				<div className="notice notice-error inline" role="alert">

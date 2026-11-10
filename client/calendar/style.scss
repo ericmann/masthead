@@ -102,25 +102,92 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 12px;
-	margin: 8px 0 12px;
+	gap: 10px;
+	margin: 0 0 16px;
+	padding: 10px 12px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
 
-	&__nav,
-	&__views {
+	&__nav {
 		display: flex;
-		gap: 4px;
+		align-items: center;
+		gap: 6px;
+	}
+
+	&__step.button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		padding: 0;
+		border-color: #c3c4c7;
+		color: #1d2327;
+
+		// Outranks core's .wp-core-ui .button.button-compact .dashicons line-height.
+		&.button-compact .dashicons {
+			width: 20px;
+			height: 20px;
+			line-height: 1;
+		}
 	}
 
 	&__title {
-		flex: 1;
+		min-width: 132px;
 		margin: 0;
-		font-size: 18px;
+		color: #1d2327;
+		font-size: 16px;
+		font-weight: 600;
+		text-align: center;
 	}
 
-	.button[aria-pressed="true"] {
-		border-color: #2271b1;
-		background: #f0f6fc;
-		color: #135e96;
+	&__today.button {
+		border-color: #c3c4c7;
+		background: #f6f7f7;
+		color: #1d2327;
+	}
+
+	&__views.button-group {
+		display: inline-flex;
+		margin-left: 6px;
+
+		> .button:not(.button-primary) {
+			border-color: #c3c4c7;
+			background: #fff;
+			color: #1d2327;
+		}
+	}
+
+	.masthead-legend {
+		flex: 1 1 240px;
+		min-width: 0;
+		margin-left: 8px;
+	}
+
+	&__fill {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin-left: auto;
+	}
+
+	&__fill-note {
+		max-width: 260px;
+		color: #50575e;
+		font-size: 12px;
+		line-height: 1.4;
+		text-align: right;
+
+		&:empty {
+			display: none;
+		}
+	}
+
+	&__fill-button.button {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font-weight: 600;
 	}
 }
 
@@ -214,9 +281,22 @@
 
 	.masthead-toolbar {
 
-		&__title {
+		&__nav {
 			flex-basis: 100%;
-			order: -1;
+		}
+
+		&__title {
+			flex: 1;
+		}
+
+		.masthead-legend {
+			flex-basis: 100%;
+			margin-left: 0;
+		}
+
+		&__fill {
+			flex-wrap: wrap;
+			justify-content: flex-end;
 		}
 	}
 
@@ -398,11 +478,6 @@
 		outline: 2px solid #2271b1;
 		outline-offset: 2px;
 	}
-}
-
-.masthead-toolbar__fill {
-	display: flex;
-	align-items: center;
 }
 
 .masthead-desk {

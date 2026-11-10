@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
 import CategoryLegend from '../components/CategoryLegend';
+import Sparkle from '../components/Sparkle';
 
 const VIEWS = [
 	{ id: 'month', label: __( 'Month', 'masthead' ) },
@@ -9,7 +10,7 @@ const VIEWS = [
 ];
 
 /**
- * Calendar toolbar: previous, next, title, Today and the view switch.
+ * Calendar toolbar: previous and next around the title, Today, the view switch, the legend and Fill open days.
  *
  * @param {Object}      props                  Props.
  * @param {string}      props.view             month, week or list.
@@ -22,8 +23,9 @@ const VIEWS = [
  * @param {Set<string>} props.hidden           Hidden category slugs.
  * @param {Function}    props.onToggleCategory Called with a slug.
  * @param {Function}    props.onFillOpenDays   Runs suggestions for every open day in view.
- * @param {string}      props.fillStatus       Progress text for the live region.
+ * @param {string}      props.fillStatus       Progress text while Fill open days runs.
  * @param {boolean}     props.filling          Whether Fill open days is running.
+ * @param {string}      props.fillBlocked      Why there is nothing to fill, or an empty string.
  * @return {Element} The toolbar.
  */
 export default function Toolbar( {
@@ -39,6 +41,7 @@ export default function Toolbar( {
 	onFillOpenDays = null,
 	fillStatus = '',
 	filling = false,
+	fillBlocked = '',
 } ) {
 	const labels = {
 		month: [
@@ -54,6 +57,7 @@ export default function Toolbar( {
 			__( 'Next page', 'masthead' ),
 		],
 	}[ view ];
+	const fillNote = filling ? fillStatus : fillBlocked;
 	return (
 		<div
 			className="masthead-toolbar"
@@ -61,19 +65,41 @@ export default function Toolbar( {
 			aria-label={ __( 'Calendar', 'masthead' ) }
 		>
 			<div className="masthead-toolbar__nav">
-				<button type="button" className="button" onClick={ onPrev }>
-					{ labels[ 0 ] }
+				<button
+					type="button"
+					className="button button-compact masthead-toolbar__step"
+					aria-label={ labels[ 0 ] }
+					title={ labels[ 0 ] }
+					onClick={ onPrev }
+				>
+					<span
+						className="dashicons dashicons-arrow-left-alt2"
+						aria-hidden="true"
+					/>
 				</button>
-				<button type="button" className="button" onClick={ onNext }>
-					{ labels[ 1 ] }
-				</button>
-				<button type="button" className="button" onClick={ onToday }>
-					{ __( 'Today', 'masthead' ) }
+				<h2 className="masthead-toolbar__title">{ title }</h2>
+				<button
+					type="button"
+					className="button button-compact masthead-toolbar__step"
+					aria-label={ labels[ 1 ] }
+					title={ labels[ 1 ] }
+					onClick={ onNext }
+				>
+					<span
+						className="dashicons dashicons-arrow-right-alt2"
+						aria-hidden="true"
+					/>
 				</button>
 			</div>
-			<h2 className="masthead-toolbar__title">{ title }</h2>
+			<button
+				type="button"
+				className="button button-compact masthead-toolbar__today"
+				onClick={ onToday }
+			>
+				{ __( 'Today', 'masthead' ) }
+			</button>
 			<div
-				className="masthead-toolbar__views"
+				className="button-group button-compact masthead-toolbar__views"
 				role="group"
 				aria-label={ __( 'View', 'masthead' ) }
 			>
@@ -81,7 +107,11 @@ export default function Toolbar( {
 					<button
 						key={ item.id }
 						type="button"
-						className="button"
+						className={
+							view === item.id
+								? 'button button-primary'
+								: 'button'
+						}
 						aria-pressed={ view === item.id }
 						onClick={ () => onView( item.id ) }
 					>
@@ -89,27 +119,36 @@ export default function Toolbar( {
 					</button>
 				) ) }
 			</div>
-			{ onFillOpenDays ? (
-				<div className="masthead-toolbar__fill">
-					<button
-						type="button"
-						className="button"
-						disabled={ filling }
-						onClick={ onFillOpenDays }
-					>
-						{ __( 'Fill open days', 'masthead' ) }
-					</button>
-					<span className="screen-reader-text" aria-live="polite">
-						{ fillStatus }
-					</span>
-				</div>
-			) : null }
 			{ categories.length > 0 ? (
 				<CategoryLegend
 					categories={ categories }
 					hidden={ hidden }
 					onToggle={ onToggleCategory }
 				/>
+			) : null }
+			{ onFillOpenDays ? (
+				<div className="masthead-toolbar__fill">
+					<span
+						id="masthead-fill-note"
+						className="masthead-toolbar__fill-note"
+						role="status"
+					>
+						{ fillNote }
+					</span>
+					<button
+						type="button"
+						className="button button-primary button-compact masthead-toolbar__fill-button"
+						disabled={ filling || fillBlocked !== '' }
+						aria-describedby={
+							fillNote ? 'masthead-fill-note' : undefined
+						}
+						title={ fillNote || undefined }
+						onClick={ onFillOpenDays }
+					>
+						<Sparkle />
+						{ __( 'Fill open days', 'masthead' ) }
+					</button>
+				</div>
 			) : null }
 		</div>
 	);
