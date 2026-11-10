@@ -19,6 +19,7 @@ All notable changes to Masthead are recorded here. The format follows [Keep a Ch
 
 ### Fixed
 
+- The Desk's series reason named the lane's weekday as the thing that was due ("Thursday is due around Nov 17…"); it now reads "Part 3 is due around Nov 17 (every 2 weeks) and isn't on the calendar yet."
 - Categories without a stored colour showed grey everywhere: core's `sanitize_hex_color('')` returns `''`, not `null`, so the empty term meta was taken as a valid colour and the slug defaults and palette were never used.
 - Series planning meta (`masthead_cadence`, `masthead_lane_exception`) no longer appears in public `wp/v2/<series>` responses. With ttm-core's public `series` taxonomy those responses are the ones the theme uses. The keys are returned only when the request's `context` is `edit`, which needs the `edit_terms` capability; the Settings screen and the swap panel read and write them in that context, and writes are unchanged.
 

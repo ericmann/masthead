@@ -16,7 +16,7 @@ Plan a month of posts in WordPress on a weekly rhythm, with a Desk that tells yo
 
 [Quick start](#quick-start) · [Features](#what-you-get) · [Honest by design](#honest-by-design) · [MCP](#works-with-your-ai-assistant) · [FAQ](#faq)
 
-![Masthead's month view in wp-admin: posts coloured by category, a lane for each weekday, and the Desk suggesting what to put on Wednesday](docs/screenshots/calendar-month.png)
+![Masthead's month view in wp-admin on a demo blog: posts coloured by category, a lane for each weekday, and the Desk suggesting what to put on Thursday](docs/screenshots/calendar-month.png)
 
 </div>
 
@@ -48,7 +48,9 @@ You stay the editor. Masthead never publishes, moves or shares anything without 
 
 ## See it in action
 
-<!-- DEMO VIDEO: poster image linking to the video, added once the demo is recorded. -->
+[![Watch the three-minute demo: the calendar, the weekly rhythm, the Desk, day plans, series and the nightly swap check, on a sample blog](docs/screenshots/demo-poster.png)](https://github.com/ericmann/masthead/releases/latest)
+
+<p align="center"><b>▶ Watch the three-minute demo</b> (the video is attached to the latest release). It runs on a demo site with sample data.</p>
 
 | Turn a suggestion into a dated draft | Fix a schedule the swap check flagged |
 |---|---|

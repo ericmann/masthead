@@ -85,7 +85,7 @@ final class ReasonsTest extends TestCase {
 			'2026-12-07',
 			array( 'label' => 'Business' )
 		);
-		$this->assertSame( "Monday is due around Dec 7 (every 4 weeks). Part 2 isn't on the calendar.", $why );
+		$this->assertSame( "Part 2 is due around Dec 7 (every 4 weeks) and isn't on the calendar yet.", $why );
 	}
 
 	public function test_reshare_reason_contains_no_digit_other_than_the_date(): void {

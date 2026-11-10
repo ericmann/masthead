@@ -87,19 +87,23 @@ describe( 'release pack', () => {
 		expect( missingDocs( '0.0.0', [] ) ).toEqual( [] );
 	} );
 
-	it( 'README.md references four non-empty screenshots', () => {
+	it( 'README.md references five non-empty screenshots', () => {
 		const readme = fs.readFileSync(
 			path.join( process.cwd(), 'README.md' ),
 			'utf8'
 		);
-		[ 'calendar-month', 'day-plan', 'swap-panel', 'settings' ].forEach(
-			( name ) => {
-				const relative = `docs/screenshots/${ name }.png`;
-				expect( readme ).toContain( relative );
-				expect(
-					fs.statSync( path.join( process.cwd(), relative ) ).size
-				).toBeGreaterThan( 0 );
-			}
-		);
+		[
+			'calendar-month',
+			'day-plan',
+			'swap-panel',
+			'settings',
+			'demo-poster',
+		].forEach( ( name ) => {
+			const relative = `docs/screenshots/${ name }.png`;
+			expect( readme ).toContain( relative );
+			expect(
+				fs.statSync( path.join( process.cwd(), relative ) ).size
+			).toBeGreaterThan( 0 );
+		} );
 	} );
 } );

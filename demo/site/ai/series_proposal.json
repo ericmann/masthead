@@ -1,0 +1,11 @@
+{
+	"name": "Locked Down",
+	"category": "security",
+	"every_weeks": 1,
+	"parts": [
+		{ "title": "Know Your Threats Before You Buy Tools", "outline": [ "Who might want in, and why", "What they would take", "Matching defences to real risks" ] },
+		{ "title": "Passwords, Passkeys and Real People", "outline": [ "Why reuse is the real problem", "Password managers for families", "Where passkeys fit" ] },
+		{ "title": "Patching Without an IT Department", "outline": [ "Turning on automatic updates", "The devices people forget", "A monthly ten-minute check" ] },
+		{ "title": "Backups You Have Actually Restored", "outline": [ "Three copies, two places, one offline", "Practising a restore", "What to do on a bad day" ] }
+	]
+}

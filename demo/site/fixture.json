@@ -1,0 +1,401 @@
+{
+  "_source": "Demo site for the Masthead product video (demo/README.md). Every title, date and number is invented.",
+  "_note": "Northfield Notes, a fictional blog. now is Tue 2026-11-10 09:00 America/Los_Angeles. The Mantle keeps its name from docs/fixtures/queue-2026-11-09.json; its Part 2 is off-lane and off-cadence, Nov 24 is a same-day collision, Security has gone quiet since Sep 17, and 3024 is an older post with good (sample) stats.",
+  "now": "2026-11-10 09:00:00",
+  "timezone": "America/Los_Angeles",
+  "categories": [
+    {
+      "slug": "technology",
+      "name": "Technology"
+    },
+    {
+      "slug": "business",
+      "name": "Business"
+    },
+    {
+      "slug": "faith",
+      "name": "Faith"
+    },
+    {
+      "slug": "journal",
+      "name": "Journal"
+    },
+    {
+      "slug": "writing",
+      "name": "Writing"
+    },
+    {
+      "slug": "security",
+      "name": "Security"
+    },
+    {
+      "slug": "opinion",
+      "name": "Opinion"
+    }
+  ],
+  "series": [
+    {
+      "slug": "the-mantle",
+      "name": "The Mantle",
+      "ttm_total_parts": 4,
+      "masthead_cadence": {
+        "every_weeks": 4,
+        "weekday": null,
+        "time": "06:30"
+      }
+    },
+    {
+      "slug": "rebuilding-the-home-lab",
+      "name": "Rebuilding the Home Lab",
+      "ttm_total_parts": 4,
+      "masthead_cadence": {
+        "every_weeks": 2,
+        "weekday": 2,
+        "time": "07:30"
+      }
+    }
+  ],
+  "posts": [
+    {
+      "id": 3024,
+      "status": "publish",
+      "date": "2026-06-11 07:30:00",
+      "title": "The Quiet Art of Writing Good Error Messages",
+      "categories": [
+        "technology"
+      ]
+    },
+    {
+      "id": 3023,
+      "status": "publish",
+      "date": "2026-09-17 07:30:00",
+      "title": "Passkeys for the Rest of Us",
+      "categories": [
+        "security"
+      ]
+    },
+    {
+      "id": 3001,
+      "status": "publish",
+      "date": "2026-10-13 07:30:00",
+      "title": "Plain Text Is Still the Best File Format",
+      "categories": [
+        "technology"
+      ]
+    },
+    {
+      "id": 3002,
+      "status": "publish",
+      "date": "2026-10-15 07:30:00",
+      "title": "A Field Guide to Cron Jobs That Fail Quietly",
+      "categories": [
+        "technology"
+      ]
+    },
+    {
+      "id": 3003,
+      "status": "publish",
+      "date": "2026-10-16 08:00:00",
+      "title": "Build Log: New Shelves for the Workshop",
+      "categories": [
+        "journal"
+      ]
+    },
+    {
+      "id": 3004,
+      "status": "publish",
+      "date": "2026-10-18 06:30:00",
+      "title": "Sabbath as a Practice, Not a Rule",
+      "categories": [
+        "faith"
+      ]
+    },
+    {
+      "id": 3005,
+      "status": "publish",
+      "date": "2026-10-19 07:00:00",
+      "title": "Pricing the Work Nobody Sees",
+      "categories": [
+        "business"
+      ]
+    },
+    {
+      "id": 3006,
+      "status": "publish",
+      "date": "2026-10-20 07:30:00",
+      "title": "Rebuilding the Home Lab, Part 1: Taking Stock",
+      "categories": [
+        "technology"
+      ],
+      "series": "rebuilding-the-home-lab",
+      "part": 1
+    },
+    {
+      "id": 3007,
+      "status": "publish",
+      "date": "2026-10-21 08:00:00",
+      "title": "In Defense of Boring Software",
+      "categories": [
+        "opinion"
+      ]
+    },
+    {
+      "id": 3008,
+      "status": "publish",
+      "date": "2026-10-23 08:00:00",
+      "title": "Notes from a Rainy Week in the Garden",
+      "categories": [
+        "journal"
+      ]
+    },
+    {
+      "id": 3009,
+      "status": "publish",
+      "date": "2026-10-24 06:30:00",
+      "title": "The Mantle – Part 1 of 4",
+      "categories": [
+        "writing"
+      ],
+      "series": "the-mantle",
+      "part": 1
+    },
+    {
+      "id": 3010,
+      "status": "publish",
+      "date": "2026-10-25 06:30:00",
+      "title": "The Long Obedience of Small Things",
+      "categories": [
+        "faith"
+      ]
+    },
+    {
+      "id": 3011,
+      "status": "publish",
+      "date": "2026-10-26 07:00:00",
+      "title": "Saying No to Good Clients",
+      "categories": [
+        "business"
+      ]
+    },
+    {
+      "id": 3012,
+      "status": "publish",
+      "date": "2026-10-27 07:30:00",
+      "title": "Reading Logs Like a Detective",
+      "categories": [
+        "technology"
+      ]
+    },
+    {
+      "id": 3013,
+      "status": "publish",
+      "date": "2026-10-29 07:30:00",
+      "title": "SQLite in Production, One Year In",
+      "categories": [
+        "technology"
+      ]
+    },
+    {
+      "id": 3014,
+      "status": "publish",
+      "date": "2026-10-30 08:00:00",
+      "title": "Build Log: The Bench Finally Has a Vise",
+      "categories": [
+        "journal"
+      ]
+    },
+    {
+      "id": 3015,
+      "status": "publish",
+      "date": "2026-11-01 06:30:00",
+      "title": "All Saints and Ordinary Saints",
+      "categories": [
+        "faith"
+      ]
+    },
+    {
+      "id": 3016,
+      "status": "publish",
+      "date": "2026-11-02 07:00:00",
+      "title": "The Invoice Is Part of the Product",
+      "categories": [
+        "business"
+      ]
+    },
+    {
+      "id": 3017,
+      "status": "publish",
+      "date": "2026-11-03 07:30:00",
+      "title": "Rebuilding the Home Lab, Part 2: One Box, Many Jobs",
+      "categories": [
+        "technology"
+      ],
+      "series": "rebuilding-the-home-lab",
+      "part": 2
+    },
+    {
+      "id": 3018,
+      "status": "publish",
+      "date": "2026-11-04 08:00:00",
+      "title": "Your Roadmap Is a Wish List",
+      "categories": [
+        "opinion"
+      ]
+    },
+    {
+      "id": 3019,
+      "status": "publish",
+      "date": "2026-11-06 08:00:00",
+      "title": "First Frost",
+      "categories": [
+        "journal"
+      ]
+    },
+    {
+      "id": 3020,
+      "status": "publish",
+      "date": "2026-11-07 06:30:00",
+      "title": "The Lighthouse Keeper's Ledger",
+      "categories": [
+        "writing"
+      ]
+    },
+    {
+      "id": 3021,
+      "status": "publish",
+      "date": "2026-11-08 06:30:00",
+      "title": "Gratitude Before the Harvest Is In",
+      "categories": [
+        "faith"
+      ]
+    },
+    {
+      "id": 3022,
+      "status": "publish",
+      "date": "2026-11-09 07:00:00",
+      "title": "What a Small Studio Owes Its Clients",
+      "categories": [
+        "business"
+      ]
+    },
+    {
+      "id": 3031,
+      "status": "future",
+      "date": "2026-11-11 08:00:00",
+      "title": "Meetings Are a Tool, Not a Ritual",
+      "categories": [
+        "opinion"
+      ]
+    },
+    {
+      "id": 3032,
+      "status": "future",
+      "date": "2026-11-12 07:30:00",
+      "title": "Feature Flags Without a Vendor",
+      "categories": [
+        "technology"
+      ]
+    },
+    {
+      "id": 3033,
+      "status": "future",
+      "date": "2026-11-16 07:00:00",
+      "title": "Quarterly Planning for a Team of Three",
+      "categories": [
+        "business"
+      ]
+    },
+    {
+      "id": 3034,
+      "status": "future",
+      "date": "2026-11-24 07:30:00",
+      "title": "Testing the Backups You Already Have",
+      "categories": [
+        "technology"
+      ]
+    },
+    {
+      "id": 3035,
+      "status": "future",
+      "date": "2026-11-24 12:00:00",
+      "title": "A Gentle Introduction to Observability",
+      "categories": [
+        "technology"
+      ]
+    },
+    {
+      "id": 3036,
+      "status": "future",
+      "date": "2026-11-27 06:30:00",
+      "title": "The Mantle – Part 2 of 4",
+      "categories": [
+        "writing"
+      ],
+      "series": "the-mantle",
+      "part": 2
+    },
+    {
+      "id": 3041,
+      "status": "draft",
+      "date": "2026-11-14 06:30:00",
+      "title": "The Clockmaker's Apprentice",
+      "categories": [
+        "writing"
+      ]
+    },
+    {
+      "id": 3042,
+      "status": "draft",
+      "date": "2026-11-22 06:30:00",
+      "title": "Advent Is a Season of Waiting",
+      "categories": [
+        "faith"
+      ]
+    },
+    {
+      "id": 3043,
+      "status": "draft",
+      "date": "2026-11-30 07:00:00",
+      "title": "Year-End Notes for Freelancers",
+      "categories": [
+        "business"
+      ]
+    },
+    {
+      "id": 3051,
+      "status": "draft",
+      "date": null,
+      "modified": "2026-11-02 21:14:00",
+      "title": "What I Learned Auditing My Own Router",
+      "categories": [
+        "security"
+      ],
+      "tags": [
+        "router",
+        "home network"
+      ]
+    },
+    {
+      "id": 3052,
+      "status": "draft",
+      "date": null,
+      "modified": "2026-10-28 18:40:00",
+      "title": "Hiring Your First Contractor",
+      "categories": [
+        "business"
+      ]
+    },
+    {
+      "id": 3053,
+      "status": "draft",
+      "date": null,
+      "modified": "2026-11-05 22:05:00",
+      "title": "The Mantle – Part 3 of 4",
+      "categories": [
+        "writing"
+      ],
+      "series": "the-mantle",
+      "part": 3
+    }
+  ]
+}
