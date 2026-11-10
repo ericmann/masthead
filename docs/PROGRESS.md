@@ -79,7 +79,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P5-06 Ideas and include_ideas in suggest-for-date
 - [x] P5-07 masthead/draft-outline ability and the Day plan outline
 - [x] P5-08 masthead/draft-share-copy ability and the Share panel's AI button
-- [ ] P5-09 SeriesPlanner and masthead/propose-series
+- [x] P5-09 SeriesPlanner and masthead/propose-series
 - [ ] P5-10 masthead/accept-series
 - [ ] P5-11 Ask the Desk
 - [ ] P5-12 Settings: Desk and AI fields, and wp masthead ai:status
@@ -390,3 +390,7 @@ Ideas::outline(title, ?category slug, ?date) -> string[]|WP_Error (strong tier, 
 ### P5-08 — 7be66ba
 
 Desk\ShareCopy(AiClient)::draft(post_id) -> message|WP_Error (masthead_not_found 404 incl. wrong post type, masthead_not_published 409 before any AI call, masthead_ai_invalid; fast tier; title + post_excerpt only) and Abilities\DraftShareCopy masthead/draft-share-copy (input {post_id}, output {message}, readonly annotation, idempotent false, edit_posts + prompt_ai). SharePanel: "Draft with AI" beside the Message label when boot ai.supported && caps.promptAi; confirm() before replacing existing text; error shown with role=alert; never shares. Tests: unit 281, integration DraftShareCopy 4, jest SharePanel 10. No e2e added (task listed none; Share panel needs a Jetpack connection which wp-env lacks).
+
+### P5-09 — 7834a47
+
+Desk\SeriesPlanner(AiClient, ?Clock)::propose(prompt, ?start) and Abilities\ProposeSeries masthead/propose-series (input {prompt, start?}; output {name, category, cadence{every_weeks,weekday,time}, lane{slug,label,categories}, parts[{date,title,outline}]}; readonly annotation, idempotent false; edit_posts + prompt_ai). Dates are computed by Masthead: first date = first day in [start, start+6] whose lane explicitly lists the category else start; later parts via Cadence::schedule. Strong tier; allowed categories = every category slug; empty prompt (masthead_invalid_input) and past/invalid start (masthead_invalid_date) refused with 400 before any AI call; empty parts/invalid reply -> masthead_ai_invalid. Verified: security series from 2027-01-01 -> Thursdays 2027-01-07..28. Tests: unit 288, integration ProposeSeries 5. Lesson: integration tests with the real clock must use far-future dates.
