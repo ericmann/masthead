@@ -30,3 +30,10 @@ To be done on eric.mann.blog after deploying a pre-release build.
 - [ ] Share one post to one connection from the Share panel and confirm it arrives and `masthead_last_shared` is set.
 - [ ] Try "Queue for this date" and confirm it either queues or reports the plan reason.
 - [ ] Read both spike files and list every fact still marked `UNCONFIRMED`.
+
+## Phase 4
+
+- [ ] With the fixture seeded, run `wp masthead swap-check --write --now="2026-11-09 14:00:00"`, open the list view, select The Mantle Part 2 and read the swap panel against `docs/mockups/PostDetail.dc.html`.
+- [ ] Confirm no number appears anywhere in the calendar, rail or panels without "Jetpack Stats" beside it, first with stats unavailable and then with `wp option update masthead_e2e_stats 1`.
+- [ ] Select Nov 18 and compare the Desk rail and Day plan with `docs/mockups/Main.dc.html` and `docs/mockups/DayPlan.dc.html`.
+- [ ] Read `docs/tuning/P4-11.md` and `docs/tuning/P4-17.md` and decide whether the kept defaults suit the real site (the reshare ages in particular could not be judged from the sample statistics).
