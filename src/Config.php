@@ -57,7 +57,7 @@ final class Config {
 			'ai.monthly_request_cap'           => 300,
 			'ai.models.fast'                   => array( 'claude-haiku-5-5' ),
 			'ai.models.strong'                 => array( 'claude-sonnet-5-5' ),
-			'ai.temperature'                   => 0.4,
+			'ai.temperature'                   => null,
 			'ai.max_tokens'                    => array(
 				'ideas'           => 1200,
 				'outline'         => 1200,

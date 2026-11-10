@@ -115,4 +115,53 @@ final class SchemasTest extends TestCase {
 		Schemas::validate( $data, $schema );
 		$this->assertSame( $before, $data );
 	}
+	public function test_wire_drops_the_constraints_structured_output_apis_reject(): void {
+		$full = Schemas::series_proposal( array( 'technology' ), 12 );
+		$wire = Schemas::wire( $full );
+		$json = (string) json_encode( $wire );
+		foreach ( array( '"title":"', '"minLength"', '"minimum"', '"maxItems"' ) as $keyword ) {
+			$this->assertStringNotContainsString( $keyword, $json, $keyword );
+		}
+		$this->assertSame( 'At least 1.', $wire['properties']['every_weeks']['description'] );
+		$this->assertSame( 'At most 12 items.', $wire['properties']['parts']['description'] );
+		$this->assertSame( 'Not empty.', $wire['properties']['name']['description'] );
+		$this->assertSame( 1, $wire['properties']['parts']['items']['properties']['outline']['minItems'] );
+		$this->assertFalse( $wire['properties']['parts']['items']['additionalProperties'] );
+		$this->assertSame( array( 'title', 'outline' ), $wire['properties']['parts']['items']['required'] );
+		$this->assertSame( array( 'technology' ), $wire['properties']['category']['enum'] );
+		$this->assertSame( 'series_proposal', $full['title'] );
+	}
+
+	public function test_wire_keeps_an_existing_description_and_drops_min_items_above_one(): void {
+		$wire = Schemas::wire(
+			array(
+				'type'        => 'array',
+				'description' => 'Tags.',
+				'minItems'    => 2,
+				'items'       => array( 'type' => 'string' ),
+			)
+		);
+		$this->assertArrayNotHasKey( 'minItems', $wire );
+		$this->assertSame( 'Tags. At least 2 items.', $wire['description'] );
+	}
+
+	public function test_validate_still_enforces_what_wire_drops(): void {
+		$schema = Schemas::ideas( array( 'technology' ), 1 );
+		$two    = array(
+			'ideas' => array(
+				array(
+					'title' => 'A',
+					'angle' => 'B',
+					'category' => 'technology',
+				),
+				array(
+					'title' => 'C',
+					'angle' => 'D',
+					'category' => 'technology',
+				),
+			),
+		);
+		$this->assertTrue( Schemas::validate( $two, Schemas::wire( $schema ) ) );
+		$this->assertSame( '$.ideas', Schemas::validate( $two, $schema ) );
+	}
 }

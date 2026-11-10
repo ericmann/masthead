@@ -87,23 +87,30 @@ describe( 'release pack', () => {
 		expect( missingDocs( '0.0.0', [] ) ).toEqual( [] );
 	} );
 
-	it( 'README.md references five non-empty screenshots', () => {
+	it( 'README.md references four non-empty screenshots', () => {
 		const readme = fs.readFileSync(
 			path.join( process.cwd(), 'README.md' ),
 			'utf8'
 		);
-		[
-			'calendar-month',
-			'day-plan',
-			'swap-panel',
-			'settings',
-			'demo-poster',
-		].forEach( ( name ) => {
-			const relative = `docs/screenshots/${ name }.png`;
-			expect( readme ).toContain( relative );
-			expect(
-				fs.statSync( path.join( process.cwd(), relative ) ).size
-			).toBeGreaterThan( 0 );
-		} );
+		[ 'calendar-month', 'day-plan', 'swap-panel', 'settings' ].forEach(
+			( name ) => {
+				const relative = `docs/screenshots/${ name }.png`;
+				expect( readme ).toContain( relative );
+				expect(
+					fs.statSync( path.join( process.cwd(), relative ) ).size
+				).toBeGreaterThan( 0 );
+			}
+		);
+	} );
+
+	it( 'README.md plays the demo video inline', () => {
+		const readme = fs.readFileSync(
+			path.join( process.cwd(), 'README.md' ),
+			'utf8'
+		);
+		// GitHub renders a user-attachments URL on a line of its own as a video player.
+		expect( readme ).toMatch(
+			/^https:\/\/github\.com\/user-attachments\/assets\/[0-9a-f-]{36}$/m
+		);
 	} );
 } );

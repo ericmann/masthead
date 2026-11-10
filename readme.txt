@@ -3,7 +3,7 @@ Tags: editorial calendar, content planning, scheduling, jetpack, ai
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,7 +42,11 @@ Yes. The calendar, weekly rhythm, series, drag to reschedule and the swap check 
 
 = Does it work without an AI provider? =
 
-Yes. The Desk still suggests drafts, the next series part, posts worth sharing again and quiet categories. The AI buttons appear only when a provider supports text generation.
+Yes. The Desk still suggests drafts, the next series part, posts worth sharing again and quiet categories. The AI buttons appear only when a provider can return JSON that matches a schema (see the next question).
+
+= Which AI provider plugins work? =
+
+Masthead asks for JSON that matches a schema, so the provider plugin has to offer that. AI Provider for Anthropic works with Masthead's default model ids. AI Provider for OpenAI, Google, Mistral and Ollama declare schema output; with those, set your own model ids under Settings > Calendar. AI Provider for OpenRouter 1.0.0 and DeepSeek 1.0.3 do not, and Masthead shows them as unusable.
 
 = Who can use the AI features? =
 
@@ -65,6 +69,10 @@ In your own database: the weekly rhythm and settings as options, plans and outli
 Calendar abilities can be exposed to MCP clients from Settings > Calendar. Sharing is a separate switch and is off by default.
 
 == Changelog ==
+
+= 1.0.1 =
+* AI requests work with the Anthropic provider. Masthead no longer sends a temperature, which Claude 5 models reject, and it leaves out the schema keywords that the provider's API rejects. Every reply is still validated against the full schema.
+* The AI provider counts as available only when it can return JSON that matches a schema. OpenRouter's 1.0.0 plugin can't, so Settings now says so instead of every request failing.
 
 = 1.0.0 =
 * AI features work on a stock WordPress site: anyone who can publish posts gets the `prompt_ai` capability, unless a role, user or plugin grants or denies it explicitly.

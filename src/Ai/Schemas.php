@@ -102,6 +102,50 @@ final class Schemas {
 	}
 
 	/**
+	 * The schema as sent to the provider: without the constraint keywords that structured-output APIs reject
+	 * (Anthropic's returns 400 for minLength, minimum and maxItems), each one restated in the description instead.
+	 * validate() still enforces the full schema on the reply.
+	 *
+	 * @param array $schema Schema from this class.
+	 * @return array
+	 */
+	public static function wire( array $schema ): array {
+		$notes = array();
+		if ( isset( $schema['minLength'] ) ) {
+			$notes[] = 1 === $schema['minLength'] ? 'Not empty.' : sprintf( 'At least %d characters.', (int) $schema['minLength'] );
+		}
+		if ( isset( $schema['minimum'] ) ) {
+			$notes[] = sprintf( 'At least %d.', (int) $schema['minimum'] );
+		}
+		if ( isset( $schema['maxItems'] ) ) {
+			$notes[] = sprintf( 'At most %d items.', (int) $schema['maxItems'] );
+		}
+		if ( isset( $schema['minItems'] ) && $schema['minItems'] > 1 ) {
+			$notes[] = sprintf( 'At least %d items.', (int) $schema['minItems'] );
+		}
+		$wire = array();
+		foreach ( $schema as $key => $value ) {
+			if ( in_array( $key, array( 'title', 'minLength', 'minimum', 'maxItems' ), true ) ) {
+				continue;
+			}
+			if ( 'minItems' === $key && $value > 1 ) {
+				continue;
+			}
+			if ( 'properties' === $key && is_array( $value ) ) {
+				$value = array_map( array( self::class, 'wire' ), $value );
+			} elseif ( 'items' === $key && is_array( $value ) ) {
+				$value = self::wire( $value );
+			}
+			$wire[ $key ] = $value;
+		}
+		if ( array() !== $notes ) {
+			$description         = isset( $wire['description'] ) ? rtrim( (string) $wire['description'] ) . ' ' : '';
+			$wire['description'] = $description . implode( ' ', $notes );
+		}
+		return $wire;
+	}
+
+	/**
 	 * Validates data against a schema without changing it.
 	 *
 	 * @param mixed $data   Decoded data.

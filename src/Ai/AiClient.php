@@ -15,7 +15,7 @@ namespace Masthead\Ai;
 interface AiClient {
 
 	/**
-	 * Whether a provider can generate text. Makes no network call.
+	 * Whether a provider can answer Masthead's requests (a system instruction and a JSON schema).
 	 *
 	 * @return bool
 	 */
