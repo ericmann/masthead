@@ -14,6 +14,7 @@ All notable changes to Masthead are recorded here. The format follows [Keep a Ch
 
 - README and readme.txt list which AI provider plugins work with Masthead, and why.
 - The no-provider notice says which features are off; the rest of the Desk keeps working.
+- The README plays the three-minute demo inline (a GitHub video attachment), in place of a poster that linked to the release.
 
 ## [1.0.0] - 2026-11-10
 
