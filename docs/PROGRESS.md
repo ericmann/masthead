@@ -46,7 +46,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P3-01 Spike — Jetpack Stats methods, payloads and probe design
 - [x] P3-02 Stats core: StatsSource, NullStats, Payloads, FixtureStats, Cache, Factory
 - [x] P3-03 Spike — Jetpack Social routes, payloads and plan gating
-- [ ] P3-04 JetpackStats and wp masthead stats:probe
+- [x] P3-04 JetpackStats and wp masthead stats:probe
 - [ ] P3-05 masthead/stats-summary ability and the e2e stats switch
 - [ ] P3-06 Tune stats.cache_ttl
 - [ ] P3-07 Social adapters and wp masthead social:probe
@@ -258,3 +258,7 @@ Tests: NullStatsTest(1), PayloadsTest(5), FixtureStatsTest(2), CacheTest(4), Fac
 ### P3-03 — 16a515d
 
 Spike docs/spikes/P3-03-jetpack-social.md. Decision: share-and-schedule. Routes (namespace wpcom/v2, internal rest_do_request): GET /wpcom/v2/publicize/connections (items: connection_id string, display_name, service_name, ...); POST /wpcom/v2/publicize/share-post/<postId> {message, skipped_connections: [ids to SKIP] (so JetpackSocial passes all other ids), async}; POST /wpcom/v2/publicize/scheduled-actions {post_id, connection_id (one per request), message, timestamp (GMT unix seconds)}. Errors: publicize_not_available, invalid_user_permission_publicize, not_published (400), post_not_published, connection_not_found, rest_forbidden. Self-hosted sites proxy to WordPress.com (outbound call made by Jetpack). Plan gating codes UNCONFIRMED -> JetpackSocial maps any WP_Error to status unavailable + message. On an unconnected site only /wpcom/v2/publicize/connection-test-results is registered, so missing routes = unavailable. Available = $publicize global exists + Jetpack::is_connection_ready() + connection route registered + list call not WP_Error. social:probe design recorded (available, connections count, routes registered flags).
+
+### P3-04 — f970be2
+
+Tests: JetpackStatsTest(7 unit), FactoryTest(+1), StatsProbeCommandTest(2), integration JetpackStatsTest(1). JetpackStats( Cache, primary_of, ?object client ): static usable() (class WPCOM_Stats exists + class Jetpack + is_connection_ready + is_module_active('stats')), available() (client injected or usable), views_by_category via top posts, views_by_weekday via get_visits{unit:day,quantity:days}, top_posts via get_top_posts{period:day,num:days,max:desk.candidate_pool} summed by Payloads, post_views = sum of last N rows of get_post_views data (null if absent), fetched_at() oldest cache time used, probe(days), static scrub(). Factory::make(?env,?path,?bool jetpack) order: fixture(local) -> JetpackStats when usable -> NullStats. Cli\StatsProbeCommand(StatsSource) prints probe JSON or 'Jetpack Stats is not available on this site.'; registered as 'stats:probe' in Plugin's WP_CLI branch only (StatsFactory::make() is NOT called outside CLI yet - P3-05 must construct the source lazily, Jetpack functions may not be ready at plugins_loaded). Verified in wp-env: unconnected Jetpack => usable() false. Codebase note: VIP escape sniff applies to exception messages in tests (use esc_html).
