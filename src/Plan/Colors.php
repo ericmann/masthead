@@ -75,8 +75,11 @@ final class Colors {
 	 */
 	public static function for_term( int $term_id, string $slug ): string {
 		$stored = get_term_meta( $term_id, self::META, true );
-		if ( is_string( $stored ) && null !== sanitize_hex_color( $stored ) ) {
-			return $stored;
+		// Core's sanitize_hex_color() returns '' (not null) for '', which is
+		// also what get_term_meta() returns when no colour is stored.
+		$valid = is_string( $stored ) ? sanitize_hex_color( $stored ) : null;
+		if ( is_string( $valid ) && '' !== $valid ) {
+			return $valid;
 		}
 		if ( isset( self::DEFAULTS[ $slug ] ) ) {
 			return self::DEFAULTS[ $slug ];

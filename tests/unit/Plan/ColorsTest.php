@@ -21,7 +21,8 @@ final class ColorsTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		Functions\when( 'sanitize_hex_color' )->alias(
-			static fn( $color ) => is_string( $color ) && 1 === preg_match( '/^#([0-9a-fA-F]{3}){1,2}$/', $color ) ? $color : null
+			// Mirrors core: '' comes back as '', invalid input as null.
+			static fn( $color ) => '' === $color ? '' : ( is_string( $color ) && 1 === preg_match( '/^#([0-9a-fA-F]{3}){1,2}$/', $color ) ? $color : null )
 		);
 	}
 
@@ -34,6 +35,12 @@ final class ColorsTest extends TestCase {
 		$this->assertSame( '#112233', Colors::for_term( 4, 'technology' ) );
 		$this->meta( 'red' );
 		$this->assertSame( '#2f5fd0', Colors::for_term( 4, 'technology' ) );
+	}
+
+	public function test_no_stored_colour_falls_back_rather_than_returning_empty(): void {
+		$this->meta( '' );
+		$this->assertSame( '#2f5fd0', Colors::for_term( 4, 'technology' ) );
+		$this->assertSame( Colors::PALETTE[0], Colors::for_term( 7, 'recipes' ) );
 	}
 
 	public function test_default_by_slug(): void {
