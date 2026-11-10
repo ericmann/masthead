@@ -1,0 +1,11 @@
+{
+	"name": "Locking things down",
+	"category": "security",
+	"every_weeks": 1,
+	"parts": [
+		{ "title": "Start with the threat you actually face", "outline": [ "Who might want in", "What they would take" ] },
+		{ "title": "Passwords without the pain", "outline": [ "Managers", "Passkeys" ] },
+		{ "title": "Updates you can trust", "outline": [ "Why patching matters", "Automating it" ] },
+		{ "title": "Backups that survive a bad day", "outline": [ "The rule of copies", "Testing a restore" ] }
+	]
+}

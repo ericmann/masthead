@@ -1,0 +1,73 @@
+.masthead-settings {
+	max-width: 960px;
+
+	&__section {
+		margin: 16px 0;
+	}
+}
+
+.masthead-rhythm {
+
+	input[type="text"],
+	input[type="time"] {
+		width: 100%;
+		max-width: 260px;
+	}
+
+	select {
+		min-width: 160px;
+	}
+
+	&__any {
+		display: block;
+		color: #50575e;
+		font-size: 12px;
+	}
+}
+
+@media (max-width: 782px) {
+
+	.masthead-rhythm {
+		display: block;
+		overflow-x: auto;
+	}
+}
+
+.masthead-series {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	&__item {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px 16px;
+		padding: 8px 0;
+		border-top: 1px solid #dcdcde;
+
+		strong {
+			flex: 1 1 100%;
+		}
+
+		label {
+			display: inline-flex;
+			flex-direction: column;
+			gap: 2px;
+			font-size: 12px;
+		}
+	}
+}
+
+.masthead-desk-settings,
+.masthead-ai {
+
+	input[type="number"] {
+		width: 90px;
+	}
+
+	input[type="text"] {
+		width: 100%;
+		max-width: 320px;
+	}
+}

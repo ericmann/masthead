@@ -1,0 +1,59 @@
+{
+  "_synthetic": true,
+  "_note": "Shape-true synthetic payloads for the Jetpack Stats methods Masthead reads. The shapes are UNCONFIRMED (see docs/spikes/P3-01-jetpack-stats.md) and every number is invented. No real traffic number.",
+  "fetched_at": "2026-11-09T13:00:00-08:00",
+  "payloads": {
+    "get_visits": {
+      "date": "2026-11-09",
+      "unit": "day",
+      "fields": ["period", "views", "visitors"],
+      "data": [
+        ["2026-10-31", 40, 31],
+        ["2026-11-01", 55, 44],
+        ["2026-11-02", 61, 50],
+        ["2026-11-03", 48, 37],
+        ["2026-11-04", 52, 41],
+        ["2026-11-05", 66, 52],
+        ["2026-11-06", 45, 36],
+        ["2026-11-07", 30, 24],
+        ["2026-11-08", 36, 29],
+        ["2026-11-09", 58, 47]
+      ]
+    },
+    "get_top_posts": {
+      "date": "2026-11-09",
+      "days": {
+        "2026-11-09": {
+          "postviews": [
+            { "id": 12155, "href": "https://example.test/the-mantle-part-1-of-4/", "date": "2026-11-09 06:23:15", "title": "The Mantle - Part 1 of 4", "type": "post", "views": 210 },
+            { "id": 10193, "href": "https://example.test/atlas-ledger/", "date": "2026-11-09 05:47:05", "title": "Atlas Ledger", "type": "post", "views": 160 },
+            { "id": 10192, "href": "https://example.test/from-notes-to-indexes/", "date": "2026-10-01 07:57:00", "title": "From Notes to Indexes", "type": "post", "views": 95 },
+            { "id": 10191, "href": "https://example.test/search-over-plain-text/", "date": "2026-09-29 07:57:00", "title": "Search Over Plain Text", "type": "post", "views": 70 }
+          ],
+          "total_views": 535,
+          "other_views": 0
+        }
+      }
+    },
+    "get_post_views": {
+      "date": "2026-11-09",
+      "views": 210,
+      "years": {},
+      "averages": {},
+      "weeks": [],
+      "data": [
+        ["2026-11-07", 0],
+        ["2026-11-08", 0],
+        ["2026-11-09", 210]
+      ]
+    },
+    "get_tags": {
+      "date": "2026-11-09",
+      "tags": [
+        { "type": "category", "value": "technology", "views": 330 },
+        { "type": "category", "value": "writing", "views": 210 },
+        { "type": "category", "value": "faith", "views": 160 }
+      ]
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "name": "masthead",
+  "version": "0.1.0",
+  "private": true,
+  "license": "GPL-2.0-or-later",
+  "description": "Editorial calendar for WordPress.",
+  "scripts": {
+    "build": "wp-scripts build client/index.js --output-path=build",
+    "lint": "wp-scripts lint-js client tests/js tests/e2e scripts --no-error-on-unmatched-pattern && wp-scripts lint-style 'client/**/*.scss'",
+    "test:unit": "wp-scripts test-unit-js --config jest.config.js",
+    "test:integration": "npm run build && wp-env start && wp-env run tests-cli --env-cwd=wp-content/plugins/masthead vendor/bin/phpunit -c phpunit.integration.xml.dist",
+    "test:e2e:smoke": "npm run build && wp-env start && wp-scripts test-playwright --config tests/e2e/playwright.config.mjs tests/e2e/smoke",
+    "test:e2e": "npm run build && wp-env start && wp-env run cli wp masthead seed --fixture=wp-content/masthead-fixtures/queue-2026-11-09.json --now=\"2026-11-09 14:00:00\" --reset && wp-scripts test-playwright --config tests/e2e/playwright.config.mjs",
+    "screenshots": "npm run build && wp-env start && MASTHEAD_SCREENSHOTS=1 wp-scripts test-playwright --config tests/e2e/playwright.config.mjs tests/e2e/screenshots --project=desktop",
+    "release:pack": "npm run build && node scripts/release/pack.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.0",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
+    "@wordpress/api-fetch": "^8.1.0",
+    "@wordpress/components": "^44.0.0",
+    "@wordpress/core-data": "^9.1.0",
+    "@wordpress/data": "^11.1.0",
+    "@wordpress/date": "^6.1.0",
+    "@wordpress/dom-ready": "^5.1.0",
+    "@wordpress/element": "^10.1.0",
+    "@wordpress/env": "^12.1.0",
+    "@wordpress/i18n": "^7.1.0",
+    "@wordpress/scripts": "^35.0.0",
+    "@wordpress/url": "^5.1.0"
+  },
+  "overrides": {
+    "serialize-javascript": "^7.1.4",
+    "linkify-it": "^6.1.0",
+    "uuid": "^11.1.1",
+    "isomorphic-git": "^1.44.12",
+    "markdown-it": "^14.3.3",
+    "markdownlint-cli": {
+      "minimatch": "^3.1.5"
+    }
+  }
+}

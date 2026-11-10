@@ -14,24 +14,10 @@
   },
   "signing": null,
   "rounds": [],
-  "timeline": [
-    {
-      "event": "start",
-      "stage": "plan",
-      "round": 0,
-      "at": "2026-11-10T00:00:44.545Z"
-    },
-    {
-      "event": "end",
-      "stage": "plan",
-      "round": 0,
-      "at": "2026-11-10T00:40:28.918Z"
-    },
-    {
-      "event": "start",
-      "stage": "implement",
-      "round": 0,
-      "at": "2026-11-10T00:40:28.918Z"
-    }
-  ]
+  "archived": {
+    "slug": "masthead",
+    "dir": "docs/flights/masthead",
+    "at": "2026-11-10T05:42:45.657Z"
+  },
+  "breaking": false
 }
