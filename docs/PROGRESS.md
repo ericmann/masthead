@@ -43,7 +43,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P2-10 Settings app and RhythmTable
 - [x] P2-11 Settings: SeriesCadence, Exposure and AI provider status
 - [x] P2-12 Phase 2 push and manual checks
-- [ ] P3-01 Spike — Jetpack Stats methods, payloads and probe design
+- [x] P3-01 Spike — Jetpack Stats methods, payloads and probe design
 - [ ] P3-02 Stats core: StatsSource, NullStats, Payloads, FixtureStats, Cache, Factory
 - [ ] P3-03 Spike — Jetpack Social routes, payloads and plan gating
 - [ ] P3-04 JetpackStats and wp masthead stats:probe
@@ -246,3 +246,7 @@ Tests: SeriesCadence.test.js(5), Exposure.test.js(1), AiSettings.test.js(2), Ass
 ### P2-12 — b585581
 
 Docs only: Phase 2 section appended to docs/manual-checks.md. kukulu_verify (full, no files): green (105 PHP unit, 81 JS unit). composer audit: no advisories. npm audit --audit-level=high: still the transitive dev advisories (5 high; see P0-02). Push: pushed build/2026-11-10 to origin. Manual check: NOT VERIFIED (human).
+
+### P3-01 — a53cc16
+
+Spike docs/spikes/P3-01-jetpack-stats.md + docs/fixtures/stats-sample.json (synthetic). Decision: categories-from-top-posts. Facts: class Automattic\Jetpack\Stats\WPCOM_Stats (jetpack_vendor/automattic/jetpack-stats/src/class-wpcom-stats.php), no-arg constructor; methods get_visits(args) [unit/quantity/date -> views_by_weekday], get_top_posts(args) [period/date/num/summarize -> top_posts and views_by_category], get_post_views(post_id,args) [-> post_views], get_tags(args) (per tag/category name; not used); all return array|WP_Error (codes missing_token, no_possible_tokens, site_not_connected); Jetpack caches 5 min in transient jetpack_restapi_stats_cache_<md5>; availability = class exists + Jetpack::is_connection_ready() + Jetpack::is_module_active('stats'). Payload shapes UNCONFIRMED (not connected): JetpackStats must validate every field and return unavailable on mismatch. Fixture keys: payloads.get_visits / get_top_posts / get_post_views / get_tags plus fetched_at 2026-11-09T13:00:00-08:00; posts 12155, 10193, 10192, 10191. stats:probe scrubbing rule documented (numbers->0, strings->"", keys kept).
