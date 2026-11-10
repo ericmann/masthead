@@ -54,7 +54,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P3-09 SharePanel without AI copy
 - [x] P3-10 Phase 3 push and manual checks
 - [x] P4-01 Candidate shape and DraftMatch
-- [ ] P4-02 SeriesNext candidates
+- [x] P4-02 SeriesNext candidates
 - [ ] P4-03 CategoryGap candidates
 - [ ] P4-04 Reshare candidates
 - [ ] P4-05 Ranker and Dismissals
@@ -290,3 +290,7 @@ Docs only: Phase 3 section appended to docs/manual-checks.md. kukulu_verify (ful
 ### P4-01 — ddcbea1
 
 Tests: CandidateTest(2), DraftMatchTest(4). Desk\Candidates\Candidate::make(kind,key,title,score,fields)/to_array()/static idea_key(title) (to_array always has kind,key,title,score,sort_id,tiebreak; optional category,post_id,series,outline,data only when set). DraftMatch( PlanReader )->for_date(date, lane) -> Candidate[]; key draft:<id>, score Lanes::fit, data {modified, edit_url}. Interpretation: removed `final` from Plan\PlanReader and Plan\SeriesSource so Desk unit tests can subclass them (anonymous class overriding the data methods); do the same technique for later Desk tests.
+
+### P4-02 — 9f275cf
+
+Tests: SeriesNextTest(7). Desk\Candidates\SeriesNext( SeriesSource )->for_date(date, lane): per term with cadence, last dated part + 1 (skipped when dated, or past known total via for_post(last)['total']), expected via Cadence::expected_date, emit when |date-expected| <= desk.series_window_days, score 1 - distance/(window+1), key series:<term>:<part>, title "<Series>: Part <n>" or the undated holder's title (post_id set), sort_id term id, tiebreak series name, category primary of last dated part, data {expected, every_weeks, series_name, part}. Codebase note: the one-clock regex flags the words "date (" even in docblocks (avoid "the date (" in prose).
