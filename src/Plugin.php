@@ -14,6 +14,7 @@ use Masthead\Abilities\DraftOutline;
 use Masthead\Abilities\DraftShareCopy;
 use Masthead\Ai\Factory as AiFactory;
 use Masthead\Abilities\GetPlan;
+use Masthead\Abilities\ProposeSeries;
 use Masthead\Abilities\Registrar;
 use Masthead\Abilities\DismissSuggestion;
 use Masthead\Abilities\Reschedule;
@@ -46,6 +47,7 @@ use Masthead\Cron\Nightly;
 use Masthead\Desk\Ranker;
 use Masthead\Desk\Reasons;
 use Masthead\Desk\Scoring;
+use Masthead\Desk\SeriesPlanner;
 use Masthead\Desk\ShareCopy;
 use Masthead\Desk\Suggester;
 use Masthead\Desk\SwapCheck as DeskSwapCheck;
@@ -140,7 +142,8 @@ final class Plugin {
 			new DismissSuggestion( $dismissals ),
 			new SwapCheckAbility( $reader, $series ),
 			new DraftOutline( $ideas ),
-			new DraftShareCopy( new ShareCopy( $ai ) )
+			new DraftShareCopy( new ShareCopy( $ai ) ),
+			new ProposeSeries( new SeriesPlanner( $ai, $clock ) )
 		);
 		add_action( 'wp_abilities_api_categories_init', array( $registrar, 'register_category' ) );
 		add_action( 'wp_abilities_api_init', array( $registrar, 'register' ) );
