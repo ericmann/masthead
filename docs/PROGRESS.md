@@ -35,7 +35,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P2-02 Shared components: StatValue, LaneDot, CategoryLegend
 - [x] P2-03 PostChip, OpenSlot and DayCell
 - [x] P2-04 Calendar app: toolbar, hash routing and MonthGrid
-- [ ] P2-05 WeekGrid and ListView
+- [x] P2-05 WeekGrid and ListView
 - [ ] P2-06 Legend visibility toggles and Draft tray
 - [ ] P2-07 Drag to reschedule and the "Move to…" alternative
 - [ ] P2-08 Responsive layout at 390 px and accessibility gates
@@ -214,3 +214,7 @@ Tests: PostChip.test.js(4), DayCell.test.js(5). Components: PostChip({post,onSel
 ### P2-04 — be38e08
 
 Tests: App.test.js(6), MonthGrid.test.js(4), e2e calendar.spec.js (5 specs x desktop/mobile) - full npm run test:e2e passes (20 tests incl. axe on month view). Components: Toolbar({view,title,onPrev,onNext,onToday,onView}), MonthGrid({anchor,weekStartsOn,days,today,selectedDate,hidden,onSelectDay,onSelectPost}), App (view from hash, anchor, selection, hidden Set, usePlan range; aside.masthead-rail is empty). Week/List render <div data-view>. Interpretation: plain `notice notice-*` markup (no @wordpress/components Notice). Codebase notes: (1) importing @wordpress/components or @wordpress/core-data in jest pulls ESM-only deps -> jest.config.js maps core-data to tests/js/stubs/core-data.js and setup.js polyfills TextEncoder; avoid @wordpress/components in unit-tested client code or add a mapper. (2) uuid override changed to ^11.1.1 (v14 is ESM-only). (3) axe label-content-name-mismatch: visible button text must be inside aria-label. (4) Playwright getByText is substring/case-insensitive: use {exact:true}. (5) boot `rhythm` is a JSON array (PHP list) - index by weekday works.
+
+### P2-05 — 2ffcc82
+
+Tests: WeekGrid.test.js(2), ListView.test.js(4), App.test.js(+1), e2e calendar.spec.js (+2 specs; full npm run test:e2e = 24 passed). WeekGrid({anchor,weekStartsOn,days,today,selectedDate,hidden,onSelectDay,onSelectPost}); ListView({days,hidden,onSelectPost}) rows .masthead-list__row[data-post-id]; dates.js gained shortDayLabel and rangeLabel; Toolbar labels: month/week/page. List range = anchor .. anchor+boot.config.maxRangeDays-1 (reads getBoot().config.maxRangeDays, so unit-test boots need config.maxRangeDays). Codebase note: wp-env default start_of_week is 1 (Monday); the fixture expects Sunday weeks, so e2e specs that depend on weeks must `wp option update start_of_week 0` (done in calendar.spec.js seedCalendar()). Also learned: prettier reformats files so scripted string replacements may silently not match - assert the old text exists.
