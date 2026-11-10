@@ -13,6 +13,7 @@ use Masthead\Abilities\CreatePlannedDraft;
 use Masthead\Abilities\GetPlan;
 use Masthead\Abilities\Registrar;
 use Masthead\Abilities\Reschedule;
+use Masthead\Abilities\StatsSummary;
 use Masthead\Admin\Assets;
 use Masthead\Admin\CalendarPage;
 use Masthead\Admin\Notices;
@@ -77,11 +78,13 @@ final class Plugin {
 
 		$assets->add_planning_boot_data( $series );
 
+		$stats     = StatsFactory::make();
 		$reader    = new PlanReader( $clock, $series );
 		$registrar = new Registrar(
 			new GetPlan( $reader ),
 			new CreatePlannedDraft( $slots, $series ),
-			new Reschedule( new PlanReschedule( $clock ) )
+			new Reschedule( new PlanReschedule( $clock ) ),
+			new StatsSummary( $stats )
 		);
 		add_action( 'wp_abilities_api_categories_init', array( $registrar, 'register_category' ) );
 		add_action( 'wp_abilities_api_init', array( $registrar, 'register' ) );
@@ -90,7 +93,7 @@ final class Plugin {
 				array(
 					'seed' => new SeedCommand( new Seeder( $slots, $series ) ),
 					'plan' => new PlanCommand( $registrar->get( 'masthead/get-plan' ), $clock ),
-					'stats:probe' => new StatsProbeCommand( StatsFactory::make() ),
+					'stats:probe' => new StatsProbeCommand( $stats ),
 				)
 			);
 		}
