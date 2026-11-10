@@ -23,6 +23,12 @@ test.describe( 'app shell', () => {
 	} );
 
 	test( 'e2e mu-plugins are loaded', async () => {
+		let previous = null;
+		try {
+			previous = wpCli( [ 'option', 'get', 'masthead_seed_now' ] );
+		} catch {
+			previous = null;
+		}
 		wpCli( [
 			'option',
 			'update',
@@ -36,7 +42,11 @@ test.describe( 'app shell', () => {
 			] );
 			expect( out ).toContain( '2026-11-09 14:00:00' );
 		} finally {
-			wpCli( [ 'option', 'delete', 'masthead_seed_now' ] );
+			if ( previous === null ) {
+				wpCli( [ 'option', 'delete', 'masthead_seed_now' ] );
+			} else {
+				wpCli( [ 'option', 'update', 'masthead_seed_now', previous ] );
+			}
 		}
 	} );
 } );

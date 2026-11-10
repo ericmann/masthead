@@ -16,6 +16,9 @@ use Masthead\Abilities\Reschedule;
 use Masthead\Admin\Assets;
 use Masthead\Admin\CalendarPage;
 use Masthead\Admin\Notices;
+use Masthead\Cli\Commands;
+use Masthead\Cli\SeedCommand;
+use Masthead\Cli\Seeder;
 use Masthead\Plan\Colors;
 use Masthead\Plan\PlanReader;
 use Masthead\Plan\Reschedule as PlanReschedule;
@@ -71,6 +74,14 @@ final class Plugin {
 		);
 		add_action( 'wp_abilities_api_categories_init', array( $registrar, 'register_category' ) );
 		add_action( 'wp_abilities_api_init', array( $registrar, 'register' ) );
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			Commands::register(
+				array(
+					'seed' => new SeedCommand( new Seeder( $slots, $series ) ),
+				)
+			);
+		}
+
 		$assets->add_boot_data( 'abilities', array( $registrar, 'describe' ) );
 		$assets->add_boot_data(
 			'run',
