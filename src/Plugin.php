@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Masthead;
 
+use Masthead\Abilities\CreatePlannedDraft;
 use Masthead\Abilities\GetPlan;
 use Masthead\Abilities\Registrar;
 use Masthead\Admin\Assets;
@@ -61,7 +62,10 @@ final class Plugin {
 		add_action( 'init', array( $slots, 'register_meta' ) );
 
 		$reader    = new PlanReader( $clock, $series );
-		$registrar = new Registrar( new GetPlan( $reader ) );
+		$registrar = new Registrar(
+			new GetPlan( $reader ),
+			new CreatePlannedDraft( $slots, $series )
+		);
 		add_action( 'wp_abilities_api_categories_init', array( $registrar, 'register_category' ) );
 		add_action( 'wp_abilities_api_init', array( $registrar, 'register' ) );
 		$assets->add_boot_data( 'abilities', array( $registrar, 'describe' ) );
