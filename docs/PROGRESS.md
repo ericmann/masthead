@@ -53,7 +53,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P3-08 masthead/share-connections and masthead/share-post abilities
 - [x] P3-09 SharePanel without AI copy
 - [x] P3-10 Phase 3 push and manual checks
-- [ ] P4-01 Candidate shape and DraftMatch
+- [x] P4-01 Candidate shape and DraftMatch
 - [ ] P4-02 SeriesNext candidates
 - [ ] P4-03 CategoryGap candidates
 - [ ] P4-04 Reshare candidates
@@ -286,3 +286,7 @@ Tests: SharePanel.test.js(6), e2e share.spec.js(2 x2); full npm run test:e2e = 6
 ### P3-10 — 453c4da
 
 Docs only: Phase 3 section appended to docs/manual-checks.md. kukulu_verify (full): green (144 PHP unit, 87 JS unit). composer audit: no advisories. npm audit --audit-level=high: still the transitive dev advisories (5 high; see P0-02). Push: pushed build/2026-11-10 to origin. Manual check: NOT VERIFIED (human).
+
+### P4-01 — ddcbea1
+
+Tests: CandidateTest(2), DraftMatchTest(4). Desk\Candidates\Candidate::make(kind,key,title,score,fields)/to_array()/static idea_key(title) (to_array always has kind,key,title,score,sort_id,tiebreak; optional category,post_id,series,outline,data only when set). DraftMatch( PlanReader )->for_date(date, lane) -> Candidate[]; key draft:<id>, score Lanes::fit, data {modified, edit_url}. Interpretation: removed `final` from Plan\PlanReader and Plan\SeriesSource so Desk unit tests can subclass them (anonymous class overriding the data methods); do the same technique for later Desk tests.
