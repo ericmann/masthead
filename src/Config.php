@@ -139,6 +139,104 @@ final class Config {
 	}
 
 	/**
+	 * Reduces raw settings to the settable keys with valid values. Anything else is dropped so the default applies.
+	 *
+	 * @param mixed $raw Raw masthead_settings value.
+	 * @return array<string,mixed> Nested by dotted path, for example array( 'desk' => array( 'horizon_days' => 30 ) ).
+	 */
+	public static function sanitize_overrides( $raw ): array {
+		if ( ! is_array( $raw ) ) {
+			return array();
+		}
+		$defaults = self::defaults();
+		$clean    = array();
+		foreach ( self::settable() as $key ) {
+			$found = self::lookup( $raw, $key );
+			if ( null === $found ) {
+				continue;
+			}
+			$value = self::sanitize_value( $key, $defaults[ $key ], $found[0] );
+			if ( null === $value ) {
+				continue;
+			}
+			$node  = &$clean;
+			$parts = explode( '.', $key );
+			$last  = array_pop( $parts );
+			foreach ( $parts as $part ) {
+				if ( ! isset( $node[ $part ] ) || ! is_array( $node[ $part ] ) ) {
+					$node[ $part ] = array();
+				}
+				$node = &$node[ $part ];
+			}
+			$node[ $last ] = $value;
+			unset( $node );
+		}
+		return $clean;
+	}
+
+	/**
+	 * Validates one value against its default's type and the key's bounds.
+	 *
+	 * @param string $key           Dotted key.
+	 * @param mixed  $default_value Default.
+	 * @param mixed  $value         Candidate.
+	 * @return mixed Cleaned value, or null when invalid.
+	 */
+	private static function sanitize_value( string $key, $default_value, $value ) {
+		if ( is_bool( $default_value ) ) {
+			return is_bool( $value ) ? $value : null;
+		}
+		if ( is_float( $default_value ) ) {
+			return self::unit_float( $value );
+		}
+		if ( is_int( $default_value ) ) {
+			if ( ! is_int( $value ) ) {
+				return null;
+			}
+			$minimum = ( 'ai.monthly_request_cap' === $key ) ? 0 : 1;
+			return $value >= $minimum ? $value : null;
+		}
+		if ( 'swap.weights' === $key ) {
+			$weights = array();
+			foreach ( array_keys( $default_value ) as $name ) {
+				$weight = is_array( $value ) ? self::unit_float( $value[ $name ] ?? null ) : null;
+				if ( null === $weight ) {
+					return null;
+				}
+				$weights[ $name ] = $weight;
+			}
+			return $weights;
+		}
+		if ( is_array( $default_value ) ) {
+			if ( ! is_array( $value ) || array() === $value ) {
+				return null;
+			}
+			$list = array();
+			foreach ( $value as $item ) {
+				if ( ! is_string( $item ) || '' === trim( $item ) ) {
+					return null;
+				}
+				$list[] = trim( $item );
+			}
+			return $list;
+		}
+		return null;
+	}
+
+	/**
+	 * A number from zero to one as a float, else null.
+	 *
+	 * @param mixed $value Candidate.
+	 * @return float|null
+	 */
+	private static function unit_float( $value ): ?float {
+		if ( ! is_int( $value ) && ! is_float( $value ) ) {
+			return null;
+		}
+		return ( $value >= 0 && $value <= 1 ) ? (float) $value : null;
+	}
+
+	/**
 	 * Finds a dotted path in a nested array.
 	 *
 	 * @param array<mixed> $tree Nested array.

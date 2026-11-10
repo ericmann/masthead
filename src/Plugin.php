@@ -16,6 +16,7 @@ use Masthead\Abilities\Reschedule;
 use Masthead\Admin\Assets;
 use Masthead\Admin\CalendarPage;
 use Masthead\Admin\Notices;
+use Masthead\Admin\SettingsPage;
 use Masthead\Cli\Commands;
 use Masthead\Cli\PlanCommand;
 use Masthead\Cli\SeedCommand;
@@ -59,6 +60,11 @@ final class Plugin {
 		add_action( 'admin_menu', array( $calendar, 'register' ) );
 		add_action( 'admin_enqueue_scripts', array( $assets, 'enqueue' ) );
 		add_action( 'admin_notices', array( $notices, 'render' ) );
+
+		$settings = new SettingsPage( $assets );
+		add_action( 'admin_menu', array( $settings, 'register' ) );
+		add_action( 'admin_init', array( $settings, 'register_settings' ) );
+		add_action( 'rest_api_init', array( $settings, 'register_settings' ) );
 		add_action( 'init', array( Colors::class, 'register_meta' ) );
 
 		$series = new SeriesSource();

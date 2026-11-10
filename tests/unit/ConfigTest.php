@@ -159,4 +159,85 @@ final class ConfigTest extends TestCase {
 		$this->options( array(), 1 );
 		$this->assertSame( 1, Config::get( 'calendar.week_starts_on' ) );
 	}
+
+	public function test_sanitize_overrides_drops_non_settable_keys(): void {
+		$clean = Config::sanitize_overrides(
+			array(
+				'desk'     => array(
+					'horizon_days' => 30,
+					'unknown'      => 5,
+				),
+				'calendar' => array( 'max_posts_per_range' => 5 ),
+				'cron'     => array( 'nightly_hour' => 5 ),
+				'rogue'    => true,
+			)
+		);
+		$this->assertSame( array( 'desk' => array( 'horizon_days' => 30 ) ), $clean );
+		$this->assertSame( array(), Config::sanitize_overrides( 'nope' ) );
+	}
+
+	public function test_sanitize_overrides_enforces_types_and_bounds(): void {
+		$clean = Config::sanitize_overrides(
+			array(
+				'desk'      => array(
+					'horizon_days'   => 0,
+					'ghost_days'     => '14',
+					'max_suggestions' => 1,
+					'gap_days'       => -3,
+				),
+				'swap'      => array(
+					'min_score_delta' => 2,
+					'weights'         => array(
+						'lane'     => 0.6,
+						'category' => 0.3,
+						'weekday'  => 1,
+					),
+				),
+				'ai'        => array(
+					'monthly_request_cap' => 0,
+					'models'              => array(
+						'fast'   => array( ' a ', 'b' ),
+						'strong' => array( '' ),
+					),
+					'include_draft_excerpts' => 'yes',
+				),
+				'abilities' => array( 'expose_share' => true ),
+				'stats'     => array( 'window_days' => 7 ),
+			)
+		);
+		$this->assertEquals(
+			array(
+				'desk'      => array( 'max_suggestions' => 1 ),
+				'swap'      => array(
+					'weights' => array(
+						'lane'     => 0.6,
+						'category' => 0.3,
+						'weekday'  => 1.0,
+					),
+				),
+				'ai'        => array(
+					'monthly_request_cap' => 0,
+					'models'              => array( 'fast' => array( 'a', 'b' ) ),
+				),
+				'abilities' => array( 'expose_share' => true ),
+				'stats'     => array( 'window_days' => 7 ),
+			),
+			$clean
+		);
+		$partial = Config::sanitize_overrides( array( 'swap' => array( 'weights' => array( 'lane' => 0.5 ) ) ) );
+		$this->assertSame( array(), $partial );
+	}
+
+	public function test_sanitized_overrides_are_read_back_by_get(): void {
+		$clean = Config::sanitize_overrides(
+			array(
+				'desk' => array( 'horizon_days' => 30 ),
+				'ai'   => array( 'models' => array( 'fast' => array( 'x-model' ) ) ),
+			)
+		);
+		$this->options( $clean );
+		$this->assertSame( 30, Config::get( 'desk.horizon_days' ) );
+		$this->assertSame( array( 'x-model' ), Config::get( 'ai.models.fast' ) );
+		$this->assertSame( 14, Config::get( 'desk.ghost_days' ) );
+	}
 }
