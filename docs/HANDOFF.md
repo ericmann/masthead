@@ -112,3 +112,16 @@ All are in `docs/manual-checks.md` and none was performed. Each phase-end task l
 - Series dates are computed by `Desk\SeriesPlanner` and `Plan\Cadence`, never by the AI. `accept-series` validates everything before writing and rolls back on any failure.
 - `docs/mockups/`, `docs/SPEC.md` and `docs/PLAN.md` still name the real site and show real planned titles. They were not changed (the task forbade it); see the Phase 6 manual checks before making the repository public. Git history still contains the real fixture titles.
 - Two end-to-end tests are skipped by design: a project-scoped skip in `tests/e2e/responsive.spec.js` and one in `tests/e2e/reschedule.spec.js`. The screenshot capture spec skips itself unless `MASTHEAD_SCREENSHOTS=1`.
+
+## Round 1
+
+Review-fix round: R1-01 to R1-06, all done, none blocked. Branch build/2026-11-10, head 4a69486 before the handoff commit. 91 of 91 tasks done.
+
+- R1-01: npm audit --audit-level=high now exits 0. Overrides added: isomorphic-git ^1.44.12, markdown-it ^14.3.3, markdownlint-cli > minimatch ^3.1.5. Lockfile regenerated from scratch because stale node_modules kept old minimatch. The advisories differed from the review text (deepmerge is now low severity). Interpretation: fixed the three high ones that existed.
+- R1-02: SwapCheck drops exempt-category posts per date before counting collisions.
+- R1-03: Ideas passes a lane copy with the resolved allowed categories to Prompts::ideas (Prompts unchanged).
+- R1-04: AskDesk has a labelled "Start on" date input; start is sent only when set.
+- R1-05: suggest-for-date idempotent annotation is false.
+- R1-06: boundary tests for reshare min-age and cooldown. Mutants not re-run (no kukulu_mutate tool in this session); a human or the reviewer should re-run mutation testing.
+
+Manual check: NOT VERIFIED (human): ask for a series with a Start on date in a live site.
