@@ -72,7 +72,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-17 Tune the swap assumptions
 - [x] P4-18 Phase 4 push and manual checks
 - [x] P5-01 Spike — WordPress AI Client surface and model metadata
-- [ ] P5-02 AiClient interface, Schemas and the schema validator
+- [x] P5-02 AiClient interface, Schemas and the schema validator
 - [ ] P5-03 Prompts
 - [ ] P5-04 WpAiClient, Factory, FakeAiClient and AI fixtures
 - [ ] P5-05 Budget and the BudgetedAi decorator
@@ -362,3 +362,7 @@ Docs only: Phase 4 section appended to docs/manual-checks.md. kukulu_verify (ful
 ### P5-01 — 43d1e75
 
 Spike docs/spikes/P5-01-ai-client.md. Decision: model-id-exposed. Facts: wp_ai_client_prompt( $prompt = null ) (ai-client.php:60) returns WP_AI_Client_Prompt_Builder; snake_case methods via __call: using_system_instruction( string ), using_model_preference( ...ids ) (variadic; strings, instances or [provider, model] tuples), using_temperature( float ), using_max_tokens( int ), as_json_response( ?array schema ), is_supported_for_text_generation() (no network; false with no provider), generate_text(): string|WP_Error, generate_text_result(): GenerativeAiResult|WP_Error -> ->toText() and ->getModelMetadata()->getId() (model id), getProviderMetadata(). Errors are WP_Error with codes prompt_prevented 503, prompt_network_error 503, prompt_client_error, prompt_upstream_server_error, prompt_token_limit_reached 400, prompt_invalid_argument 400 (observed "No models found that support text_generation..." with no provider), prompt_builder_error 500. IMPORTANT: capability `prompt_ai` is NOT defined by core 7.1.4 and NO default role (not even administrator) holds it, so on a stock site every AI ability that requires it is denied; e2e fake grants it via user_has_cap; flagged for HANDOFF/readme (site owner must grant it, or a later task maps it). UNCONFIRMED: real JSON-constrained response shape. Use generate_text_result() in WpAiClient to report the model id.
+
+### P5-02 — 32772e1
+
+Ai\AiClient (SPEC 6.6 interface) and Ai\Schemas (static: ideas, outline, share_copy, series_proposal, validate). Tests: SchemasTest 10, all unit 238 green, constraints ok. Interpretation: validate() returns paths like $.ideas[0].category; integer type is strict is_int (no coercion); object accepts [] (decoded {}) but not a list; enum uses strict in_array. Schemas takes count/max_parts as parameters, so callers read Config (desk.ideas_per_request, ai.series_max_parts).
