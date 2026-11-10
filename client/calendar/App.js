@@ -11,6 +11,8 @@ import {
 	weekRange,
 } from '../data/dates';
 import { usePlan } from '../data/usePlan';
+import { runAbility } from '../data/useAbility';
+import DeskRail from './DeskRail';
 import DraftTray from './DraftTray';
 import SharePanel from './SharePanel';
 import { useReschedule } from './useReschedule';
@@ -109,6 +111,35 @@ export default function App() {
 			ghosts[ day.date ] = { suggestion: first, color };
 		}
 	} );
+	const selectedDay = selection?.type === 'day' ? selection.date : null;
+	const { load } = suggestions;
+	useEffect( () => {
+		if ( selectedDay ) {
+			load( selectedDay );
+		}
+	}, [ selectedDay, load ] );
+	const dismissSuggestion = async ( suggestion ) => {
+		await runAbility( 'masthead/dismiss-suggestion', {
+			date: selectedDay,
+			key: suggestion.key,
+		} );
+		suggestions.invalidate( selectedDay );
+		await suggestions.load( selectedDay );
+	};
+	const placeSuggestion = async ( suggestion ) => {
+		await move( { id: suggestion.post_id, date: null }, selectedDay );
+		suggestions.invalidate( selectedDay );
+	};
+	const shareSuggestion = ( suggestion ) =>
+		setSelection( {
+			type: 'post',
+			post: {
+				id: suggestion.post_id,
+				title: suggestion.title,
+				status: 'publish',
+				date: null,
+			},
+		} );
 	const fillOpenDays = () =>
 		suggestions.loadMany(
 			plan.days
@@ -278,6 +309,22 @@ export default function App() {
 							post={ selection.post }
 						/>
 					) : null }
+					{ selection?.type === 'post' ? null : (
+						<DeskRail
+							days={ plan.days }
+							today={ today }
+							weekStartsOn={ weekStartsOn }
+							selectedDate={ selectedDay }
+							result={
+								selectedDay
+									? suggestions.get( selectedDay )
+									: null
+							}
+							onPlace={ placeSuggestion }
+							onShare={ shareSuggestion }
+							onDismiss={ dismissSuggestion }
+						/>
+					) }
 					<DraftTray
 						unscheduled={ plan.unscheduled }
 						onMove={ move }

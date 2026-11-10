@@ -67,13 +67,15 @@ export default function SharePanel( { post } ) {
 	const heading = (
 		<>
 			<h2>{ post.title }</h2>
-			<p>
-				{ sprintf(
-					/* translators: %s: short date, such as "Nov 9". */
-					__( 'Published %s', 'masthead' ),
-					published
-				) }
-			</p>
+			{ published ? (
+				<p>
+					{ sprintf(
+						/* translators: %s: short date, such as "Nov 9". */
+						__( 'Published %s', 'masthead' ),
+						published
+					) }
+				</p>
+			) : null }
 		</>
 	);
 

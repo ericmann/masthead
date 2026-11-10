@@ -162,3 +162,13 @@ export function rangeLabel( from, to ) {
 export function monthDayLabel( ymd ) {
 	return gmdateI18n( 'M j', new Date( parse( ymd ) ) );
 }
+
+/**
+ * Long weekday, short month and day, localised.
+ *
+ * @param {string} ymd Date.
+ * @return {string} Label such as "Wednesday, Nov 18".
+ */
+export function weekdayMonthDayLabel( ymd ) {
+	return gmdateI18n( 'l, M j', new Date( parse( ymd ) ) );
+}
