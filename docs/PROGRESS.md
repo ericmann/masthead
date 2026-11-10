@@ -20,7 +20,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-04 Cadence
 - [x] P1-05 SeriesSource adapter and series term meta
 - [x] P1-06 Slots (non-floating dated drafts)
-- [ ] P1-07 Reschedule
+- [x] P1-07 Reschedule
 - [ ] P1-08 PlanReader
 - [ ] P1-09 Spike — Abilities REST execution and exposure flags
 - [ ] P1-10 Abilities Registrar, category and masthead/get-plan
@@ -154,3 +154,7 @@ Tests: unit SeriesSourceTest(4), integration SeriesSourceTest(4). SeriesSource i
 ### P1-06 — d90645d
 
 Tests: unit SlotsTest(6), integration SlotsTest(5). Slots is an instance class: new Slots( SeriesSource ). Methods: register_meta (init), insert( postarr, status ) (pins status via wp_insert_post_data filter, supports import_id in postarr), delete( id ), create( input ), static is_dated( post ), static outline_markup( items ). Interpretation: invalid explicit time -> masthead_invalid_date; empty time -> lane time. Verified: a 'future' insert with a 2020 date stays future; REST title update keeps both dates.
+
+### P1-07 — 99c2897
+
+Tests: unit RescheduleTest(6), integration RescheduleTest(5). new Reschedule( Clock ); move( post_id, date, ?time ) -> {post_id, date ISO, status} | WP_Error (masthead_not_found 404, published_locked 409, unsupported_status 409, invalid_date 400, past_date 400). Action masthead_rescheduled( id, old|null, new ) with local MySQL datetimes; idempotent (no write/no event when unchanged). Codebase note: hard-coded-tunable flags bare HTTP codes unless the line contains 'status'/'response'; use named private consts for them (pattern used here: BAD_REQUEST/NOT_FOUND/CONFLICT).
