@@ -37,7 +37,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P2-04 Calendar app: toolbar, hash routing and MonthGrid
 - [x] P2-05 WeekGrid and ListView
 - [x] P2-06 Legend visibility toggles and Draft tray
-- [ ] P2-07 Drag to reschedule and the "Move to…" alternative
+- [x] P2-07 Drag to reschedule and the "Move to…" alternative
 - [ ] P2-08 Responsive layout at 390 px and accessibility gates
 - [ ] P2-09 Settings › Calendar page and registered settings
 - [ ] P2-10 Settings app and RhythmTable
@@ -222,3 +222,7 @@ Tests: WeekGrid.test.js(2), ListView.test.js(4), App.test.js(+1), e2e calendar.s
 ### P2-06 — 207406f
 
 Tests: DraftTray.test.js(3), App.test.js(+1), e2e calendar.spec.js(+2); npm run test:e2e = 28 passed before the final lint-only edits. DraftTray({unscheduled}) rows .masthead-tray__row[data-post-id]; Toolbar now takes categories/hidden/onToggleCategory and renders CategoryLegend; App holds hidden as a Set via toggleCategory. DraftTray sits in aside.masthead-rail (later rail content goes there too). dates.js gained monthDayLabel.
+
+### P2-07 — c583894
+
+Tests: useReschedule.test.js(3), MoveTo.test.js(3), e2e reschedule.spec.js (3; drag desktop-only) - full npm run test:e2e = 33 passed, 1 skipped (mobile drag). useReschedule(plan)->{move(post,date),error,clearError}; MoveTo({post,onMove}); PostChip gained onMove (draggable for future/draft only; returns a fragment of chip + MoveTo); DayCell gained onMovePost/onDropPost (HTML5 drop, is-drop-target class); MonthGrid/WeekGrid pass them through; DraftTray gained onMove (rows draggable + MoveTo). seed.spec.js now re-seeds in beforeAll (reschedule.spec mutates data). Codebase notes: the full e2e run now takes ~1.7 minutes, so run it with run_in_background (the Bash tool auto-backgrounds after 120s); Playwright dragTo works for native HTML5 DnD in Chromium.
