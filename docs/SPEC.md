@@ -182,7 +182,7 @@ Shared wiring that must stay serial in the plan: `Plugin.php`, `Abilities/Regist
 | `ai.monthly_request_cap` | `300` ⚠️ ASSUMPTION | yes | `0` disables AI. |
 | `ai.models.fast` | `['claude-haiku-5-5']` ⚠️ ASSUMPTION | yes | Passed to `using_model_preference()`; the provider's default is used if none match (e.g. OpenRouter ids). |
 | `ai.models.strong` | `['claude-sonnet-5-5']` ⚠️ ASSUMPTION | yes | Used for Ask the Desk and outlines. |
-| `ai.temperature` | `0.4` ⚠️ ASSUMPTION | no | |
+| `ai.temperature` | `null`: not sent (1.0.1; Claude 5 models reject sampling parameters, and a temperature the model doesn't list removes it from the AI Client's candidates). A number from `masthead_config` is sent | no | |
 | `ai.max_tokens` | per kind: `series_proposal` 4000, `default` 1200 (1.0.0; see `docs/tuning/P5-13.md`) | no | |
 | `ai.context_days` | `90` | yes | Recent posts sent as context. |
 | `ai.context_max_posts` | `60` ⚠️ ASSUMPTION | no | |
@@ -288,7 +288,7 @@ interface AiClient {
 }
 ```
 
-`WpAiClient` builds `wp_ai_client_prompt( $user )` with the system instruction, `using_model_preference( ...Config ai.models.<tier> )`, `using_temperature`, `using_max_tokens`, and `as_json_response( $schema )` for `json()`. Before each call `Budget::reserve()` checks `ai.monthly_request_cap`; a refusal returns `WP_Error( 'masthead_ai_budget' )`. Prompts live in `Ai/Prompts.php`; schemas in `Ai/Schemas.php` (`ideas`, `outline`, `share_copy`, `series_proposal`). Idea context: lane label and categories, the date, titles + excerpts of posts from the last `ai.context_days` (max `ai.context_max_posts`), in-progress series names, and current gaps, all inside `<untrusted-post-data>`.
+`WpAiClient` builds `wp_ai_client_prompt( $user )` with the system instruction, `using_model_preference( ...Config ai.models.<tier> )`, `using_temperature` only when `ai.temperature` is a number, `using_max_tokens`, and `as_json_response( Schemas::wire( $schema ) )` for `json()`: the wire schema drops `title`, `minLength`, `minimum`, `maxItems` and `minItems` above 1 (Anthropic's structured outputs return 400 for them) and restates them in `description`, while `Schemas::validate()` checks the reply against the full schema. `supported()` asks whether a model takes a system instruction and a JSON schema, since every request needs both. Before each call `Budget::reserve()` checks `ai.monthly_request_cap`; a refusal returns `WP_Error( 'masthead_ai_budget' )`. Prompts live in `Ai/Prompts.php`; schemas in `Ai/Schemas.php` (`ideas`, `outline`, `share_copy`, `series_proposal`). Idea context: lane label and categories, the date, titles + excerpts of posts from the last `ai.context_days` (max `ai.context_max_posts`), in-progress series names, and current gaps, all inside `<untrusted-post-data>`.
 
 Tests and e2e use `FakeAiClient` (returns fixtures from `tests/fixtures/ai/*.json`), installed via the `masthead_ai_client` filter from `tests/e2e/mu/fake-ai.php`; `Ai\Factory` ignores the filter unless the environment is `local`.
 
@@ -376,7 +376,7 @@ In the mockups, `[Jetpack]` marks a number the plugin must read from Jetpack Sta
 The site repository builds an immutable WordPress image and pins ttm-core/ttm-theme release zips by tag. Masthead follows the same path: no submodule, no subtree.
 
 ```dockerfile
-ARG MASTHEAD_VERSION=1.0.0
+ARG MASTHEAD_VERSION=1.0.1
 ARG MASTHEAD_SHA256=<from dist/masthead.zip.sha256>
 RUN curl -fsSL -o /tmp/masthead.zip \
       "https://github.com/<owner>/masthead/releases/download/v${MASTHEAD_VERSION}/masthead.zip" \

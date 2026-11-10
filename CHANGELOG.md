@@ -2,6 +2,19 @@
 
 All notable changes to Masthead are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-11-10
+
+### Fixed
+
+- AI requests with the Anthropic provider. Masthead always sent a temperature, but Claude 5 models reject sampling parameters, and the Anthropic plugin doesn't list `temperature` for them. A required option a model doesn't list removes it from the WordPress AI Client's candidates, so the configured `claude-haiku-5-5` and `claude-sonnet-5-5` were skipped for an older model, or for none at all. `ai.temperature` now defaults to `null`, which means none is sent; a number set through `masthead_config` is still sent.
+- AI requests carried JSON Schema keywords that Anthropic's structured outputs reject with a 400 (`minLength`, `minimum`, `maxItems`). The provider now gets `Schemas::wire()`, which leaves them out and restates each one in the field's `description`. `Schemas::validate()` still checks every reply against the full schema.
+- The AI provider counted as available when it could generate any text at all. It now counts only when a model takes a system instruction and a JSON schema, which every Masthead request needs. With OpenRouter's 1.0.0 plugin, whose models declare neither, Settings › Calendar says *Provider: none Masthead can use* and the AI buttons stay off, instead of every request failing.
+
+### Changed
+
+- README and readme.txt list which AI provider plugins work with Masthead, and why.
+- The no-provider notice says which features are off; the rest of the Desk keeps working.
+
 ## [1.0.0] - 2026-11-10
 
 ### Added

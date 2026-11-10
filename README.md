@@ -44,7 +44,7 @@ You stay the editor. Masthead never publishes, moves or shares anything without 
 
 **📣 Re-shares through Jetpack Social.** Bring an evergreen post back to your social accounts now or on a chosen date, with share copy the Desk can draft for you.
 
-**🤖 AI that knows its place.** Ideas, outlines, share copy and series proposals come from whichever provider you configure in WordPress (Anthropic, OpenAI, Google and others via Settings › Connectors). A monthly request cap keeps costs predictable; set it to 0 and the AI is off.
+**🤖 AI that knows its place.** Ideas, outlines, share copy and series proposals come from the provider plugin you set up under Settings › Connectors ([which ones work](#ai-providers)). A monthly request cap keeps costs predictable; set it to 0 and the AI is off.
 
 ## See it in action
 
@@ -104,7 +104,7 @@ Sharing to social accounts has its own switch and stays off for MCP clients unle
 Optional extras:
 
 - **[Jetpack](https://jetpack.com/)** with Stats and Social connected adds traffic numbers, re-share suggestions and sharing.
-- **An AI provider** under **Settings › Connectors** (for example [AI Provider for Anthropic](https://wordpress.org/plugins/ai-provider-for-anthropic/)) adds ideas, outlines, share copy and series proposals. Users who can publish posts get access by default.
+- **An AI provider** under **Settings › Connectors** (for example [AI Provider for Anthropic](https://wordpress.org/plugins/ai-provider-for-anthropic/); see [AI providers](#ai-providers)) adds ideas, outlines, share copy and series proposals. Users who can publish posts get access by default.
 
 ### Requirements
 
@@ -113,7 +113,26 @@ Optional extras:
 | WordPress | 7.1 or later |
 | PHP | 8.3 or later |
 | Jetpack | Optional, for Stats and Social |
-| AI provider | Optional, any provider supported by the WordPress AI Client |
+| AI provider | Optional, a provider plugin whose models return JSON that matches a schema ([AI providers](#ai-providers)) |
+
+### AI providers
+
+Masthead talks to AI only through the WordPress AI Client, and every request asks for JSON that matches a schema. So a provider plugin works only if its models offer schema-checked JSON output. Masthead checks this itself: a provider that can't do it shows as *Provider: none Masthead can use* under Settings › Calendar, and the AI buttons stay off.
+
+| Provider plugin | Checked | Status |
+|---|---|---|
+| [AI Provider for Anthropic](https://wordpress.org/plugins/ai-provider-for-anthropic/) | 1.0.5 | ✅ Works. Masthead's default models (`claude-haiku-5-5` for quick jobs, `claude-sonnet-5-5` for outlines and series) are Anthropic's. |
+| [AI Provider for OpenAI](https://wordpress.org/plugins/ai-provider-for-openai/) | 1.2.0 | ✅ Declares schema output for its models. Set your own model ids. |
+| [AI Provider for Google](https://wordpress.org/plugins/ai-provider-for-google/) | 1.2.1 | ✅ Declares schema output for its models. Set your own model ids. |
+| [AI Provider for Mistral](https://wordpress.org/plugins/ai-provider-for-mistral/), [AI Provider for Ollama](https://wordpress.org/plugins/ai-provider-for-ollama/) | 1.3.1, 1.4.0 | ✅ Both declare schema output for their models. Set your own model ids. |
+| [AI Provider for OpenRouter](https://wordpress.org/plugins/ai-provider-for-openrouter/) | 1.0.0 | ❌ Its models don't declare schema output, so the AI Client finds no model for Masthead's requests. A fix is open upstream ([#9](https://github.com/jonathanbossenger/ai-provider-for-openrouter/pull/9), [#12](https://github.com/jonathanbossenger/ai-provider-for-openrouter/pull/12)). |
+| [AI Provider for DeepSeek](https://wordpress.org/plugins/ai-provider-for-deepseek/) | 1.0.3 | ❌ JSON mode only, without a schema. |
+
+"Checked" is the plugin version whose declared capabilities were read. Only the Anthropic plugin has been run end to end with Masthead.
+
+**Model ids.** Masthead prefers the ids under Settings › Calendar › AI (*Fast model ids* and *Strong model ids*). With a provider other than Anthropic, enter that provider's ids there. If none of them is offered, the WordPress AI Client uses the first suitable model the provider lists, which you may not want. After a request, Settings shows the model that actually answered.
+
+**Cost.** AI runs only when someone clicks an AI action or asks the Desk, and the monthly request cap (300 by default; 0 turns AI off) is checked before every call. An idea or outline request sends a few thousand tokens of post titles and excerpts and gets about a thousand back.
 
 ## FAQ
 
@@ -132,7 +151,7 @@ No. Every change is a click, or an ability call you or your assistant made on pu
 <details>
 <summary><b>Which AI providers can it use, and what does it cost?</b></summary>
 
-Any provider configured through the WordPress AI Client under Settings › Connectors. You can name preferred fast and strong models, and Masthead uses them if your provider offers them. A monthly request cap (300 by default) limits spending; 0 turns the AI off. AI only runs when someone asks for it.
+Any provider plugin for the WordPress AI Client whose models return JSON that matches a schema: Anthropic, OpenAI, Google, Mistral and Ollama do; OpenRouter 1.0.0 and DeepSeek 1.0.3 don't yet. The table under [AI providers](#ai-providers) has the details. A monthly request cap (300 by default) limits spending, and 0 turns the AI off. AI runs only when someone asks for it.
 </details>
 
 <details>
