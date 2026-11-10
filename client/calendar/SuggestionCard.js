@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { getBoot } from '../data/boot';
 import { NEUTRAL_COLOR } from '../data/colors';
 
-const KIND_LABELS = {
+export const KIND_LABELS = {
 	draft: __( 'DRAFT', 'masthead' ),
 	series: __( 'SERIES', 'masthead' ),
 	reshare: __( 'RESHARE', 'masthead' ),

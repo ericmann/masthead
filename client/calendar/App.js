@@ -376,6 +376,11 @@ export default function App() {
 											( day ) => day.date === selectedDay
 										)?.lane.label || ''
 									}
+									lane={
+										plan.days.find(
+											( day ) => day.date === selectedDay
+										)?.lane || null
+									}
 									others={ (
 										suggestions.get( selectedDay )
 											?.suggestions || []

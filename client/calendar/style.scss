@@ -928,3 +928,139 @@
 	color: #50575e;
 	font-size: 12px;
 }
+
+.masthead-dayplan {
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+
+	&__head {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0;
+		padding: 14px 16px;
+		border-bottom: 1px solid #f0f0f1;
+		font-size: 14px;
+
+		.masthead-sparkle {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+	}
+
+	&__lane {
+		margin-left: auto;
+		color: var(--wp-admin-theme-color, #3858e9);
+		font-size: 12px;
+	}
+
+	&__section {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 12px 16px;
+		border-bottom: 1px solid #f0f0f1;
+
+		&:last-child {
+			border-bottom: 0;
+		}
+
+		p {
+			margin: 0;
+		}
+	}
+
+	&__title[type="text"] {
+		width: 100%;
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	&__category .masthead-lane-dot {
+		padding: 2px 8px;
+		border-radius: 999px;
+		background: #f0f0f1;
+		font-size: 12px;
+	}
+
+	&__outline-editor {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	&__outline {
+		margin: 0;
+		padding-left: 20px;
+
+		> li {
+			margin-bottom: 6px;
+		}
+
+		input[type="text"] {
+			width: calc(100% - 64px);
+		}
+	}
+
+	&__when {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		gap: 10px 12px;
+	}
+
+	&__field {
+		display: flex;
+		flex: 1 1 130px;
+		flex-direction: column;
+		gap: 4px;
+		min-width: 0;
+
+		label {
+			color: #50575e;
+			font-size: 12px;
+		}
+
+		input,
+		select {
+			width: 100%;
+			max-width: 100%;
+		}
+	}
+
+	&__date {
+		color: #50575e;
+		font-size: 12px;
+	}
+
+	&__error,
+	&__actions {
+		flex-basis: 100%;
+	}
+
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	&__others ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		li {
+			margin: 0 0 4px;
+		}
+	}
+
+	&__kind {
+		font-size: 10px;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+	}
+
+	&__error {
+		color: #b32d2e;
+	}
+}
