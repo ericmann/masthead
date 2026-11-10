@@ -95,7 +95,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] R1-03 Ideas prompt lists every category for an any-category lane
 - [x] R1-04 Ask the Desk: optional start date sent to propose-series
 - [x] R1-05 suggest-for-date is not annotated idempotent
-- [ ] R1-06 Reshare: pin the min-age and cooldown boundaries
+- [x] R1-06 Reshare: pin the min-age and cooldown boundaries
 
 ## Log
 
@@ -460,3 +460,7 @@ Added labelled "Start on" date input in AskDesk form; start included in propose-
 ### R1-05 — 3826271
 
 idempotent annotation set to false on suggest-for-date; integration test added; 127 integration tests pass.
+
+### R1-06 — 22f8a64
+
+Two boundary tests added (exact min-age excluded / +1 included; exact cooldown excluded / +1 included), values from Config. kukulu_mutate not run (no such tool in this session); tests fail by construction under the < mutants.
