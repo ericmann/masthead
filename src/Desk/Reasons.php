@@ -46,12 +46,11 @@ class Reasons {
 				);
 			case 'series':
 				return sprintf(
-					/* translators: 1: weekday name, 2: expected date, 3: number of weeks, 4: part number. */
-					__( "%1\$s is due around %2\$s (every %3\$d weeks). Part %4\$d isn't on the calendar.", 'masthead' ),
-					$weekday,
+					/* translators: 1: part number, 2: expected date, 3: number of weeks. */
+					__( "Part %1\$d is due around %2\$s (every %3\$d weeks) and isn't on the calendar yet.", 'masthead' ),
+					(int) ( $data['part'] ?? 0 ),
 					$this->short_ymd( $data['expected'] ?? null ),
-					(int) ( $data['every_weeks'] ?? 0 ),
-					(int) ( $data['part'] ?? 0 )
+					(int) ( $data['every_weeks'] ?? 0 )
 				);
 			case 'reshare':
 				return sprintf(
