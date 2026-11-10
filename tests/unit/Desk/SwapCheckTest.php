@@ -17,6 +17,7 @@ use Masthead\Desk\SwapCheck;
 use Masthead\Plan\PlanReader;
 use Masthead\Plan\SeriesSource;
 use Masthead\Stats\NullStats;
+use Masthead\Stats\StatsSource;
 use Masthead\Support\Clock;
 use Masthead\Tests\Unit\TestCase;
 
@@ -40,6 +41,20 @@ final class SwapCheckTest extends TestCase {
 	public array $parts = array();
 
 	/**
+	 * Undated drafts the reader knows.
+	 *
+	 * @var array<int,array>
+	 */
+	public array $drafts = array();
+
+	/**
+	 * Config overrides.
+	 *
+	 * @var array<string,mixed>
+	 */
+	private array $config = array();
+
+	/**
 	 * Lane exception flags by term ID.
 	 *
 	 * @var array<int,bool>
@@ -56,6 +71,8 @@ final class SwapCheckTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		$this->posts      = array();
+		$this->drafts     = array();
+		$this->config     = array();
 		$this->parts      = array();
 		$this->exceptions = array();
 		$this->cadence    = array(
@@ -70,6 +87,9 @@ final class SwapCheckTest extends TestCase {
 			static fn( $format, $timestamp, $zone ) => ( new \DateTimeImmutable( '@' . $timestamp ) )->setTimezone( $zone )->format( $format )
 		);
 		Filters\expectApplied( 'masthead_now' )->zeroOrMoreTimes()->andReturn( '2026-11-09 14:00:00' );
+		Filters\expectApplied( 'masthead_config' )->zeroOrMoreTimes()->andReturnUsing(
+			fn( $flat ) => array_merge( $flat, $this->config )
+		);
 	}
 
 	private function post( int $id, string $title, string $date, string $primary, array $series = array() ): array {
@@ -105,7 +125,7 @@ final class SwapCheckTest extends TestCase {
 		);
 	}
 
-	private function check(): SwapCheck {
+	private function check( ?StatsSource $stats = null ): SwapCheck {
 		$reader = new class( $this ) extends PlanReader {
 			public function __construct( private SwapCheckTest $test ) {}
 
@@ -120,6 +140,10 @@ final class SwapCheckTest extends TestCase {
 
 			public function post( int $post_id ): ?array {
 				return $this->test->posts()[ $post_id ] ?? null;
+			}
+
+			public function unscheduled(): array {
+				return $this->test->drafts;
 			}
 		};
 		$series = new class( $this ) extends SeriesSource {
@@ -141,7 +165,7 @@ final class SwapCheckTest extends TestCase {
 				return 'masthead_series';
 			}
 		};
-		return new SwapCheck( $reader, $series, new Scoring(), new Reasons( new Clock() ), new NullStats(), new Clock() );
+		return new SwapCheck( $reader, $series, new Scoring(), new Reasons( new Clock() ), $stats ?? new NullStats(), new Clock() );
 	}
 
 	public function posts(): array {
@@ -308,7 +332,195 @@ final class SwapCheckTest extends TestCase {
 		$this->post( 30, 'Earlier business', '2026-11-17', 'business' );
 		$this->post( 29, 'Same day business', '2026-11-17', 'business' );
 		$findings = $this->check()->run();
-		$this->assertSame( array( 'lane_mismatch:29', 'lane_mismatch:30', 'lane_mismatch:31' ), $this->types( $findings ) );
+		$this->assertSame( array( 'lane_mismatch:29', 'collision:29', 'lane_mismatch:30', 'collision:30', 'lane_mismatch:31' ), $this->types( $findings ), 'date, then post, then type order' );
 		$this->assertSame( SwapCheck::TYPES, array( 'lane_mismatch', 'collision', 'cadence_break', 'better_candidate' ) );
+	}
+
+	private function draft( int $id, string $title, string $primary ): array {
+		$draft = array(
+			'id'               => $id,
+			'title'            => $title,
+			'status'           => 'draft',
+			'date'             => null,
+			'categories'       => array( $primary ),
+			'primary_category' => $primary,
+		);
+		$this->drafts[ $id ] = $draft;
+		return $draft;
+	}
+
+	private function stats( ?array $by_category, ?array $by_weekday, bool $available = true ): StatsSource {
+		return new class( $by_category, $by_weekday, $available ) implements StatsSource {
+			public function __construct( private ?array $by_category, private ?array $by_weekday, private bool $available ) {}
+
+			public function available(): bool {
+				return $this->available;
+			}
+
+			public function views_by_category( int $days ): ?array {
+				return $this->by_category;
+			}
+
+			public function views_by_weekday( int $days ): ?array {
+				return $this->by_weekday;
+			}
+
+			public function top_posts( int $days, int $limit ): ?array {
+				return null;
+			}
+
+			public function post_views( int $post_id, int $days ): ?int {
+				return null;
+			}
+
+			public function fetched_at(): ?string {
+				return '2026-11-09T13:00:00-08:00';
+			}
+		};
+	}
+
+	public function test_two_posts_on_one_date_collide(): void {
+		$this->post( 40, 'First', '2026-11-18', 'writing' );
+		$this->post( 41, 'Second', '2026-11-18', 'technology' );
+		$collisions = array_values( array_filter( $this->check()->run(), static fn( $f ) => 'collision' === $f['type'] ) );
+		$this->assertSame( array( 'collision:40', 'collision:41' ), array_column( $collisions, 'key' ) );
+		$this->assertSame( 'First shares Nov 18 with Second.', $collisions[0]['why'] );
+		$this->assertSame( array(), $collisions[0]['options'] );
+		$this->assertSame( 'review', $collisions[0]['severity'] );
+	}
+
+	public function test_exempt_category_does_not_collide(): void {
+		$this->post( 40, 'Build log', '2026-11-20', 'journal' );
+		$this->post( 41, 'Other', '2026-11-20', 'journal' );
+		$types = array_column( $this->check()->run(), 'type' );
+		$this->assertNotContains( 'collision', $types );
+		$this->post( 42, 'Third', '2026-11-20', 'technology' );
+		$this->assertNotContains( 'collision', array_column( $this->check()->run(), 'type' ), 'one exempt post exempts the date' );
+		$this->config = array( 'swap.collision_exempt_categories' => array() );
+		$this->assertContains( 'collision', array_column( $this->check()->run(), 'type' ) );
+	}
+
+	public function test_better_candidate_needs_the_minimum_delta(): void {
+		// Tuesday 2026-11-17 is a technology day. A business post there scores 0.0; a technology draft scores 1.0.
+		$this->post( 50, 'Business on technology day', '2026-11-17', 'business' );
+		$this->draft( 60, 'Technology draft', 'technology' );
+		$findings = array_values( array_filter( $this->check()->run(), static fn( $f ) => 'better_candidate' === $f['type'] ) );
+		$this->assertCount( 1, $findings );
+		$this->assertSame( 'info', $findings[0]['severity'] );
+		$this->assertSame( 'Technology draft fits Tuesday\'s Technical series lane better than Business on technology day.', $findings[0]['why'] );
+		$this->assertSame( 'Put Technology draft on 2026-11-17', $findings[0]['options'][0]['label'] );
+		$this->assertSame(
+			array(
+				'post_id' => 60,
+				'date' => '2026-11-17',
+			),
+			$findings[0]['options'][0]['input'] 
+		);
+		$this->assertArrayNotHasKey( 'also', $findings[0]['options'][0] );
+
+		$this->drafts = array();
+		$this->draft( 61, 'Half fit', 'business' );
+		$this->drafts[61]['categories'] = array( 'business', 'technology' );
+		$this->post( 51, 'Faith', '2026-11-24', 'faith' );
+		$this->config = array( 'swap.min_score_delta' => 0.75 );
+		$this->assertNotContains( 'better_candidate', array_column( $this->check()->run(), 'type' ), 'a half-fit draft does not beat zero by 0.75' );
+	}
+
+	public function test_better_candidate_picks_highest_score_then_lowest_id(): void {
+		$this->post( 50, 'Wrong day', '2026-11-17', 'business' );
+		$this->draft( 70, 'Technology B', 'technology' );
+		$this->draft( 62, 'Technology A', 'technology' );
+		$this->draft( 63, 'Partial', 'faith' );
+		$this->drafts[63]['categories'] = array( 'faith', 'technology' );
+		$finding = array_values( array_filter( $this->check()->run(), static fn( $f ) => 'better_candidate' === $f['type'] ) )[0];
+		$this->assertSame( 62, $finding['options'][0]['input']['post_id'] );
+	}
+
+	public function test_candidate_outside_the_window_is_ignored(): void {
+		$this->post( 50, 'Wrong day', '2026-11-17', 'business' );
+		$this->post( 52, 'Technology post', '2026-11-24', 'technology' );
+		$types = array_column( $this->check()->run(), 'type', 'post_id' );
+		$this->assertNotContains( 'better_candidate', $types, 'seven days away is outside the three day window' );
+		$this->post( 53, 'Close technology post', '2026-11-19', 'technology' );
+		$better = array_values( array_filter( $this->check()->run(), static fn( $f ) => 'better_candidate' === $f['type'] && 50 === $f['post_id'] ) );
+		$this->assertCount( 1, $better );
+		$this->assertSame( 'Swap dates with Close technology post', $better[0]['options'][0]['label'] );
+	}
+
+	public function test_swap_option_carries_the_reverse_move_in_also(): void {
+		$this->post( 50, 'Wrong day', '2026-11-17', 'business' );
+		$this->post( 53, 'Close technology post', '2026-11-19', 'technology' );
+		$option = array_values( array_filter( $this->check()->run(), static fn( $f ) => 'better_candidate:50' === $f['key'] ) )[0]['options'][0];
+		$this->assertSame(
+			array(
+				'post_id' => 50,
+				'date' => '2026-11-19',
+			),
+			$option['input'] 
+		);
+		$this->assertSame(
+			array(
+				array(
+					'ability' => 'masthead/reschedule',
+					'input'   => array(
+						'post_id' => 53,
+						'date'    => '2026-11-17',
+					),
+				),
+			),
+			$option['also']
+		);
+	}
+
+	public function test_numbers_present_only_with_available_stats(): void {
+		$this->post( 50, 'Wrong day', '2026-11-17', 'business' );
+		$this->draft( 60, 'Technology draft', 'technology' );
+		$without = array_values( array_filter( $this->check()->run(), static fn( $f ) => 'better_candidate' === $f['type'] ) )[0];
+		$this->assertArrayNotHasKey( 'numbers', $without );
+		$unavailable = array_values( array_filter( $this->check( $this->stats( array( 'technology' => 9 ), array( 2 => 5.0 ), false ) )->run(), static fn( $f ) => 'better_candidate' === $f['type'] ) )[0];
+		$this->assertArrayNotHasKey( 'numbers', $unavailable );
+
+		$with = array_values(
+			array_filter(
+				$this->check(
+					$this->stats(
+						array(
+							'technology' => 400,
+							'business' => 100,
+						),
+						array(
+							2 => 30.0,
+							1 => 60.0,
+						) 
+					) 
+				)->run(),
+				static fn( $f ) => 'better_candidate' === $f['type'] 
+			) 
+		)[0];
+		$this->assertSame(
+			array(
+				'source'     => 'Jetpack Stats',
+				'fetched_at' => '2026-11-09T13:00:00-08:00',
+				'values'     => array(
+					'scheduled_category_views' => 100,
+					'candidate_category_views' => 400,
+					'weekday_avg_views'        => 30.0,
+				),
+			),
+			$with['numbers']
+		);
+		$this->assertSame( 0, preg_match( '/\d/', $with['why'] ), 'the sentence states no number' );
+	}
+
+	public function test_delta_and_window_come_from_config(): void {
+		$this->post( 50, 'Wrong day', '2026-11-17', 'business' );
+		$this->post( 52, 'Technology post', '2026-11-24', 'technology' );
+		$this->config = array( 'swap.candidate_window_days' => 7 );
+		$this->assertContains( 'better_candidate:50', array_column( $this->check()->run(), 'key' ) );
+		$this->config = array(
+			'swap.candidate_window_days' => 7,
+			'swap.min_score_delta'       => 1.5,
+		);
+		$this->assertNotContains( 'better_candidate:50', array_column( $this->check()->run(), 'key' ) );
 	}
 }

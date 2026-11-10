@@ -102,4 +102,16 @@ final class SwapCheckMantleTest extends TestCase {
 		$this->assertNotContains( 10194, $ids );
 		$this->assertSame( array( 12156, 12156, 12157, 12158 ), $ids, 'ordered by date, post and type' );
 	}
+
+	public function test_fixture_produces_exactly_four_findings(): void {
+		$findings = $this->findings();
+		$this->assertSame(
+			array( 'lane_mismatch:12156', 'cadence_break:12156', 'lane_mismatch:12157', 'lane_mismatch:12158' ),
+			$this->keys( $findings )
+		);
+		$this->assertCount( 3, array_filter( $findings, static fn( $f ) => 'lane_mismatch' === $f['type'] ) );
+		$this->assertCount( 1, array_filter( $findings, static fn( $f ) => 'cadence_break' === $f['type'] ) );
+		$this->assertNotContains( 12177, array_column( $findings, 'post_id' ) );
+		$this->assertNotContains( 10194, array_column( $findings, 'post_id' ) );
+	}
 }

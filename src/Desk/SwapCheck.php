@@ -60,7 +60,12 @@ class SwapCheck {
 		$to    = $to ?? Dates::add_days( $today, (int) Config::get( 'swap.lookahead_days' ) );
 
 		$posts = $this->examined( $from, $to );
-		$findings = array_merge( $this->lane_mismatches( $posts ), $this->cadence_breaks( $posts ) );
+		$findings = array_merge(
+			$this->lane_mismatches( $posts ),
+			$this->collisions( $posts ),
+			$this->cadence_breaks( $posts ),
+			$this->better_candidates( $posts )
+		);
 		usort(
 			$findings,
 			static fn( $a, $b ) => array( $a['date'], $a['post_id'], array_search( $a['type'], self::TYPES, true ) )
@@ -302,6 +307,171 @@ class SwapCheck {
 			);
 		}
 		return $findings;
+	}
+
+	/**
+	 * Collision findings: two or more examined posts on one date, unless one of them is in an exempt category.
+	 *
+	 * @param array<int,array<string,mixed>> $posts Examined posts.
+	 * @return array<int,array<string,mixed>>
+	 */
+	private function collisions( array $posts ): array {
+		$exempt  = (array) Config::get( 'swap.collision_exempt_categories' );
+		$by_date = array();
+		foreach ( $posts as $post ) {
+			$by_date[ $this->date_of( $post ) ][] = $post;
+		}
+		$findings = array();
+		foreach ( $by_date as $date => $group ) {
+			if ( count( $group ) <= 1 ) {
+				continue;
+			}
+			$primaries = array_map( static fn( $post ) => $post['primary_category'] ?? null, $group );
+			if ( array() !== array_intersect( $primaries, $exempt ) ) {
+				continue;
+			}
+			foreach ( $group as $post ) {
+				$others = array_map(
+					static fn( $other ) => (string) $other['title'],
+					array_filter( $group, static fn( $other ) => $other['id'] !== $post['id'] )
+				);
+				$findings[] = array(
+					'key'      => 'collision:' . $post['id'],
+					'post_id'  => $post['id'],
+					'date'     => (string) $date,
+					'type'     => 'collision',
+					'severity' => 'review',
+					'why'      => $this->reasons->for_collision( (string) $post['title'], (string) $date, array_values( $others ) ),
+					'options'  => array(),
+				);
+			}
+		}
+		return $findings;
+	}
+
+	/**
+	 * Better candidate findings: a draft or a nearby scheduled post that fits the date clearly better.
+	 *
+	 * @param array<int,array<string,mixed>> $posts Examined posts.
+	 * @return array<int,array<string,mixed>>
+	 */
+	private function better_candidates( array $posts ): array {
+		$delta  = (float) Config::get( 'swap.min_score_delta' );
+		$window = (int) Config::get( 'swap.candidate_window_days' );
+		$days   = (int) Config::get( 'stats.window_days' );
+
+		$stats_on = $this->stats->available();
+		$by_cat   = $stats_on ? $this->stats->views_by_category( $days ) : null;
+		$by_day   = $stats_on ? $this->stats->views_by_weekday( $days ) : null;
+		$fetched  = $stats_on ? $this->stats->fetched_at() : null;
+
+		$drafts   = $this->reader->unscheduled();
+		$findings = array();
+		foreach ( $posts as $post ) {
+			$date      = $this->date_of( $post );
+			$lane      = Lanes::for_date( $date );
+			$own       = $this->score_on( $post, $date, $lane, $by_cat, $by_day );
+			$best      = null;
+			$best_score = 0.0;
+
+			$candidates = array();
+			foreach ( $drafts as $draft ) {
+				$candidates[] = $draft;
+			}
+			foreach ( $posts as $other ) {
+				$other_date = $this->date_of( $other );
+				if ( $other['id'] !== $post['id'] && $other_date !== $date && abs( Dates::diff_days( $date, $other_date ) ) <= $window ) {
+					$candidates[] = $other;
+				}
+			}
+			foreach ( $candidates as $candidate ) {
+				$score = $this->score_on( $candidate, $date, $lane, $by_cat, $by_day );
+				if ( null === $best || $score > $best_score || ( $score === $best_score && $candidate['id'] < $best['id'] ) ) {
+					$best       = $candidate;
+					$best_score = $score;
+				}
+			}
+			if ( null === $best || $best_score - $own < $delta - 1e-9 ) {
+				continue;
+			}
+
+			$scheduled = null !== ( $best['date'] ?? null );
+			if ( $scheduled ) {
+				$option = array(
+					'label'   => sprintf(
+						/* translators: %s: post title. */
+						__( 'Swap dates with %s', 'masthead' ),
+						(string) $best['title']
+					),
+					'ability' => 'masthead/reschedule',
+					'input'   => array(
+						'post_id' => $post['id'],
+						'date'    => $this->date_of( $best ),
+					),
+					'also'    => array(
+						array(
+							'ability' => 'masthead/reschedule',
+							'input'   => array(
+								'post_id' => $best['id'],
+								'date'    => $date,
+							),
+						),
+					),
+				);
+			} else {
+				$option = array(
+					'label'   => sprintf(
+						/* translators: 1: draft title, 2: date. */
+						__( 'Put %1$s on %2$s', 'masthead' ),
+						(string) $best['title'],
+						$date
+					),
+					'ability' => 'masthead/reschedule',
+					'input'   => array(
+						'post_id' => $best['id'],
+						'date'    => $date,
+					),
+				);
+			}
+
+			$finding = array(
+				'key'      => 'better_candidate:' . $post['id'],
+				'post_id'  => $post['id'],
+				'date'     => $date,
+				'type'     => 'better_candidate',
+				'severity' => 'info',
+				'why'      => $this->reasons->for_better_candidate( (string) $best['title'], $this->weekday_name( $date ), (string) $lane['label'], (string) $post['title'] ),
+				'options'  => array( $option ),
+			);
+			if ( null !== $by_cat && null !== $by_day && null !== $fetched ) {
+				$finding['numbers'] = array(
+					'source'     => 'Jetpack Stats',
+					'fetched_at' => $fetched,
+					'values'     => array(
+						'scheduled_category_views' => $by_cat[ $post['primary_category'] ?? '' ] ?? 0,
+						'candidate_category_views' => $by_cat[ $best['primary_category'] ?? '' ] ?? 0,
+						'weekday_avg_views'        => $by_day[ Dates::weekday( $date ) ] ?? 0,
+					),
+				);
+			}
+			$findings[] = $finding;
+		}
+		return $findings;
+	}
+
+	/**
+	 * A post's score on a date.
+	 *
+	 * @param array      $post   PlanPost.
+	 * @param string     $date   Date.
+	 * @param array      $lane   Lane for the date.
+	 * @param array|null $by_cat Views by category.
+	 * @param array|null $by_day Average views by weekday.
+	 * @return float
+	 */
+	private function score_on( array $post, string $date, array $lane, ?array $by_cat, ?array $by_day ): float {
+		$exception = isset( $post['series']['term_id'] ) && $this->series->lane_exception( (int) $post['series']['term_id'] );
+		return $this->scoring->score( $this->scoring->terms( $post, $date, $lane, $exception, $by_cat, $by_day ) );
 	}
 
 	/**

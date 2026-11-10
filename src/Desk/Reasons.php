@@ -119,6 +119,49 @@ class Reasons {
 	}
 
 	/**
+	 * The why line of a collision finding.
+	 *
+	 * @param string   $title  Post title.
+	 * @param string   $date   Shared date, Y-m-d.
+	 * @param string[] $others Titles of the other posts that day.
+	 * @return string
+	 */
+	public function for_collision( string $title, string $date, array $others ): string {
+		return sprintf(
+			/* translators: 1: post title, 2: date, 3: titles of the other posts. */
+			__( '%1$s shares %2$s with %3$s.', 'masthead' ),
+			$title,
+			$this->short_ymd( $date ),
+			implode( ', ', $others )
+		);
+	}
+
+	/**
+	 * The why line of a better_candidate finding. It states no number.
+	 *
+	 * @param string $candidate Title of the better-fitting post or draft.
+	 * @param string $weekday   Weekday name of the date.
+	 * @param string $lane      Lane label of the date.
+	 * @param string $scheduled Title of the post currently on the date.
+	 * @return string
+	 */
+	public function for_better_candidate( string $candidate, string $weekday, string $lane, string $scheduled ): string {
+		$slot = sprintf(
+			/* translators: 1: weekday name, 2: lane label. */
+			__( "%1\$s's %2\$s lane", 'masthead' ),
+			$weekday,
+			$lane
+		);
+		return sprintf(
+			/* translators: 1: candidate title, 2: the weekday and lane, 3: scheduled post title. */
+			__( '%1$s fits %2$s better than %3$s.', 'masthead' ),
+			$candidate,
+			$slot,
+			$scheduled
+		);
+	}
+
+	/**
 	 * Localised weekday name of a date.
 	 *
 	 * @param string $date Date, Y-m-d.

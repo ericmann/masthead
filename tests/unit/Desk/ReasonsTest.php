@@ -111,4 +111,14 @@ final class ReasonsTest extends TestCase {
 		$why = $this->reasons()->for_cadence_break( 2, '2026-12-14', 4, '2026-12-07' );
 		$this->assertSame( 'Part 2 is on Dec 14; the series cadence (every 4 weeks) expects Dec 7.', $why );
 	}
+
+	public function test_collision_reason(): void {
+		$this->assertSame( 'First shares Nov 18 with Second, Third.', $this->reasons()->for_collision( 'First', '2026-11-18', array( 'Second', 'Third' ) ) );
+	}
+
+	public function test_better_candidate_reason_contains_no_digit(): void {
+		$why = $this->reasons()->for_better_candidate( 'Technology draft', 'Tuesday', 'Technical series', 'Business post' );
+		$this->assertSame( "Technology draft fits Tuesday's Technical series lane better than Business post.", $why );
+		$this->assertSame( 0, preg_match( '/\d/', $why ) );
+	}
 }
