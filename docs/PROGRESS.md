@@ -18,7 +18,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-02 Rhythm option, activation defaults and Lanes
 - [x] P1-03 Primary category and Colors
 - [x] P1-04 Cadence
-- [ ] P1-05 SeriesSource adapter and series term meta
+- [x] P1-05 SeriesSource adapter and series term meta
 - [ ] P1-06 Slots (non-floating dated drafts)
 - [ ] P1-07 Reschedule
 - [ ] P1-08 PlanReader
@@ -146,3 +146,7 @@ Tests: CategoriesTest(4), ColorsTest(4). Interpretation: primary category = cate
 ### P1-04 — 71021ed
 
 Tests: CadenceTest(7). Cadence static: sanitize/from_json/to_json/sanitize_json/expected_date/is_break/schedule. sanitize rejects missing/invalid time (no default). Digit strings accepted for every_weeks/weekday. expected_date with weekday picks the nearest date with that weekday (ties impossible).
+
+### P1-05 — 0af1a14
+
+Tests: unit SeriesSourceTest(4), integration SeriesSourceTest(4). SeriesSource is an INSTANCE class, `new SeriesSource()` (stateless). Public: taxonomy(), part_meta(), total_meta(), register() (init, PHP_INT_MAX in Plugin), for_post, terms, parts(term_id) -> [{post_id, part, status, date (null if undated), dated}], cadence, lane_exception, rest_base, set_part. Codebase note: WP_UnitTestCase clears registered meta between tests, so integration tests must call ->register() themselves; term meta over REST needs a term of the taxonomy and admin user. Unregister a stub taxonomy with unregister_taxonomy in finally.
