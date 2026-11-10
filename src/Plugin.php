@@ -17,6 +17,7 @@ use Masthead\Admin\Assets;
 use Masthead\Admin\CalendarPage;
 use Masthead\Admin\Notices;
 use Masthead\Cli\Commands;
+use Masthead\Cli\PlanCommand;
 use Masthead\Cli\SeedCommand;
 use Masthead\Cli\Seeder;
 use Masthead\Plan\Colors;
@@ -78,6 +79,7 @@ final class Plugin {
 			Commands::register(
 				array(
 					'seed' => new SeedCommand( new Seeder( $slots, $series ) ),
+					'plan' => new PlanCommand( $registrar->get( 'masthead/get-plan' ), $clock ),
 				)
 			);
 		}

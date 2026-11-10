@@ -1,6 +1,6 @@
 <?php
 /**
- * wp masthead seed.
+ * Command masthead seed.
  *
  * @package Masthead
  */
