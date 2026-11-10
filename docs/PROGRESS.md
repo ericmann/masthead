@@ -67,7 +67,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-12 Scoring
 - [x] P4-13 SwapCheck: lane_mismatch and cadence_break with options
 - [x] P4-14 SwapCheck: collision and better_candidate
-- [ ] P4-15 Nightly cron, masthead/swap-check ability and wp masthead swap-check
+- [x] P4-15 Nightly cron, masthead/swap-check ability and wp masthead swap-check
 - [ ] P4-16 Swap panel and queue verdicts
 - [ ] P4-17 Tune the swap assumptions
 - [ ] P4-18 Phase 4 push and manual checks
@@ -342,3 +342,7 @@ Tests: SwapCheckTest(8), ReasonsTest(+2), integration SwapCheckMantleTest(5) - t
 ### P4-14 — a1b560a
 
 Tests: SwapCheckTest(+8, now 16), ReasonsTest(+2), integration SwapCheckMantleTest(+1: exactly four findings: lane_mismatch 12156/12157/12158 + cadence_break 12156). SwapCheck now also emits collision (>=2 examined posts on a date unless any has a primary category in swap.collision_exempt_categories; one finding per post, why "<title> shares <Mon D> with <others>.", no options) and better_candidate (severity info; candidates = PlanReader::unscheduled() drafts + other examined posts within +-swap.candidate_window_days on a different date; best by score then lowest id; needs score gap >= swap.min_score_delta; options: "Swap dates with <title>" reschedule p->q date with also q->d, or "Put <draft> on <date>"; numbers {source:'Jetpack Stats', fetched_at, values{scheduled_category_views, candidate_category_views, weekday_avg_views}} only when stats available with both maps). Reasons::for_collision / for_better_candidate. Finding order date, post_id, type (lane_mismatch, collision, cadence_break, better_candidate).
+
+### P4-15 — 6d94fe2
+
+Tests: unit NightlyTest(5), integration Cron\NightlyTest(2), Abilities\SwapCheckTest(7). Cron\Nightly( DeskSwapCheck, StatsSource, Clock ) [Clock added]: schedule() on init (daily masthead_nightly at next cron.nightly_hour in site time), run() (warms stats if available, SwapCheck::run(), update_option masthead_findings {generated_at ISO, items} autoload false, action masthead_findings_updated( count )), static unschedule(). Plugin builds Scoring/Reasons/DeskSwapCheck/Nightly, hooks init+masthead_nightly, adds Abilities\SwapCheck( PlanReader, SeriesSource ) (read-only, default [] input, {generated_at|null, findings}; drops stale findings) and `swap-check` command (Cli\SwapCheckCommand: no flag prints "type<TAB>post<TAB>date<TAB>why"; --write fires do_action('masthead_nightly') and prints stored count); masthead.php registers deactivation hook -> Plugin::deactivate. Verified by hand: `wp masthead swap-check --now=...` prints the four Mantle findings after seeding. Manual check: NOT VERIFIED (human) real WP-Cron timing.
