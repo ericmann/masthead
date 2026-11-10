@@ -30,7 +30,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-14 wp masthead seed
 - [x] P1-15 wp masthead plan
 - [x] P1-16 Tune calendar.max_posts_per_range
-- [ ] P1-17 Phase 1 push and manual checks
+- [x] P1-17 Phase 1 push and manual checks
 - [ ] P2-01 Boot data and the client data layer
 - [ ] P2-02 Shared components: StatValue, LaneDot, CategoryLegend
 - [ ] P2-03 PostChip, OpenSlot and DayCell
@@ -194,3 +194,7 @@ Tests: PlanCommandTest(3) with tests/unit/stubs/WP_CLI.php (WP_CLI::$lines/$erro
 ### P1-16 — aa7f6d5
 
 Tuning calendar.max_posts_per_range (docs/tuning/P1-16.md). Measurement: before cap=500 median 48.9 ms, peak 56.5 MB (rule: <1 s and <64 MB -> passes); alt 250: 24.9 ms / 52.5 MB; alt 1000: 92.9 ms / 60.5 MB; after cap=500 unchanged (rerun 50.1 ms / 56.5 MB). Config unchanged. Harness: tests/integration/Tuning/PlanRangeBench.php (class suffix Bench.php; phpunit.integration.xml.dist now also collects tests/integration/Tuning/*Bench.php; run with --group tuning). Output via echo esc_html (VIP sniffs forbid fwrite). Later tuning tasks: copy this pattern.
+
+### P1-17 — a66a769
+
+Docs only: Phase 1 section appended to docs/manual-checks.md. kukulu_verify (full, no files): green. composer audit: no advisories. npm audit --audit-level=high: still reports transitive dev advisories (5 high, no non-breaking fix; see P0-02). Push: pushed build/2026-11-09... branch build/2026-11-10 to origin. Manual check: NOT VERIFIED (human).
