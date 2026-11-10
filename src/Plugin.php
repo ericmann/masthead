@@ -14,6 +14,7 @@ use Masthead\Admin\CalendarPage;
 use Masthead\Admin\Notices;
 use Masthead\Plan\Colors;
 use Masthead\Plan\Rhythm;
+use Masthead\Plan\SeriesSource;
 use Masthead\Support\Clock;
 
 /**
@@ -48,6 +49,9 @@ final class Plugin {
 		add_action( 'admin_enqueue_scripts', array( $assets, 'enqueue' ) );
 		add_action( 'admin_notices', array( $notices, 'render' ) );
 		add_action( 'init', array( Colors::class, 'register_meta' ) );
+
+		$series = new SeriesSource();
+		add_action( 'init', array( $series, 'register' ), PHP_INT_MAX );
 	}
 
 	/**
