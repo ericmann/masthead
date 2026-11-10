@@ -77,7 +77,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P5-04 WpAiClient, Factory, FakeAiClient and AI fixtures
 - [x] P5-05 Budget and the BudgetedAi decorator
 - [x] P5-06 Ideas and include_ideas in suggest-for-date
-- [ ] P5-07 masthead/draft-outline ability and the Day plan outline
+- [x] P5-07 masthead/draft-outline ability and the Day plan outline
 - [ ] P5-08 masthead/draft-share-copy ability and the Share panel's AI button
 - [ ] P5-09 SeriesPlanner and masthead/propose-series
 - [ ] P5-10 masthead/accept-series
@@ -382,3 +382,7 @@ Desk\Budget (reserve, remaining, note_model, models; option masthead_ai_usage {m
 ### P5-06 — 7755b9a
 
 Desk\Ideas(AiClient, PlanReader, SeriesSource, CategoryGap, Budget): status(), context(date), ideas(date, lane, dismissed) -> Candidate[]|WP_Error. Suggester::suggest(date, user, kinds, include_ideas) with optional 10th ctor arg ?Ideas; ideas appended after the ranked list (kind idea, why = angle, actions create_draft+dismiss); on WP_Error list unchanged, ai.used false, ai.error = code; ai.remaining = Budget::remaining() when Ideas wired. SuggestForDate passes include_ideas (permission already required prompt_ai); SuggestCommand --ideas. Client: useSuggestions.loadIdeas, DeskRail "Suggest ideas" (needs boot ai.supported && caps.promptAi, hidden once ai.used), SuggestionCard "Suggest topics", ai.error notice. Tests: unit 275, integration SuggestForDate 9, jest 126, e2e ideas.spec desktop+mobile pass (desk.spec still passes). Interpretation: context window anchored on the target day; ideas structurally validated against all categories then out-of-lane ones dropped individually; invalid reply -> masthead_ai_invalid. Lessons: scripted replace in App.js silently missed (prettier indentation) - assert the match; npm run build must be rerun before e2e; the e2e site already has the fake AI via the mu loader, so integration tests use it too.
+
+### P5-07 — 98604bb
+
+Ideas::outline(title, ?category slug, ?date) -> string[]|WP_Error (strong tier, Schemas::outline, context only when a date is given); Abilities\DraftOutline masthead/draft-outline (input {title, category?, date?}, output {outline}, readonly annotation, idempotent false, perm edit_posts + prompt_ai, 400 on blank title/bad date). Plugin now builds $ideas once and passes it to Suggester and DraftOutline. DayPlan: "Draft an outline" (needs boot ai.supported && caps.promptAi) -> editable lines (aria-label "Outline line N", Remove, Add line), note "Outline only. The Desk never writes body copy.", create sends the edited outline; ability error shown, form stays usable; a suggestion's own outline (series) still shows read-only until replaced. Tests: unit 277, integration DraftOutline 5, jest 129, e2e dayplan (new case) pass desktop+mobile. Interpretation: blank lines are dropped before sending.
