@@ -67,6 +67,8 @@ final class Plugin {
 		$slots = new Slots( $series );
 		add_action( 'init', array( $slots, 'register_meta' ) );
 
+		$assets->add_planning_boot_data( $series );
+
 		$reader    = new PlanReader( $clock, $series );
 		$registrar = new Registrar(
 			new GetPlan( $reader ),

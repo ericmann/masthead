@@ -12,6 +12,7 @@ namespace Masthead\Tests\Unit\Admin;
 use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
 use Masthead\Admin\Assets;
+use Masthead\Plan\SeriesSource;
 use Masthead\Support\Clock;
 use Masthead\Tests\Unit\TestCase;
 
@@ -77,6 +78,72 @@ final class AssetsTest extends TestCase {
 		$this->assertSame( '2026-11-09', $data['today'] );
 		$this->assertSame( '0.0.0', $data['version'] );
 		$this->assertStringStartsWith( '2026-11-09T14:00:00', $data['now'] );
+	}
+
+	public function test_boot_data_has_config_caps_urls_series_categories_rhythm_and_ai(): void {
+		Functions\when( 'current_user_can' )->alias( static fn( $cap ) => in_array( $cap, array( 'edit_posts', 'publish_posts' ), true ) );
+		Functions\when( 'admin_url' )->alias( static fn( $path ) => 'http://example.test/wp-admin/' . $path );
+		Functions\when( 'taxonomy_exists' )->justReturn( false );
+		Functions\when( 'get_taxonomy' )->justReturn( (object) array( 'rest_base' => 'masthead_series' ) );
+		Functions\when( 'get_terms' )->justReturn(
+			array(
+				(object) array(
+					'term_id' => 8,
+					'slug'    => 'technology',
+					'name'    => 'Technology',
+				),
+			)
+		);
+		Functions\when( 'get_term_meta' )->justReturn( '' );
+		Functions\when( 'sanitize_hex_color' )->justReturn( null );
+
+		$assets = new Assets( new Clock(), $this->dir . '/masthead.php' );
+		$assets->add_planning_boot_data( new SeriesSource() );
+		$data = $assets->boot_data();
+
+		$this->assertSame(
+			array(
+				'ghostDays'        => 14,
+				'horizonDays'      => 21,
+				'maxRangeDays'     => 92,
+				'maxPostsPerRange' => 500,
+				'maxSuggestions'   => 3,
+				'dragPublished'    => false,
+				'statsWindowDays'  => 30,
+			),
+			$data['config']
+		);
+		$this->assertSame(
+			array(
+				'editPosts'       => true,
+				'editOthersPosts' => false,
+				'publishPosts'    => true,
+				'promptAi'        => false,
+				'manageOptions'   => false,
+			),
+			$data['caps']
+		);
+		$this->assertSame( 'http://example.test/wp-admin/post.php?post=%d&action=edit', $data['urls']['editPost'] );
+		$this->assertSame( 'http://example.test/wp-admin/options-general.php?page=masthead-settings', $data['urls']['settings'] );
+		$this->assertSame( 'http://example.test/wp-admin/options-connectors.php', $data['urls']['connectors'] );
+		$this->assertSame( 'http://example.test/wp-admin/post-new.php', $data['urls']['newPost'] );
+		$this->assertSame(
+			array(
+				'taxonomy' => 'masthead_series',
+				'restBase' => 'masthead_series',
+			),
+			$data['series']
+		);
+		$this->assertSame( 'technology', $data['categories'][0]['slug'] );
+		$this->assertSame( '#2f5fd0', $data['categories'][0]['color'] );
+		$this->assertSame( 'faith', $data['rhythm'][0]['lane'] );
+		$this->assertSame(
+			array(
+				'supported' => false,
+				'remaining' => 0,
+			),
+			$data['ai']
+		);
 	}
 
 	public function test_enqueue_does_nothing_when_build_is_missing(): void {

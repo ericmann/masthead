@@ -10,6 +10,9 @@ declare(strict_types=1);
 namespace Masthead\Admin;
 
 use Masthead\Config;
+use Masthead\Plan\Colors;
+use Masthead\Plan\Rhythm;
+use Masthead\Plan\SeriesSource;
 use Masthead\Support\Clock;
 use const Masthead\SLUG;
 use const Masthead\VERSION;
@@ -45,6 +48,62 @@ final class Assets {
 		$this->add_boot_data( 'today', fn() => $this->clock->today() );
 		$this->add_boot_data( 'timezone', static fn() => wp_timezone_string() );
 		$this->add_boot_data( 'weekStartsOn', static fn() => Config::get( 'calendar.week_starts_on' ) );
+	}
+
+	/**
+	 * Adds the boot data the calendar client needs to read the plan.
+	 *
+	 * @param SeriesSource $series Series adapter.
+	 * @return void
+	 */
+	public function add_planning_boot_data( SeriesSource $series ): void {
+		$this->add_boot_data(
+			'config',
+			static fn() => array(
+				'ghostDays'        => Config::get( 'desk.ghost_days' ),
+				'horizonDays'      => Config::get( 'desk.horizon_days' ),
+				'maxRangeDays'     => Config::get( 'calendar.max_range_days' ),
+				'maxPostsPerRange' => Config::get( 'calendar.max_posts_per_range' ),
+				'maxSuggestions'   => Config::get( 'desk.max_suggestions' ),
+				'dragPublished'    => Config::get( 'calendar.drag_published' ),
+				'statsWindowDays'  => Config::get( 'stats.window_days' ),
+			)
+		);
+		$this->add_boot_data(
+			'caps',
+			static fn() => array(
+				'editPosts'       => current_user_can( 'edit_posts' ),
+				'editOthersPosts' => current_user_can( 'edit_others_posts' ),
+				'publishPosts'    => current_user_can( 'publish_posts' ),
+				'promptAi'        => current_user_can( 'prompt_ai' ),
+				'manageOptions'   => current_user_can( 'manage_options' ),
+			)
+		);
+		$this->add_boot_data(
+			'urls',
+			static fn() => array(
+				'newPost'    => admin_url( 'post-new.php' ),
+				'editPost'   => admin_url( 'post.php?post=%d&action=edit' ),
+				'settings'   => admin_url( 'options-general.php?page=' . SLUG . '-settings' ),
+				'connectors' => admin_url( 'options-connectors.php' ),
+			)
+		);
+		$this->add_boot_data(
+			'series',
+			static fn() => array(
+				'taxonomy' => $series->taxonomy(),
+				'restBase' => $series->rest_base(),
+			)
+		);
+		$this->add_boot_data( 'categories', array( Colors::class, 'legend' ) );
+		$this->add_boot_data( 'rhythm', array( Rhythm::class, 'get' ) );
+		$this->add_boot_data(
+			'ai',
+			static fn() => array(
+				'supported' => false,
+				'remaining' => 0,
+			)
+		);
 	}
 
 	/**
