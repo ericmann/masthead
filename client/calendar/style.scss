@@ -38,6 +38,12 @@
 		}
 	}
 
+	&__meta {
+		display: none;
+		color: #50575e;
+		font-size: 12px;
+	}
+
 	&__today {
 		position: absolute;
 		top: 8px;
@@ -195,6 +201,35 @@
 
 	.masthead-day {
 		min-height: 0;
+
+		&.is-outside {
+			display: none;
+		}
+
+		&__meta {
+			display: block;
+			padding: 0 4px;
+		}
+	}
+
+	.masthead-toolbar {
+
+		&__title {
+			flex-basis: 100%;
+			order: -1;
+		}
+	}
+
+	.masthead-calendar {
+		overflow-x: hidden;
+	}
+
+	.masthead-list__row {
+		grid-template-columns: 6px minmax(0, 1fr);
+		grid-template-areas:
+			"bar when"
+			"bar title"
+			"bar status";
 	}
 }
 

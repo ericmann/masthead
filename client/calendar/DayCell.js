@@ -1,4 +1,5 @@
 import { useState } from '@wordpress/element';
+import { gmdateI18n } from '@wordpress/date';
 import { __, _n, sprintf } from '@wordpress/i18n';
 
 import { dayLabel } from '../data/dates';
@@ -107,6 +108,14 @@ export default function DayCell( {
 					{ Number( day.date.slice( -2 ) ) }
 				</span>
 			</button>
+			<span className="masthead-day__meta" aria-hidden="true">
+				{ [
+					gmdateI18n( 'D', new Date( Date.parse( day.date ) ) ),
+					day.lane.label,
+				]
+					.filter( Boolean )
+					.join( ' · ' ) }
+			</span>
 			{ isToday ? (
 				<span className="masthead-day__today" aria-hidden="true">
 					{ __( 'TODAY', 'masthead' ) }
