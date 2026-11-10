@@ -101,4 +101,14 @@ final class ReasonsTest extends TestCase {
 		$this->assertSame( 0, preg_match( '/\d/', preg_replace( '/Feb 1, 2026/', '', $why ) ) );
 		$this->assertSame( '', $this->reasons()->for_candidate( array( 'kind' => 'idea' ), '2026-11-18', array() ) );
 	}
+
+	public function test_lane_mismatch_reason(): void {
+		$why = $this->reasons()->for_lane_mismatch( 'The Mantle - Part 2 of 4', '2026-12-14', array( 'label' => 'Business & leadership' ) );
+		$this->assertSame( 'The Mantle - Part 2 of 4 is on a Monday, which your rhythm gives to Business & leadership.', $why );
+	}
+
+	public function test_cadence_break_reason(): void {
+		$why = $this->reasons()->for_cadence_break( 2, '2026-12-14', 4, '2026-12-07' );
+		$this->assertSame( 'Part 2 is on Dec 14; the series cadence (every 4 weeks) expects Dec 7.', $why );
+	}
 }

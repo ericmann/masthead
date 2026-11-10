@@ -81,6 +81,44 @@ class Reasons {
 	}
 
 	/**
+	 * The why line of a lane_mismatch finding.
+	 *
+	 * @param string $title Post title.
+	 * @param string $date  Date of the post, Y-m-d.
+	 * @param array  $lane  Lane for that date.
+	 * @return string
+	 */
+	public function for_lane_mismatch( string $title, string $date, array $lane ): string {
+		return sprintf(
+			/* translators: 1: post title, 2: weekday name, 3: lane label. */
+			__( '%1$s is on a %2$s, which your rhythm gives to %3$s.', 'masthead' ),
+			$title,
+			$this->weekday( $date ),
+			(string) ( $lane['label'] ?? '' )
+		);
+	}
+
+	/**
+	 * The why line of a cadence_break finding.
+	 *
+	 * @param int    $part        Part number.
+	 * @param string $date        Date of the part, Y-m-d.
+	 * @param int    $every_weeks Cadence in weeks.
+	 * @param string $expected    Expected date, Y-m-d.
+	 * @return string
+	 */
+	public function for_cadence_break( int $part, string $date, int $every_weeks, string $expected ): string {
+		return sprintf(
+			/* translators: 1: part number, 2: its date, 3: weeks between parts, 4: the expected date. */
+			__( 'Part %1$d is on %2$s; the series cadence (every %3$d weeks) expects %4$s.', 'masthead' ),
+			$part,
+			$this->short_ymd( $date ),
+			$every_weeks,
+			$this->short_ymd( $expected )
+		);
+	}
+
+	/**
 	 * Localised weekday name of a date.
 	 *
 	 * @param string $date Date, Y-m-d.
