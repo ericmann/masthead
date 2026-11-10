@@ -68,7 +68,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-13 SwapCheck: lane_mismatch and cadence_break with options
 - [x] P4-14 SwapCheck: collision and better_candidate
 - [x] P4-15 Nightly cron, masthead/swap-check ability and wp masthead swap-check
-- [ ] P4-16 Swap panel and queue verdicts
+- [x] P4-16 Swap panel and queue verdicts
 - [ ] P4-17 Tune the swap assumptions
 - [ ] P4-18 Phase 4 push and manual checks
 - [ ] P5-01 Spike — WordPress AI Client surface and model metadata
@@ -346,3 +346,7 @@ Tests: SwapCheckTest(+8, now 16), ReasonsTest(+2), integration SwapCheckMantleTe
 ### P4-15 — 6d94fe2
 
 Tests: unit NightlyTest(5), integration Cron\NightlyTest(2), Abilities\SwapCheckTest(7). Cron\Nightly( DeskSwapCheck, StatsSource, Clock ) [Clock added]: schedule() on init (daily masthead_nightly at next cron.nightly_hour in site time), run() (warms stats if available, SwapCheck::run(), update_option masthead_findings {generated_at ISO, items} autoload false, action masthead_findings_updated( count )), static unschedule(). Plugin builds Scoring/Reasons/DeskSwapCheck/Nightly, hooks init+masthead_nightly, adds Abilities\SwapCheck( PlanReader, SeriesSource ) (read-only, default [] input, {generated_at|null, findings}; drops stale findings) and `swap-check` command (Cli\SwapCheckCommand: no flag prints "type<TAB>post<TAB>date<TAB>why"; --write fires do_action('masthead_nightly') and prints stored count); masthead.php registers deactivation hook -> Plugin::deactivate. Verified by hand: `wp masthead swap-check --now=...` prints the four Mantle findings after seeding. Manual check: NOT VERIFIED (human) real WP-Cron timing.
+
+### P4-16 — e4b7564
+
+Tests: SwapPanel.test.js(6), useFindings.test.js(3), ListView.test.js(+2), e2e swap.spec.js(6 x2); full npm run test:e2e = 92 passed, 2 skipped (6.4 min). Client: useFindings()->{generatedAt, findings, loaded, byPost(id), refresh} (masthead/swap-check once per load); SwapPanel({post,findings,onApplied,onClose}) (type labels, why, StatValue per numbers value, option buttons, "Reschedules n posts", runs ability then each also in order stopping at the first error, ability null + input.rest -> apiFetch, aria-live outcome, Keep as is); ListView gained findings prop (Fits/Review badge `.masthead-list__verdict[data-verdict]` on future/draft rows + "Swap check ran <date>" / "has not run yet"); App renders SwapPanel for a selected future/draft post and refreshes plan+findings after an option. e2e verified: Review x3 / Fits x2 verdicts, the exact "Move to Saturdays: ..." option, applying it moves 12156/12157/12158 to 2026-12-12/2027-01-09/2027-02-06 (status stays future), lane exception leaves only cadence_break, fixture stats numbers all carry "Jetpack Stats" (3 StatValues on a better_candidate), axe passes. Test hint: in e2e create planned drafts with `wp eval` after wp_set_current_user(1) and the ability's execute().
