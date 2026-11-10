@@ -12,7 +12,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P0-05 wp-env and the integration test harness
 - [x] P0-06 Playwright and axe smoke harness, e2e mu-plugin loader
 - [x] P0-07 Release packer and LICENSE
-- [ ] P0-08 CI and release workflows
+- [x] P0-08 CI and release workflows
 - [ ] P0-09 Phase 0 push and manual checks
 - [ ] P1-01 Support\Dates and Support\Json
 - [ ] P1-02 Rhythm option, activation defaults and Lanes
@@ -122,3 +122,7 @@ Tests: shell.spec.js 3 specs x 2 projects (desktop 1280x800, mobile 390x844) pas
 ### P0-07 — 721d39a
 
 Tests: pack.test.js (4). pack.mjs exports shouldInclude/tagMatches/checksumLine; `--check-tag vX` supported; root = process.cwd() (npm runs from repo root). jest.config.js got a .mjs transform (wp-scripts babel-transform). LICENSE downloaded from gnu.org (GPLv2). Zip has 18 entries; sha256sum -c OK. Codebase note: build/ ships style-index.css and RTL css.
+
+### P0-08 — 4f99318
+
+Tests: workflows.test.js (5, reads YAML as text). ci.yml: verify/integration/e2e jobs (e2e runs test:e2e:smoke; P1-14 switches it to test:e2e). release.yml checks tag then packs then gh release create. Note: `npm audit --audit-level=high` in ci will fail on the transitive dev advisories recorded in P0-02 (minimatch etc.). Manual check: NOT VERIFIED (human) - workflows never executed on GitHub.
