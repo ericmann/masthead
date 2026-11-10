@@ -156,6 +156,48 @@ final class ReshareTest extends TestCase {
 		$this->assertSame( array( 'reshare:10191' ), $this->keys( $reshare->for_date( '2026-11-18', $this->lane() ) ) );
 	}
 
+	private function days_before_today( int $days ): string {
+		return ( new \DateTimeImmutable( '2026-11-09' ) )->modify( '-' . $days . ' days' )->format( 'Y-m-d' );
+	}
+
+	public function test_post_exactly_min_age_days_old_is_excluded_and_one_day_older_is_included(): void {
+		$min_age     = (int) \Masthead\Config::get( 'desk.reshare_min_age_days' );
+		$this->posts = array(
+			20001 => array( 'publish', $this->days_before_today( $min_age ) . ' 07:00:00', array( 'technology' ), '' ),
+			20002 => array( 'publish', $this->days_before_today( $min_age + 1 ) . ' 07:00:00', array( 'technology' ), '' ),
+		);
+		$reshare     = new Reshare(
+			$this->stats(
+				array(
+					20001 => 9,
+					20002 => 5,
+				)
+			),
+			$this->share(),
+			new Clock()
+		);
+		$this->assertSame( array( 'reshare:20002' ), $this->keys( $reshare->for_date( '2026-11-18', $this->lane() ) ) );
+	}
+
+	public function test_post_shared_exactly_cooldown_days_ago_is_excluded_and_one_day_earlier_is_included(): void {
+		$cooldown    = (int) \Masthead\Config::get( 'desk.reshare_cooldown_days' );
+		$this->posts = array(
+			20001 => array( 'publish', '2025-01-01 07:00:00', array( 'technology' ), $this->days_before_today( $cooldown ) . 'T08:00:00-07:00' ),
+			20002 => array( 'publish', '2025-01-01 07:00:00', array( 'technology' ), $this->days_before_today( $cooldown + 1 ) . 'T08:00:00-07:00' ),
+		);
+		$reshare     = new Reshare(
+			$this->stats(
+				array(
+					20001 => 9,
+					20002 => 5,
+				)
+			),
+			$this->share(),
+			new Clock()
+		);
+		$this->assertSame( array( 'reshare:20002' ), $this->keys( $reshare->for_date( '2026-11-18', $this->lane() ) ) );
+	}
+
 	public function test_post_shared_within_cooldown_is_excluded(): void {
 		$reshare = new Reshare(
 			$this->stats(
