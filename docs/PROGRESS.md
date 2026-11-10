@@ -16,7 +16,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P0-09 Phase 0 push and manual checks
 - [x] P1-01 Support\Dates and Support\Json
 - [x] P1-02 Rhythm option, activation defaults and Lanes
-- [ ] P1-03 Primary category and Colors
+- [x] P1-03 Primary category and Colors
 - [ ] P1-04 Cadence
 - [ ] P1-05 SeriesSource adapter and series term meta
 - [ ] P1-06 Slots (non-floating dated drafts)
@@ -138,3 +138,7 @@ Tests: DatesTest(10), JsonTest(3). Dates static API per task; invalid input: add
 ### P1-02 — 12591f2
 
 Tests: RhythmTest(5), LanesTest(8), RhythmActivationTest(1 integration). Rhythm and Lanes are static classes (Rhythm::get/sanitize/install_defaults/reinstall_defaults, Lanes::for_date/fit/nearest_date_for_category). Rhythm keys are PHP int weekdays 0..6 (written as quoted keys in DEFAULTS because hard-coded-tunable flags `2 =>`). Plugin::activate() installs defaults. phpcs.xml.dist: LongConditionClosingComment disabled. Tooling: vendor/bin/phpcbf autofixes style errors. Process note: I run composer lint/unit, a local re-implementation of the constraint regexes, forbidden-patterns and integration directly per task (kukulu_verify output is ~5k tokens each) and call kukulu_verify at phase ends.
+
+### P1-03 — 532508c
+
+Tests: CategoriesTest(4), ColorsTest(4). Interpretation: primary category = category term with lowest term_id. API: Categories::primary(terms)/for_post(id)->{slugs,primary}/all() (get_terms bounded by desk.candidate_pool); Colors::DEFAULTS/PALETTE/for_term(id,slug)/legend()/register_meta() (hooked on init in Plugin). Stored colour validated through sanitize_hex_color.
