@@ -23,7 +23,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-07 Reschedule
 - [x] P1-08 PlanReader
 - [x] P1-09 Spike — Abilities REST execution and exposure flags
-- [ ] P1-10 Abilities Registrar, category and masthead/get-plan
+- [x] P1-10 Abilities Registrar, category and masthead/get-plan
 - [ ] P1-11 masthead/create-planned-draft ability
 - [ ] P1-12 masthead/reschedule ability
 - [ ] P1-13 REST contract for running abilities
@@ -166,3 +166,7 @@ Tests: unit PlanReaderTest(6), integration PlanReaderTest(3). new PlanReader( Cl
 ### P1-09 — 90eec9d
 
 Spike docs/spikes/P1-09-abilities-rest.md. Decision: core-endpoint. Key facts for later tasks: route /wp-abilities/v1/abilities/<name>/run (name keeps its slash); method by annotations: readonly=>GET (input in `input` query param), destructive+idempotent=>DELETE, else POST (JSON body {input}); wrong method 405. Errors: 401/403 rest_ability_cannot_execute, 400 ability_invalid_input, 404 rest_ability_not_found; WP_Error from execute keeps its own status. meta.show_in_rest defaults to meta.public, else false; abilities the UI runs need show_in_rest true even when public is false (share-post). Registration hooks wp_abilities_api_categories_init / wp_abilities_api_init; `category` required. @wordpress/abilities is a script MODULE only, so the client uses apiFetch (nonce middleware is installed by core). Connectors screen: options-connectors.php. UNCONFIRMED: MCP adapter's own exposure key (fallback meta.public). Don't set both destructive and idempotent on reschedule (it would require DELETE).
+
+### P1-10 — 0cc2156
+
+Tests: unit RegistrarTest(4), integration GetPlanTest(6). Abilities\Ability interface (name,label,description,input_schema,output_schema,annotations,permission,execute); Registrar( Ability ... ) with register_category, register, get( name ), describe(). Registrar sets meta.show_in_rest=true always and meta.public by expose_mcp / expose_share (share-post). Plugin::boot builds PlanReader, Registrar( new GetPlan( $reader ) ) -- later ability tasks add their ability to that constructor call; boot data `abilities` (describe) and `run` ({path:'/wp-abilities/v1/abilities/%s/run', readonly:{method:'GET',input:'query'}, write:{method:'POST',input:'body'}}). Integration tests call wp_get_ability(name)->check_permissions()/execute(). Error status consts are named private consts (400).
