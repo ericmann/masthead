@@ -109,7 +109,7 @@ class Ideas {
 		$every   = array_column( Categories::all(), 'slug' );
 		$allowed = array() === ( $lane['categories'] ?? array() ) ? $every : array_values( $lane['categories'] );
 		$count   = (int) Config::get( 'desk.ideas_per_request' );
-		$prompt  = Prompts::ideas( $lane, $date, $this->context( $date ), $count );
+		$prompt  = Prompts::ideas( array_merge( $lane, array( 'categories' => $allowed ) ), $date, $this->context( $date ), $count );
 
 		$reply = $this->ai->json( $prompt['system'], $prompt['user'], Schemas::ideas( $allowed, $count ), 'fast' );
 		if ( $reply instanceof \WP_Error ) {

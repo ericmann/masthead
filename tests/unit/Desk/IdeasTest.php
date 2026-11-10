@@ -241,6 +241,16 @@ final class IdeasTest extends TestCase {
 		$this->assertSame( array( 'technology' ), $this->client->schemas[0][0]['properties']['ideas']['items']['properties']['category']['enum'] );
 	}
 
+	public function test_any_category_lane_prompt_lists_every_category(): void {
+		$ideas = $this->ideas( $this->reply( array() ) );
+		$ideas->ideas( '2026-11-18', $this->lane( array() ), array() );
+		$user = $this->client->users[0];
+		$this->assertStringNotContainsString( 'Allowed categories: none', $user );
+		foreach ( array( 'opinion', 'technology', 'security' ) as $slug ) {
+			$this->assertMatchesRegularExpression( '#<untrusted-post-data>\s*' . $slug . '\s*</untrusted-post-data>#', $user );
+		}
+	}
+
 	public function test_idea_outside_the_lane_categories_is_dropped_not_coerced(): void {
 		$ideas = $this->ideas( $this->reply( array( $this->item( 'In lane', 'technology' ), $this->item( 'Out of lane', 'security' ) ) ) );
 		$out   = $ideas->ideas( '2026-11-18', $this->lane(), array() );
