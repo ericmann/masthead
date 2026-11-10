@@ -27,7 +27,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-11 masthead/create-planned-draft ability
 - [x] P1-12 masthead/reschedule ability
 - [x] P1-13 REST contract for running abilities
-- [ ] P1-14 wp masthead seed
+- [x] P1-14 wp masthead seed
 - [ ] P1-15 wp masthead plan
 - [ ] P1-16 Tune calendar.max_posts_per_range
 - [ ] P1-17 Phase 1 push and manual checks
@@ -182,3 +182,7 @@ Tests: integration Abilities\RescheduleTest(5). Abilities\Reschedule( Plan\Resch
 ### P1-13 — a07de3c
 
 Tests: integration RestTransportTest(5). Decision core-endpoint: no RestBridge, Plugin unchanged. Verified over rest_do_request: GET get-plan with input query param works; POST on a readonly ability -> 405; subscriber 403/401; anon 401; missing/reversed input 400; unknown ability 404; boot data `run` + `abilities` printed in the inline script match the route.
+
+### P1-14 — d902b9f
+
+Tests: unit SeederTest(3), integration SeederTest(7), e2e seed.spec.js (2 specs x desktop/mobile); full `npm run test:e2e` passes (10 tests) incl. the seed step via wp-env cli. Cli\Commands::register(commands)/apply_now(assoc_args); Cli\SeedCommand( Seeder ); Cli\Seeder( Slots, SeriesSource ) with reset(), seed(fixture, ?now), static post_array(). Plugin registers `seed` only when WP_CLI. Interpretation: seeded post author = first administrator. Codebase notes: wp_insert_post with import_id keeps fixture IDs; Slots::insert pins status so seeded 'future'/'publish' with past dates are not flipped; REST context=edit from Playwright needs X-WP-Nonce from admin-ajax.php?action=rest-nonce; the writes-confined regex also matches comments and docblocks (don't write the function name in prose); get_the_title() texturizes quotes, compare post_title in tests. e2e specs must restore (not delete) option masthead_seed_now. ci.yml e2e job now runs `npm run test:e2e`.
