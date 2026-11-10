@@ -49,7 +49,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P3-04 JetpackStats and wp masthead stats:probe
 - [x] P3-05 masthead/stats-summary ability and the e2e stats switch
 - [x] P3-06 Tune stats.cache_ttl
-- [ ] P3-07 Social adapters and wp masthead social:probe
+- [x] P3-07 Social adapters and wp masthead social:probe
 - [ ] P3-08 masthead/share-connections and masthead/share-post abilities
 - [ ] P3-09 SharePanel without AI copy
 - [ ] P3-10 Phase 3 push and manual checks
@@ -270,3 +270,7 @@ Tests: integration StatsSummaryTest(6), e2e stats.spec.js(2 x2); full npm run te
 ### P3-06 — cc05af6
 
 Tuning stats.cache_ttl (docs/tuning/P3-06.md). Measurement: before ttl=21600 -> 12 upstream calls/day, greatest age 5.50 h (rule: not more than 12 calls and 6 h -> passes); alternatives 3600 -> 54 calls / 0.50 h; 86400 -> 3 calls / 19.00 h; after ttl=21600 unchanged. Config unchanged. Harness: tests/unit/Tuning/StatsCacheBench.php (group tuning); phpunit.xml.dist now excludes group tuning and collects tests/unit/Tuning/*Bench.php; run with --group tuning --filter StatsCacheBench. Real upstream latency NOT MEASURED (needs a connected Jetpack site; human).
+
+### P3-07 — bf117c0
+
+Tests: NullShareTest(1), JetpackSocialTest(6), Social FactoryTest(1), integration JetpackSocialTest(1). API: Social\ShareSource (SPEC 6.5), NullShare, JetpackSocial(?callable dispatch) with static usable() (Jetpack class + is_connection_ready only), available() (+ route registered), connections()->[{id,service,display_name}], share_now (non-chosen ids -> skipped_connections), share_at (one /scheduled-actions POST per connection, timestamp from Dates::parse_iso), probe(), static rest_dispatch(); Factory::make(?bool usable). Result shape {status: shared|queued|unavailable|error, results:[{connection_id, ok, message}]}. Interpretation: error code -> unavailable when it matches /not_available|not_connected|missing_token|no_possible_tokens|invalid_user_permission|plan|upgrade|quota|limit|no_route/i. Plugin builds $share = SocialFactory::make() at boot (usable() is cheap, no REST server access) and registers social:probe in the WP_CLI branch; P3-08 should pass $share to the abilities. Codebase notes: the hard-coded-tunable regex flags digits in prose like "ISO 8601" inside translatable strings; the word publicize is confined to JetpackSocial.php.
