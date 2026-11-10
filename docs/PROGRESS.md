@@ -21,7 +21,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P1-05 SeriesSource adapter and series term meta
 - [x] P1-06 Slots (non-floating dated drafts)
 - [x] P1-07 Reschedule
-- [ ] P1-08 PlanReader
+- [x] P1-08 PlanReader
 - [ ] P1-09 Spike — Abilities REST execution and exposure flags
 - [ ] P1-10 Abilities Registrar, category and masthead/get-plan
 - [ ] P1-11 masthead/create-planned-draft ability
@@ -158,3 +158,7 @@ Tests: unit SlotsTest(6), integration SlotsTest(5). Slots is an instance class: 
 ### P1-07 — 99c2897
 
 Tests: unit RescheduleTest(6), integration RescheduleTest(5). new Reschedule( Clock ); move( post_id, date, ?time ) -> {post_id, date ISO, status} | WP_Error (masthead_not_found 404, published_locked 409, unsupported_status 409, invalid_date 400, past_date 400). Action masthead_rescheduled( id, old|null, new ) with local MySQL datetimes; idempotent (no write/no event when unchanged). Codebase note: hard-coded-tunable flags bare HTTP codes unless the line contains 'status'/'response'; use named private consts for them (pattern used here: BAD_REQUEST/NOT_FOUND/CONFLICT).
+
+### P1-08 — 76417dc
+
+Tests: unit PlanReaderTest(6), integration PlanReaderTest(3). new PlanReader( Clock, SeriesSource ). range( from, to ) -> {days:[{date, lane:{slug,label,categories}, posts, open}], unscheduled, truncated}; unscheduled(); post( id ); scheduled_between( from, to ) (future + dated drafts); public plan_post( object ). PlanPost keys: id,title,status,date,categories,primary_category,color,planned,edit_url, optional series{term_id,name,part,total}, and modified for undated. Interpretation: unscheduled() uses a temporary posts_where filter (post_date_gmt = zero) so the desk.candidate_pool bound counts undated drafts only. range() always includes unscheduled() (second get_posts call).
