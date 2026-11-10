@@ -15,9 +15,9 @@ use Masthead\Support\Clock;
 use Masthead\Support\Dates;
 
 /**
- * Reads posts in a range as PlanPost records grouped by day.
+ * Reads posts in a range as PlanPost records grouped by day. Not final so Desk tests can stub it.
  */
-final class PlanReader {
+class PlanReader {
 
 	/**
 	 * Constructor.

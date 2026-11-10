@@ -12,9 +12,9 @@ namespace Masthead\Plan;
 use Masthead\Config;
 
 /**
- * Reads series from ttm-core's "series" taxonomy when present, else from masthead_series.
+ * Reads series from the series taxonomy when present, else from masthead_series. Not final so Desk tests can stub it.
  */
-final class SeriesSource {
+class SeriesSource {
 
 	/**
 	 * Masthead's own series taxonomy.
