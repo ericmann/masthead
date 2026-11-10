@@ -27,6 +27,7 @@
 	"autoload-dev": {
 		"psr-4": {
 			"Masthead\\Tests\\": "tests/",
+			"Masthead\\Tests\\Support\\": "tests/support/",
 			"Masthead\\Tests\\Unit\\": "tests/unit/",
 			"Masthead\\Tests\\Integration\\": "tests/integration/"
 		}
