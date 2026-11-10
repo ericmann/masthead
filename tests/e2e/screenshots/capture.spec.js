@@ -17,6 +17,14 @@ test.skip(
 
 test.use( { viewport: { width: 1440, height: 1000 } } );
 
+// Ghost cards load one day at a time in the background; wait until they are done
+// so no screenshot catches "Fill open days" disabled mid-run.
+async function waitForGhosts( page ) {
+	await expect(
+		page.locator( '.masthead-toolbar__fill-note' )
+	).not.toHaveText( /^Suggesting/, { timeout: 60000 } );
+}
+
 test.describe( 'README screenshots', () => {
 	test.beforeAll( () => {
 		seedFixture();
@@ -34,10 +42,15 @@ test.describe( 'README screenshots', () => {
 			.click();
 		await page.waitForSelector( '.masthead-suggestion' );
 		await page.waitForSelector( '.masthead-ghost' );
-		const calendar = page.locator( '#masthead-calendar-root' );
-		await calendar.screenshot( {
+		await waitForGhosts( page );
+		await expect(
+			page.getByRole( 'button', { name: 'Fill open days' } )
+		).toBeEnabled();
+		// The hero image: the whole 1440 by 1000 viewport, admin bar and menu included, like Main.dc.html.
+		await page.screenshot( {
 			path: path.join( OUT, 'calendar-month.png' ),
 		} );
+		const calendar = page.locator( '#masthead-calendar-root' );
 
 		// Day plan for Nov 18.
 		await page
@@ -57,6 +70,7 @@ test.describe( 'README screenshots', () => {
 		await page.goto( `${ CALENDAR }#list` );
 		await page.reload();
 		await page.waitForSelector( '.masthead-list__row' );
+		await waitForGhosts( page );
 		await page
 			.locator( '.masthead-list__row[data-post-id="12156"]' )
 			.click();
@@ -69,6 +83,8 @@ test.describe( 'README screenshots', () => {
 		await page.goto( SETTINGS );
 		await page.waitForSelector( '.masthead-rhythm tbody tr' );
 		await expect( page.getByText( 'Provider: available' ) ).toBeVisible();
+		// Series terms arrive from core-data after first paint and grow the page.
+		await page.waitForSelector( '.masthead-series__item' );
 		await page.locator( '#masthead-settings-root' ).screenshot( {
 			path: path.join( OUT, 'settings.png' ),
 		} );
