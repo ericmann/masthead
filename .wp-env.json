@@ -6,7 +6,9 @@
     "https://downloads.wordpress.org/plugin/jetpack.16.4.zip"
   ],
   "mappings": {
-    "wp-content/masthead-fixtures": "./docs/fixtures"
+    "wp-content/masthead-fixtures": "./docs/fixtures",
+    "wp-content/mu-plugins/masthead-e2e": "./tests/e2e/mu",
+    "wp-content/mu-plugins/masthead-e2e-loader.php": "./tests/e2e/mu-loader.php"
   },
   "config": {
     "WP_ENVIRONMENT_TYPE": "local",
