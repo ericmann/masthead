@@ -8,6 +8,12 @@
 	<testsuites>
 		<testsuite name="unit">
 			<directory suffix="Test.php">tests/unit</directory>
+			<directory suffix="Bench.php">tests/unit/Tuning</directory>
 		</testsuite>
 	</testsuites>
+	<groups>
+		<exclude>
+			<group>tuning</group>
+		</exclude>
+	</groups>
 </phpunit>
