@@ -34,7 +34,7 @@ The AI provider is a WordPress.org plugin. Add `ai-provider-for-anthropic` (or `
 
 Two things to know before relying on the AI features:
 
-- Users need the `prompt_ai` capability. WordPress 7.1 does not assign it to any role (checked on 7.1.4), so grant it deliberately, for example in a small site plugin that adds it to the administrator role through the `user_has_cap` filter.
+- Users need the `prompt_ai` capability. WordPress 7.1 does not assign it to any role (checked on 7.1.4), so Masthead grants it to users with `publish_posts` when nothing else has set it. To narrow or widen that, grant or deny `prompt_ai` on a role (an explicit value always wins) or change `ai.fallback_capability` through the `masthead_config` filter.
 - The default model ids (`ai.models.fast`, `ai.models.strong`) are Anthropic ids. With another provider they will not match and that provider's default model is used.
 
 ## Private repository

@@ -8,7 +8,7 @@ Masthead adds nothing to public pages. Every action is a WordPress Ability under
 
 - WordPress 7.1 or later and PHP 8.3 or later.
 - Optional: [Jetpack](https://jetpack.com/) for traffic numbers (Jetpack Stats) and sharing (Jetpack Social). Without it the calendar, lanes and series still work, and Masthead never invents a number.
-- Optional: an AI provider configured under Settings > Connectors for post ideas, outlines, share copy and series proposals. The person using these features also needs the `prompt_ai` capability, which WordPress 7.1 does not grant to any role by default (checked on 7.1.4); grant it yourself, for example with a small plugin that adds it for administrators through the `user_has_cap` filter.
+- Optional: an AI provider configured under Settings > Connectors for post ideas, outlines, share copy and series proposals. They need the `prompt_ai` capability, which WordPress 7.1 does not grant to any role (checked on 7.1.4), so Masthead grants it to users who can `publish_posts` unless a role or another plugin grants or denies `prompt_ai` explicitly. The capability it checks is the `ai.fallback_capability` key of the `masthead_config` filter.
 
 ## Screenshots
 

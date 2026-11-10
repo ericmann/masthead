@@ -97,6 +97,7 @@ export default function App() {
 					setSetting={ setSetting }
 					remaining={ boot.ai?.remaining ?? null }
 					models={ boot.ai?.models || {} }
+					fallbackCapability={ boot.ai?.fallbackCapability || '' }
 				/>
 			</section>
 			<p className="submit">

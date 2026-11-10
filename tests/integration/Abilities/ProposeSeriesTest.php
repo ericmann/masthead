@@ -37,7 +37,8 @@ final class ProposeSeriesTest extends TestCase {
 	}
 
 	public function test_denied(): void {
-		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+		// A contributor has edit_posts but not publish_posts, so the prompt_ai fallback does not apply.
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'contributor' ) ) );
 		$result = $this->ability()->check_permissions( array( 'prompt' => 'x' ) );
 		$this->assertTrue( false === $result || is_wp_error( $result ) );
 		$this->assertWPError( $this->ability()->execute( array( 'prompt' => 'x' ) ) );

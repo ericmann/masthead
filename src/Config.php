@@ -63,6 +63,7 @@ final class Config {
 			'ai.context_max_posts'             => 60,
 			'ai.include_draft_excerpts'        => true,
 			'ai.series_max_parts'              => 12,
+			'ai.fallback_capability'           => 'publish_posts',
 			'abilities.expose_mcp'             => true,
 			'abilities.expose_share'           => false,
 			'cron.nightly_hour'                => 3,

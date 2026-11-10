@@ -40,7 +40,7 @@ To be done on eric.mann.blog after deploying a pre-release build.
 
 ## Phase 5
 
-Needs a real AI provider on a local site, so none of this could be done by the build. Core 7.1.4 does not define the `prompt_ai` capability (see `docs/spikes/P5-01-ai-client.md`): grant it to the account you test with, for example with a small `user_has_cap` filter, or every AI control stays hidden.
+Needs a real AI provider on a local site, so none of this could be done by the build. Core 7.1.4 does not define the `prompt_ai` capability (see `docs/spikes/P5-01-ai-client.md`); since 1.0.0 Masthead grants it to users with `publish_posts`, so test with an administrator, editor or author.
 
 - [ ] Install AI Provider for Anthropic on a local site with a real key. Ask the Desk for "a 4-part security series starting the first Thursday in January", accept it, and see four dated drafts on Thursdays.
 - [ ] Press "Suggest ideas" on an open day and "Draft an outline" in the Day plan, and confirm no reply states a traffic number, a date or a claim about history.
