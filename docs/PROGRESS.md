@@ -66,7 +66,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-11 Tune the Desk assumptions
 - [x] P4-12 Scoring
 - [x] P4-13 SwapCheck: lane_mismatch and cadence_break with options
-- [ ] P4-14 SwapCheck: collision and better_candidate
+- [x] P4-14 SwapCheck: collision and better_candidate
 - [ ] P4-15 Nightly cron, masthead/swap-check ability and wp masthead swap-check
 - [ ] P4-16 Swap panel and queue verdicts
 - [ ] P4-17 Tune the swap assumptions
@@ -338,3 +338,7 @@ Tests: ScoringTest(8 incl. property grid). Desk\Scoring (instance, no deps): ter
 ### P4-13 — 7f80f2b
 
 Tests: SwapCheckTest(8), ReasonsTest(+2), integration SwapCheckMantleTest(5) - the SPEC Mantle acceptance passes on the fixture with NullStats: parts 12156/12157/12158 each lane_mismatch; series option exactly "Move to Saturdays: 2026-12-12, 2027-01-09, 2027-02-06" (input = own post, also = other parts' reschedule calls); part 2 cadence_break expecting 2026-12-07 (option "Move to 2026-12-07"); lane exception clears the three mismatches and leaves cadence_break:12156; 12177 and 10194 no findings; order [12156 lane, 12156 cadence, 12157, 12158]. API: Desk\SwapCheck( PlanReader, SeriesSource, Scoring, Reasons, StatsSource, Clock ) [Clock added] ->run(?from, ?to) -> findings {key,post_id,date,type,severity,why,options[{label,ability,input,also?}]}; default range tomorrow..today+swap.lookahead_days; series parts later than the range are added when a part of that series is inside it. Option for the exception has ability null and input.rest {path /wp/v2/<rest base>/<term>, method POST, data.meta.masthead_lane_exception true}. Reasons::for_lane_mismatch(title,date,lane) / for_cadence_break(part,date,every_weeks,expected). Not wired into Plugin yet (P4-15). SwapCheck::TYPES constant lists type order. Bug caught: strlen('Y-m-d') is 5, not 10 - never use it as a length.
+
+### P4-14 — a1b560a
+
+Tests: SwapCheckTest(+8, now 16), ReasonsTest(+2), integration SwapCheckMantleTest(+1: exactly four findings: lane_mismatch 12156/12157/12158 + cadence_break 12156). SwapCheck now also emits collision (>=2 examined posts on a date unless any has a primary category in swap.collision_exempt_categories; one finding per post, why "<title> shares <Mon D> with <others>.", no options) and better_candidate (severity info; candidates = PlanReader::unscheduled() drafts + other examined posts within +-swap.candidate_window_days on a different date; best by score then lowest id; needs score gap >= swap.min_score_delta; options: "Swap dates with <title>" reschedule p->q date with also q->d, or "Put <draft> on <date>"; numbers {source:'Jetpack Stats', fetched_at, values{scheduled_category_views, candidate_category_views, weekday_avg_views}} only when stats available with both maps). Reasons::for_collision / for_better_candidate. Finding order date, post_id, type (lane_mismatch, collision, cadence_break, better_candidate).
