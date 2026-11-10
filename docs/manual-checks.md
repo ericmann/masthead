@@ -46,7 +46,7 @@ Needs a real AI provider on a local site, so none of this could be done by the b
 - [ ] Press "Suggest ideas" on an open day and "Draft an outline" in the Day plan, and confirm no reply states a traffic number, a date or a claim about history.
 - [ ] Press "Draft with AI" in the Share panel for a published post; confirm nothing is shared until you click Share now.
 - [ ] Repeat one request with AI Provider for OpenRouter. Confirm the provider's default model is used when the configured ids are not offered, and that Settings reports the last model used as `docs/spikes/P5-01-ai-client.md` predicts.
-- [ ] Judge `ai.temperature` and the two model lists, which `docs/tuning/P5-13.md` records as NOT MEASURED. Also try a series request near the maximum (12 parts) and see whether the reply is cut off by `ai.max_tokens`; the Desk then reports an invalid reply and creates nothing.
+- [ ] Judge `ai.temperature` and the two model lists, which `docs/tuning/P5-13.md` records as NOT MEASURED. Also try a series request near the maximum (12 parts) and confirm the proposal arrives whole: since 1.0.0 series proposals get 4000 tokens (the `series_proposal` entry of `ai.max_tokens`; see the 1.0-02 addendum in `docs/tuning/P5-13.md`). If the reply is still cut off, the Desk reports an invalid reply and creates nothing.
 - [ ] Set the monthly cap to 1 in Settings, make two requests and see the budget message ("The monthly AI request limit has been reached.") on the second; set it back afterwards.
 - [ ] Read `docs/spikes/P5-01-ai-client.md` and list every fact still marked `UNCONFIRMED` (the JSON-constrained response shape and model-preference fallback).
 
