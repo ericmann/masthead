@@ -40,7 +40,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P2-07 Drag to reschedule and the "Move to…" alternative
 - [x] P2-08 Responsive layout at 390 px and accessibility gates
 - [x] P2-09 Settings › Calendar page and registered settings
-- [ ] P2-10 Settings app and RhythmTable
+- [x] P2-10 Settings app and RhythmTable
 - [ ] P2-11 Settings: SeriesCadence, Exposure and AI provider status
 - [ ] P2-12 Phase 2 push and manual checks
 - [ ] P3-01 Spike — Jetpack Stats methods, payloads and probe design
@@ -234,3 +234,7 @@ Tests: e2e responsive.spec.js (5, one mobile-only); full npm run test:e2e = 42 p
 ### P2-09 — 68e9be6
 
 Tests: SettingsPageTest(3), ConfigTest(+3), integration SettingsTest(5). Admin\SettingsPage( Assets ): register (options page slug masthead-settings, manage_options), render (#masthead-settings-root), register_settings (admin_init + rest_api_init) for masthead_rhythm (sanitize Rhythm::sanitize) and masthead_settings (Config::sanitize_overrides) with REST schemas. Config::sanitize_overrides(raw) -> nested array of settable keys only (ints >=1 except ai.monthly_request_cap >=0, floats 0..1, weights all-or-nothing, model lists non-empty string lists, bools). Interpretation: core's wp/v2/settings forces additionalProperties=false on object settings, so unknown keys in a REST save give 400 rather than being silently ignored; the sanitiser still drops them on other write paths. Rhythm setting is stored with int keys; REST object keys "0".."6".
+
+### P2-10 — 29262de
+
+Tests: RhythmTable.test.js(5), useSettings.test.js(2), e2e settings.spec.js (3 x2); full npm run test:e2e = 48 passed, 2 skipped. Client: settings/App (h1 "Calendar Settings", Weekly rhythm section, Save changes, success/error notices), RhythmTable({rhythm,categories,weekStartsOn,setRhythm}) + exported slugify, useSettings()->{rhythm,settings,setRhythm,setSetting(dotted path,value),save,isSaving,isSaved,error} via core-data root/site entity. index.js ROUTES gained 'masthead-settings-root'. client/settings/style.scss added via @use in client/style.scss. Interpretation: category options come from boot `categories` rather than a core-data request. P2-11 adds sections to settings/App (use setSetting for masthead_settings). Jest: mock @wordpress/data (useSelect/useDispatch) with `mock`-prefixed variables; fireEvent.change for controlled time inputs.
