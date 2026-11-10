@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Masthead;
 
 use Masthead\Abilities\CreatePlannedDraft;
+use Masthead\Ai\Factory as AiFactory;
 use Masthead\Abilities\GetPlan;
 use Masthead\Abilities\Registrar;
 use Masthead\Abilities\DismissSuggestion;
@@ -35,6 +36,8 @@ use Masthead\Desk\Candidates\CategoryGap;
 use Masthead\Desk\Candidates\DraftMatch;
 use Masthead\Desk\Candidates\Reshare;
 use Masthead\Desk\Candidates\SeriesNext;
+use Masthead\Desk\Budget;
+use Masthead\Desk\BudgetedAi;
 use Masthead\Desk\Dismissals;
 use Masthead\Cron\Nightly;
 use Masthead\Desk\Ranker;
@@ -101,6 +104,8 @@ final class Plugin {
 		$stats     = StatsFactory::make();
 		$share     = SocialFactory::make();
 		$reader    = new PlanReader( $clock, $series );
+		$budget     = new Budget( $clock );
+		$ai         = new BudgetedAi( AiFactory::make( null, array( $budget, 'note_model' ) ), $budget );
 		$dismissals = new Dismissals( $clock );
 		$swap_check = new DeskSwapCheck( $reader, $series, new Scoring(), new Reasons( $clock ), $stats, $clock );
 		$nightly    = new Nightly( $swap_check, $stats, $clock );
@@ -143,6 +148,13 @@ final class Plugin {
 			);
 		}
 
+		$assets->add_boot_data(
+			'ai',
+			static fn() => array(
+				'supported' => $ai->supported(),
+				'remaining' => $budget->remaining(),
+			)
+		);
 		$assets->add_boot_data( 'abilities', array( $registrar, 'describe' ) );
 		$assets->add_boot_data(
 			'run',
