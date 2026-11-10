@@ -45,7 +45,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P2-12 Phase 2 push and manual checks
 - [x] P3-01 Spike — Jetpack Stats methods, payloads and probe design
 - [x] P3-02 Stats core: StatsSource, NullStats, Payloads, FixtureStats, Cache, Factory
-- [ ] P3-03 Spike — Jetpack Social routes, payloads and plan gating
+- [x] P3-03 Spike — Jetpack Social routes, payloads and plan gating
 - [ ] P3-04 JetpackStats and wp masthead stats:probe
 - [ ] P3-05 masthead/stats-summary ability and the e2e stats switch
 - [ ] P3-06 Tune stats.cache_ttl
@@ -254,3 +254,7 @@ Spike docs/spikes/P3-01-jetpack-stats.md + docs/fixtures/stats-sample.json (synt
 ### P3-02 — ac61f9c
 
 Tests: NullStatsTest(1), PayloadsTest(5), FixtureStatsTest(2), CacheTest(4), FactoryTest(4). API: Stats\StatsSource (SPEC 6.2 verbatim), NullStats, Payloads (static: by_weekday(raw), top_posts(raw,limit), post_views(raw), by_category_from_top_posts(top_posts, primary_of)), FixtureStats(path, primary_of callable) (ignores $days; post_views only for posts in the top-posts payload), Cache(Clock)->remember(name,args,producer)/fetched_at(name,args) with transients masthead_stats_<md5> for stats.cache_ttl, Factory::make(?env, ?path) -> FixtureStats only when env === 'local' and the path is a readable file, else NullStats (P3-04 adds the Jetpack branch first). Interpretation: by_weekday omits weekdays with no rows; Payloads::by_category (native) not implemented (spike decision categories-from-top-posts). Codebase note: int/int division gives int in PHP - cast to float for averages. The stats-confined regex also trips on the word WPCOM_Stats in docblocks outside JetpackStats.php.
+
+### P3-03 — 16a515d
+
+Spike docs/spikes/P3-03-jetpack-social.md. Decision: share-and-schedule. Routes (namespace wpcom/v2, internal rest_do_request): GET /wpcom/v2/publicize/connections (items: connection_id string, display_name, service_name, ...); POST /wpcom/v2/publicize/share-post/<postId> {message, skipped_connections: [ids to SKIP] (so JetpackSocial passes all other ids), async}; POST /wpcom/v2/publicize/scheduled-actions {post_id, connection_id (one per request), message, timestamp (GMT unix seconds)}. Errors: publicize_not_available, invalid_user_permission_publicize, not_published (400), post_not_published, connection_not_found, rest_forbidden. Self-hosted sites proxy to WordPress.com (outbound call made by Jetpack). Plan gating codes UNCONFIRMED -> JetpackSocial maps any WP_Error to status unavailable + message. On an unconnected site only /wpcom/v2/publicize/connection-test-results is registered, so missing routes = unavailable. Available = $publicize global exists + Jetpack::is_connection_ready() + connection route registered + list call not WP_Error. social:probe design recorded (available, connections count, routes registered flags).
