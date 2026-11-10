@@ -75,7 +75,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P5-02 AiClient interface, Schemas and the schema validator
 - [x] P5-03 Prompts
 - [x] P5-04 WpAiClient, Factory, FakeAiClient and AI fixtures
-- [ ] P5-05 Budget and the BudgetedAi decorator
+- [x] P5-05 Budget and the BudgetedAi decorator
 - [ ] P5-06 Ideas and include_ideas in suggest-for-date
 - [ ] P5-07 masthead/draft-outline ability and the Day plan outline
 - [ ] P5-08 masthead/draft-share-copy ability and the Share panel's AI button
@@ -374,3 +374,7 @@ Ai\Prompts (static, pure): ideas(lane,date,context,count), outline(title,categor
 ### P5-04 — 15ee75b
 
 Ai\WpAiClient (only wp_ai_client_prompt caller; ctor ?callable prompt_factory, ?callable on_model(tier, model_id)), Ai\Factory::make(env, on_model) honours masthead_ai_client only when env === 'local', tests/support/FakeAiClient (ctor: fail flag, alternative fixture name), 4 fixtures in tests/fixtures/ai, e2e mu fake-ai.php (filter + prompt_ai for manage_options holders). Tests: WpAiClientTest 4, FactoryTest 3, FakeAiClientTest 2; unit 255 green. Interpretation: uses generate_text_result() (spike: model-id-exposed); provider WP_Error and exceptions -> masthead_ai_invalid with data {cause: provider code}; fenced/non-object JSON rejected; unknown tier maps to strong; no model preference call when the list is empty. Added autoload-dev Masthead\Tests\Support -> tests/support. Lesson: mu-plugins load before the plugin autoloader, so the fake is required lazily inside the filter. Not yet wired in Plugin (P5-0x).
+
+### P5-05 — c872ec5
+
+Desk\Budget (reserve, remaining, note_model, models; option masthead_ai_usage {month, requests, models}) and Desk\BudgetedAi (final, implements AiClient; WP_Error masthead_ai_budget status 429). Plugin builds $ai = BudgetedAi(AiFactory::make(null, [budget,'note_model']), budget) once ($ai and $budget are available for later consumers) and the 'ai' boot provider now returns {supported: $ai->supported(), remaining}. Tests: BudgetTest 6, BudgetedAiTest 3; unit 264, integration 105 green. Interpretation: cap 0 disables and writes nothing; month key via Clock::format Y-m in site zone; negative stored counts clamp to 0; models survive a month reset. Lesson: Clock::format needs wp_date stubbed in unit tests.
