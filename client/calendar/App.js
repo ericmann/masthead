@@ -3,10 +3,18 @@ import { __ } from '@wordpress/i18n';
 
 import { getBoot } from '../data/boot';
 import { today as bootToday } from '../data/clock';
-import { addDays, monthGrid, monthLabel, weekRange } from '../data/dates';
+import {
+	addDays,
+	monthGrid,
+	monthLabel,
+	rangeLabel,
+	weekRange,
+} from '../data/dates';
 import { usePlan } from '../data/usePlan';
+import ListView from './ListView';
 import MonthGrid from './MonthGrid';
 import Toolbar from './Toolbar';
+import WeekGrid from './WeekGrid';
 
 const VIEWS = [ 'month', 'week', 'list' ];
 
@@ -28,10 +36,8 @@ function rangeFor( view, anchor, weekStartsOn ) {
 		return [ week[ 0 ], week[ week.length - 1 ] ];
 	}
 	if ( view === 'list' ) {
-		return [
-			`${ anchor.slice( 0, 7 ) }-01`,
-			addDays( shiftMonth( anchor, 1 ), -1 ),
-		];
+		const span = Number( getBoot().config.maxRangeDays );
+		return [ anchor, addDays( anchor, span - 1 ) ];
 	}
 	const weeks = monthGrid( anchor, weekStartsOn );
 	return [
@@ -61,11 +67,18 @@ export default function App() {
 
 	const step = useCallback(
 		( direction ) => {
-			setAnchor( ( current ) =>
-				view === 'week'
-					? addDays( current, direction * 7 )
-					: shiftMonth( current, direction )
-			);
+			setAnchor( ( current ) => {
+				if ( view === 'week' ) {
+					return addDays( current, direction * 7 );
+				}
+				if ( view === 'list' ) {
+					return addDays(
+						current,
+						direction * Number( getBoot().config.maxRangeDays )
+					);
+				}
+				return shiftMonth( current, direction );
+			} );
 		},
 		[ view ]
 	);
@@ -82,7 +95,11 @@ export default function App() {
 			<h1>{ __( 'Calendar', 'masthead' ) }</h1>
 			<Toolbar
 				view={ view }
-				title={ monthLabel( anchor ) }
+				title={
+					view === 'month'
+						? monthLabel( anchor )
+						: rangeLabel( from, to )
+				}
 				onPrev={ () => step( -1 ) }
 				onNext={ () => step( 1 ) }
 				onToday={ () => setAnchor( bootToday() ) }
@@ -120,12 +137,32 @@ export default function App() {
 								setSelection( { type: 'post', post } )
 							}
 						/>
-					) : (
-						<div
-							className="masthead-placeholder"
-							data-view={ view }
+					) : null }
+					{ view === 'week' ? (
+						<WeekGrid
+							anchor={ anchor }
+							weekStartsOn={ weekStartsOn }
+							days={ plan.days }
+							today={ bootToday() }
+							selectedDate={ selectedDate }
+							hidden={ hidden }
+							onSelectDay={ ( date ) =>
+								setSelection( { type: 'day', date } )
+							}
+							onSelectPost={ ( post ) =>
+								setSelection( { type: 'post', post } )
+							}
 						/>
-					) }
+					) : null }
+					{ view === 'list' ? (
+						<ListView
+							days={ plan.days }
+							hidden={ hidden }
+							onSelectPost={ ( post ) =>
+								setSelection( { type: 'post', post } )
+							}
+						/>
+					) : null }
 				</div>
 				<aside
 					className="masthead-rail"

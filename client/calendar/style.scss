@@ -165,3 +165,76 @@
 		min-height: 0;
 	}
 }
+
+.masthead-week {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	gap: 4px;
+
+	&__head {
+		padding: 6px 4px;
+		color: #50575e;
+		font-size: 12px;
+		font-weight: 600;
+	}
+}
+
+.masthead-list {
+
+	&__rows {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	&__row {
+		display: grid;
+		grid-template-columns: 6px minmax(0, 1fr) auto;
+		grid-template-areas:
+			"bar when status"
+			"bar title status";
+		gap: 2px 12px;
+		width: 100%;
+		margin-bottom: 4px;
+		padding: 8px 12px 8px 0;
+		border: 1px solid #dcdcde;
+		background: #fff;
+		color: #1d2327;
+		text-align: left;
+		cursor: pointer;
+
+		&:focus-visible {
+			outline: 2px solid #2271b1;
+			outline-offset: 2px;
+		}
+	}
+
+	&__bar {
+		grid-area: bar;
+	}
+
+	&__when {
+		grid-area: when;
+		color: #50575e;
+		font-size: 12px;
+	}
+
+	&__title {
+		grid-area: title;
+		font-weight: 600;
+	}
+
+	&__status {
+		grid-area: status;
+		align-self: center;
+		color: #50575e;
+		font-size: 12px;
+	}
+}
+
+@media (max-width: 782px) {
+
+	.masthead-week {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}

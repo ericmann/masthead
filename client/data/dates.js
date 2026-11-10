@@ -128,3 +128,27 @@ export function timeLabel( iso ) {
 		)
 	);
 }
+
+/**
+ * Short weekday, month and day, localised.
+ *
+ * @param {string} ymd Date.
+ * @return {string} Label such as "Wed Nov 11".
+ */
+export function shortDayLabel( ymd ) {
+	return gmdateI18n( 'D M j', new Date( parse( ymd ) ) );
+}
+
+/**
+ * A date range as a title.
+ *
+ * @param {string} from First date.
+ * @param {string} to   Last date.
+ * @return {string} Label such as "Nov 8 – Nov 14, 2026".
+ */
+export function rangeLabel( from, to ) {
+	return `${ gmdateI18n( 'M j', new Date( parse( from ) ) ) } – ${ gmdateI18n(
+		'M j, Y',
+		new Date( parse( to ) )
+	) }`;
+}

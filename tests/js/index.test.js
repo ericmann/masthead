@@ -10,7 +10,12 @@ jest.mock( '../../client/data/usePlan', () => ( {
 	} ),
 } ) );
 
-window.mastheadBoot = { today: '2026-11-09', weekStartsOn: 0, rhythm: [] };
+window.mastheadBoot = {
+	today: '2026-11-09',
+	weekStartsOn: 0,
+	rhythm: [],
+	config: { maxRangeDays: 92 },
+};
 
 jest.mock( '@wordpress/dom-ready', () => ( {
 	__esModule: true,

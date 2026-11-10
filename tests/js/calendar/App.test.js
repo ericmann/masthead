@@ -27,6 +27,7 @@ describe( 'calendar App', () => {
 			now: '2026-11-09T14:00:00-08:00',
 			weekStartsOn: 0,
 			rhythm: [],
+			config: { maxRangeDays: 92 },
 		};
 		resetBoot();
 		usePlan.mockReset();
@@ -59,9 +60,11 @@ describe( 'calendar App', () => {
 			window.location.hash = '#week';
 			window.dispatchEvent( new window.HashChangeEvent( 'hashchange' ) );
 		} );
-		expect(
-			container.querySelector( '[data-view="week"]' )
-		).not.toBeNull();
+		expect( container.querySelector( '.masthead-week' ) ).not.toBeNull();
+		expect( usePlan ).toHaveBeenLastCalledWith(
+			'2026-11-08',
+			'2026-11-14'
+		);
 		expect(
 			screen
 				.getByRole( 'button', { name: 'Week' } )
@@ -69,6 +72,18 @@ describe( 'calendar App', () => {
 		).toBe( 'true' );
 		expect(
 			screen.getByRole( 'button', { name: 'Next week' } )
+		).toBeTruthy();
+	} );
+
+	it( 'loads the list range from the anchor for the configured span', () => {
+		window.location.hash = '#list';
+		render( <App /> );
+		expect( usePlan ).toHaveBeenLastCalledWith(
+			'2026-11-09',
+			'2027-02-08'
+		);
+		expect(
+			screen.getByRole( 'button', { name: 'Next page' } )
 		).toBeTruthy();
 	} );
 

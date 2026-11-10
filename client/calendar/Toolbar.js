@@ -26,7 +26,20 @@ export default function Toolbar( {
 	onToday,
 	onView,
 } ) {
-	const weekly = view === 'week';
+	const labels = {
+		month: [
+			__( 'Previous month', 'masthead' ),
+			__( 'Next month', 'masthead' ),
+		],
+		week: [
+			__( 'Previous week', 'masthead' ),
+			__( 'Next week', 'masthead' ),
+		],
+		list: [
+			__( 'Previous page', 'masthead' ),
+			__( 'Next page', 'masthead' ),
+		],
+	}[ view ];
 	return (
 		<div
 			className="masthead-toolbar"
@@ -35,14 +48,10 @@ export default function Toolbar( {
 		>
 			<div className="masthead-toolbar__nav">
 				<button type="button" className="button" onClick={ onPrev }>
-					{ weekly
-						? __( 'Previous week', 'masthead' )
-						: __( 'Previous month', 'masthead' ) }
+					{ labels[ 0 ] }
 				</button>
 				<button type="button" className="button" onClick={ onNext }>
-					{ weekly
-						? __( 'Next week', 'masthead' )
-						: __( 'Next month', 'masthead' ) }
+					{ labels[ 1 ] }
 				</button>
 				<button type="button" className="button" onClick={ onToday }>
 					{ __( 'Today', 'masthead' ) }
