@@ -139,6 +139,28 @@ describe( 'AiSettings', () => {
 		expect( screen.queryByText( /does not report/ ) ).toBeNull();
 	} );
 
+	it( 'explains who gets prompt_ai, naming the fallback capability', () => {
+		const { rerender } = render(
+			<AiSettings
+				supported
+				connectorsUrl="x"
+				get={ get }
+				fallbackCapability="publish_posts"
+			/>
+		);
+		expect(
+			screen.getByText(
+				/Masthead grants it to users who have publish_posts\. A role or plugin that grants or denies prompt_ai itself takes precedence\./
+			)
+		).toBeTruthy();
+
+		rerender( <AiSettings supported connectorsUrl="x" get={ get } /> );
+		expect(
+			screen.getByText( 'The AI features need the prompt_ai capability.' )
+		).toBeTruthy();
+		expect( screen.queryByText( /Masthead grants it/ ) ).toBeNull();
+	} );
+
 	it( 'shows the model-not-reported message when no model is known', () => {
 		render( <AiSettings supported connectorsUrl="x" get={ get } /> );
 		expect(

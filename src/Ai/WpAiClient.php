@@ -109,8 +109,11 @@ class WpAiClient implements AiClient {
 		try {
 			$builder = ( $this->prompt_factory )( $user )
 				->using_system_instruction( $system )
-				->using_temperature( (float) Config::get( 'ai.temperature' ) )
-				->using_max_tokens( (int) Config::get( 'ai.max_tokens' ) );
+				->using_temperature( (float) Config::get( 'ai.temperature' ) );
+			$limit   = $this->max_tokens( $schema );
+			if ( $limit > 0 ) {
+				$builder = $builder->using_max_tokens( $limit );
+			}
 			if ( array() !== $models ) {
 				$builder = $builder->using_model_preference( ...$models );
 			}
@@ -130,5 +133,23 @@ class WpAiClient implements AiClient {
 			( $this->on_model )( $tier, $model_id );
 		}
 		return $text;
+	}
+
+	/**
+	 * Token limit for one request. ai.max_tokens is keyed by request kind, the schema's title (ideas, outline,
+	 * share_copy, series_proposal); a plain-text reply or a schema without its own entry uses 'default'. A site that
+	 * filters ai.max_tokens to a single number gets that number for every kind.
+	 *
+	 * @param array|null $schema Schema for a JSON reply, or null for text.
+	 * @return int The limit, or 0 to leave the provider's default.
+	 */
+	private function max_tokens( ?array $schema ): int {
+		$limits = Config::get( 'ai.max_tokens' );
+		if ( ! is_array( $limits ) ) {
+			return is_numeric( $limits ) ? (int) $limits : 0;
+		}
+		$kind  = is_string( $schema['title'] ?? null ) ? $schema['title'] : 'default';
+		$limit = $limits[ $kind ] ?? $limits['default'] ?? 0;
+		return is_numeric( $limit ) ? (int) $limit : 0;
 	}
 }

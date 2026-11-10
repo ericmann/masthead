@@ -1,6 +1,6 @@
 <?php
 /**
- * Installs the fake AI client and grants prompt_ai to administrators. Test code, never packaged.
+ * Installs the fake AI client. Test code, never packaged. prompt_ai comes from Masthead's own fallback (Ai\Capability).
  *
  * @package Masthead
  */
@@ -17,15 +17,5 @@ add_filter(
 			require_once $file;
 		}
 		return class_exists( 'Masthead\Tests\Support\FakeAiClient' ) ? new Masthead\Tests\Support\FakeAiClient() : $client;
-	}
-);
-
-add_filter(
-	'user_has_cap',
-	static function ( $allcaps ) {
-		if ( ! empty( $allcaps['manage_options'] ) ) {
-			$allcaps['prompt_ai'] = true;
-		}
-		return $allcaps;
 	}
 );

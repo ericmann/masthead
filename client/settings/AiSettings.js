@@ -53,13 +53,14 @@ function ListField( { id, label, value, onChange } ) {
 /**
  * AI provider status and the AI settings.
  *
- * @param {Object}   props               Props.
- * @param {boolean}  props.supported     Whether a provider supports text generation.
- * @param {string}   props.connectorsUrl Settings > Connectors URL.
- * @param {Function} props.get           Returns the effective value of a dotted key.
- * @param {Function} props.setSetting    Called with a dotted key and the new value.
- * @param {number}   props.remaining     Requests left this month.
- * @param {Object}   props.models        Last model id used per tier.
+ * @param {Object}   props                    Props.
+ * @param {boolean}  props.supported          Whether a provider supports text generation.
+ * @param {string}   props.connectorsUrl      Settings > Connectors URL.
+ * @param {Function} props.get                Returns the effective value of a dotted key.
+ * @param {Function} props.setSetting         Called with a dotted key and the new value.
+ * @param {number}   props.remaining          Requests left this month.
+ * @param {Object}   props.models             Last model id used per tier.
+ * @param {string}   props.fallbackCapability Capability that receives prompt_ai when nothing else sets it.
  * @return {Element} The section.
  */
 export default function AiSettings( {
@@ -69,6 +70,7 @@ export default function AiSettings( {
 	setSetting = () => {},
 	remaining = null,
 	models = {},
+	fallbackCapability = '',
 } ) {
 	const known = TIERS.filter( ( { tier } ) => models?.[ tier ] );
 	return (
@@ -91,6 +93,21 @@ export default function AiSettings( {
 					</p>
 				</div>
 			) }
+			<p className="description masthead-ai__access">
+				{ fallbackCapability
+					? sprintf(
+							/* translators: %s: capability name, such as publish_posts. */
+							__(
+								'The AI features need the prompt_ai capability. WordPress does not give it to any role, so Masthead grants it to users who have %s. A role or plugin that grants or denies prompt_ai itself takes precedence.',
+								'masthead'
+							),
+							fallbackCapability
+						)
+					: __(
+							'The AI features need the prompt_ai capability.',
+							'masthead'
+						) }
+			</p>
 			{ TIERS.map( ( { key, label } ) => (
 				<ListField
 					key={ key }

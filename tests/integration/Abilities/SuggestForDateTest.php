@@ -103,6 +103,8 @@ final class SuggestForDateTest extends TestCase {
 			'date'          => '2026-11-18',
 			'include_ideas' => true,
 		);
+		// A contributor has edit_posts but not publish_posts, so the prompt_ai fallback does not apply.
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'contributor' ) ) );
 		$this->assertTrue( $this->ability()->check_permissions( array( 'date' => '2026-11-18' ) ) );
 		$denied = $this->ability()->check_permissions( $input );
 		$this->assertTrue( false === $denied || is_wp_error( $denied ) );

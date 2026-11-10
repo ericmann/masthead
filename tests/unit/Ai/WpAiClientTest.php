@@ -11,6 +11,7 @@ namespace Masthead\Tests\Unit\Ai;
 
 use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
+use Masthead\Ai\Schemas;
 use Masthead\Ai\WpAiClient;
 use Masthead\Tests\Unit\TestCase;
 
@@ -83,6 +84,46 @@ final class WpAiClientTest extends TestCase {
 		$this->assertSame( array( 0.4 ), $builder->args( 'using_temperature' ) );
 		$this->assertSame( array( 1200 ), $builder->args( 'using_max_tokens' ) );
 		$this->assertSame( array( $schema ), $builder->args( 'as_json_response' ) );
+	}
+
+	public function test_max_tokens_follow_the_request_kind(): void {
+		$schemas = array(
+			array( Schemas::ideas( array( 'technology' ), 3 ), 1200 ),
+			array( Schemas::outline(), 1200 ),
+			array( Schemas::share_copy(), 1200 ),
+			array( Schemas::series_proposal( array( 'technology' ), 12 ), 4000 ),
+			array( array( 'title' => 'not_a_kind' ), 1200 ),
+			array( array(), 1200 ),
+		);
+		foreach ( $schemas as $pair ) {
+			$builder         = new StubBuilder();
+			$builder->result = $this->result( '{}' );
+			$this->client( $builder )->json( 's', 'u', $pair[0], 'strong' );
+			$this->assertSame( array( $pair[1] ), $builder->args( 'using_max_tokens' ), (string) ( $pair[0]['title'] ?? 'untitled' ) );
+		}
+		$builder         = new StubBuilder();
+		$builder->result = $this->result( 'plain' );
+		$this->client( $builder )->text( 's', 'u', 'fast' );
+		$this->assertSame( array( 1200 ), $builder->args( 'using_max_tokens' ) );
+	}
+
+	public function test_a_single_filtered_max_tokens_applies_to_every_kind(): void {
+		$this->overrides = array( 'ai.max_tokens' => 900 );
+		foreach ( array( Schemas::series_proposal( array( 'technology' ), 12 ), Schemas::ideas( array( 'technology' ), 3 ) ) as $schema ) {
+			$builder         = new StubBuilder();
+			$builder->result = $this->result( '{}' );
+			$this->client( $builder )->json( 's', 'u', $schema, 'strong' );
+			$this->assertSame( array( 900 ), $builder->args( 'using_max_tokens' ), $schema['title'] );
+		}
+	}
+
+	public function test_a_kind_without_a_positive_limit_leaves_the_provider_default(): void {
+		$this->overrides = array( 'ai.max_tokens' => array( 'ideas' => 1200 ) );
+		$builder         = new StubBuilder();
+		$builder->result = $this->result( '{}' );
+		$this->client( $builder )->json( 's', 'u', Schemas::series_proposal( array( 'technology' ), 12 ), 'strong' );
+		$this->assertNotContains( 'using_max_tokens', $builder->names() );
+		$this->assertSame( array( 0.4 ), $builder->args( 'using_temperature' ) );
 	}
 
 	public function test_tier_selects_the_model_list_from_config(): void {

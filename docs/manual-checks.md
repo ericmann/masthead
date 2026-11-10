@@ -40,19 +40,19 @@ To be done on eric.mann.blog after deploying a pre-release build.
 
 ## Phase 5
 
-Needs a real AI provider on a local site, so none of this could be done by the build. Core 7.1.4 does not define the `prompt_ai` capability (see `docs/spikes/P5-01-ai-client.md`): grant it to the account you test with, for example with a small `user_has_cap` filter, or every AI control stays hidden.
+Needs a real AI provider on a local site, so none of this could be done by the build. Core 7.1.4 does not define the `prompt_ai` capability (see `docs/spikes/P5-01-ai-client.md`); since 1.0.0 Masthead grants it to users with `publish_posts`, so test with an administrator, editor or author.
 
 - [ ] Install AI Provider for Anthropic on a local site with a real key. Ask the Desk for "a 4-part security series starting the first Thursday in January", accept it, and see four dated drafts on Thursdays.
 - [ ] Press "Suggest ideas" on an open day and "Draft an outline" in the Day plan, and confirm no reply states a traffic number, a date or a claim about history.
 - [ ] Press "Draft with AI" in the Share panel for a published post; confirm nothing is shared until you click Share now.
 - [ ] Repeat one request with AI Provider for OpenRouter. Confirm the provider's default model is used when the configured ids are not offered, and that Settings reports the last model used as `docs/spikes/P5-01-ai-client.md` predicts.
-- [ ] Judge `ai.temperature` and the two model lists, which `docs/tuning/P5-13.md` records as NOT MEASURED. Also try a series request near the maximum (12 parts) and see whether the reply is cut off by `ai.max_tokens`; the Desk then reports an invalid reply and creates nothing.
+- [ ] Judge `ai.temperature` and the two model lists, which `docs/tuning/P5-13.md` records as NOT MEASURED. Also try a series request near the maximum (12 parts) and confirm the proposal arrives whole: since 1.0.0 series proposals get 4000 tokens (the `series_proposal` entry of `ai.max_tokens`; see the 1.0-02 addendum in `docs/tuning/P5-13.md`). If the reply is still cut off, the Desk reports an invalid reply and creates nothing.
 - [ ] Set the monthly cap to 1 in Settings, make two requests and see the budget message ("The monthly AI request limit has been reached.") on the second; set it back afterwards.
 - [ ] Read `docs/spikes/P5-01-ai-client.md` and list every fact still marked `UNCONFIRMED` (the JSON-constrained response shape and model-preference fallback).
 
 ## Phase 6
 
-- [ ] After the pull request merges, create and push the signed tag `v0.1.0` (`git tag -s v0.1.0`), and confirm the release has `masthead.zip` and `masthead.zip.sha256` and that `sha256sum -c masthead.zip.sha256` passes. The build did not create a tag.
+- [ ] After the pull request merges, create and push the signed tag `v1.0.0` (`git tag -s v1.0.0`; 0.1.0 was never tagged), and confirm the release has `masthead.zip` and `masthead.zip.sha256` and that `sha256sum -c masthead.zip.sha256` passes. The build did not create a tag.
 - [ ] Bump the site repository's pinned Masthead version and checksum as described in `docs/DEPLOYMENT.md`, build the image, roll it, and plan one real week from the calendar.
 - [ ] Before making the repository public:
   - Decide whether to rewrite git history, which still contains the real post titles that P6-01 replaced in the fixture.

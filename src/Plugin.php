@@ -13,6 +13,7 @@ use Masthead\Abilities\AcceptSeries;
 use Masthead\Abilities\CreatePlannedDraft;
 use Masthead\Abilities\DraftOutline;
 use Masthead\Abilities\DraftShareCopy;
+use Masthead\Ai\Capability as AiCapability;
 use Masthead\Ai\Factory as AiFactory;
 use Masthead\Abilities\GetPlan;
 use Masthead\Abilities\ProposeSeries;
@@ -114,6 +115,7 @@ final class Plugin {
 		$reader    = new PlanReader( $clock, $series );
 		$budget     = new Budget( $clock );
 		$ai         = new BudgetedAi( AiFactory::make( null, array( $budget, 'note_model' ) ), $budget );
+		add_filter( 'user_has_cap', array( new AiCapability(), 'grant' ), PHP_INT_MAX, AiCapability::ACCEPTED_ARGS );
 		$dismissals = new Dismissals( $clock );
 		$swap_check = new DeskSwapCheck( $reader, $series, new Scoring(), new Reasons( $clock ), $stats, $clock );
 		$nightly    = new Nightly( $swap_check, $stats, $clock );
@@ -168,9 +170,10 @@ final class Plugin {
 		$assets->add_boot_data(
 			'ai',
 			static fn() => array(
-				'supported' => $ai->supported(),
-				'remaining' => $budget->remaining(),
-				'models'    => $budget->models(),
+				'supported'          => $ai->supported(),
+				'remaining'          => $budget->remaining(),
+				'models'             => $budget->models(),
+				'fallbackCapability' => Config::get( 'ai.fallback_capability' ),
 			)
 		);
 		$assets->add_boot_data( 'abilities', array( $registrar, 'describe' ) );

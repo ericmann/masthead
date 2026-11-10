@@ -85,7 +85,7 @@ Each line with an id in brackets is enforced by the `constraints` entry of that 
 - `FixtureStats` is reachable only when the environment type is `local` and `MASTHEAD_STATS_FIXTURE` names a readable file; the `masthead_ai_client` filter is honoured only when the environment type is `local`: reviewer checks by reading `src/Stats/Factory.php` and `src/Ai/Factory.php`.
 - No AI prompt asks for, and no `Reasons` template accepts from AI, a sentence about traffic, dates or history; post text sent to the model sits inside `<untrusted-post-data>`: reviewer checks by reading `src/Ai/Prompts.php` and `src/Desk/Reasons.php`.
 - `masthead/share-post` has `meta.public` false unless `abilities.expose_share` is true: integration test, and reviewer checks by reading `src/Abilities/Registrar.php`.
-- Masthead never changes a post's `post_status`: reviewer checks by reading `src/Plan/Slots.php` and `src/Plan/Reschedule.php`.
+- No server-side write path changes a post's `post_status`: `Plan\Slots` and `Plan\Reschedule` keep the status they were given, and the reviewer checks by reading `src/Plan/Slots.php` and `src/Plan/Reschedule.php`. The one status change is the Day plan's "Save as scheduled", which sets `future` through `wp/v2/posts` after a user click (§6.7).
 
 ## Task protocols
 

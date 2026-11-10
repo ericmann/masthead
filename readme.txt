@@ -3,7 +3,7 @@ Tags: editorial calendar, content planning, scheduling, jetpack, ai
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 0.1.0
+Stable tag: 1.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,7 +30,7 @@ Masthead stores no API key. The AI provider and its key are configured in WordPr
 2. In the WordPress admin choose Plugins > Add New > Upload Plugin, upload the zip and activate it.
 3. Open Posts > Calendar. Adjust the weekly rhythm under Settings > Calendar.
 4. Optional: install and connect Jetpack for traffic numbers and sharing.
-5. Optional: configure an AI provider under Settings > Connectors for ideas, outlines, share copy and series proposals. The person using these features also needs the `prompt_ai` capability (see the FAQ).
+5. Optional: configure an AI provider under Settings > Connectors for ideas, outlines, share copy and series proposals. Anyone who can publish posts can use them (see the FAQ).
 
 Masthead needs WordPress 7.1 or later and PHP 8.3 or later.
 
@@ -46,7 +46,7 @@ Yes. The Desk still suggests drafts, the next series part, posts worth sharing a
 
 = Who can use the AI features? =
 
-Only people who have both `edit_posts` and a capability named `prompt_ai`. WordPress 7.1 does not assign `prompt_ai` to any role by default (this was checked on 7.1.4), so a site owner has to grant it, for example with a small plugin that adds it to the administrator role through the `user_has_cap` filter.
+People who have both `edit_posts` and the `prompt_ai` capability. WordPress 7.1 does not assign `prompt_ai` to any role (this was checked on 7.1.4), so Masthead grants it to anyone who has `publish_posts` (administrators, editors and authors) as long as nothing else has decided it. If a role, a user or another plugin grants or denies `prompt_ai` explicitly, that decision wins. A developer can change the capability Masthead checks with the `masthead_config` filter (key `ai.fallback_capability`).
 
 = Does the AI write my posts? =
 
@@ -65,6 +65,11 @@ In your own database: the weekly rhythm and settings as options, plans and outli
 Calendar abilities can be exposed to MCP clients from Settings > Calendar. Sharing is a separate switch and is off by default.
 
 == Changelog ==
+
+= 1.0.0 =
+* AI features work on a stock WordPress site: anyone who can publish posts gets the `prompt_ai` capability, unless a role, user or plugin grants or denies it explicitly.
+* Series proposals get a larger token limit (4000), so a long Ask the Desk request is no longer cut off.
+* Series cadence and lane exceptions are returned by the REST API only in the edit context, so public series responses carry nothing from Masthead.
 
 = 0.1.0 =
 * First release: calendar (month, week, list), weekly rhythm, draft tray, drag and keyboard rescheduling, series cadence.

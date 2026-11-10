@@ -101,7 +101,16 @@ final class ConfigTest extends TestCase {
 		$this->assertSame( array( 'claude-haiku-5-5' ), $d['ai.models.fast'] );
 		$this->assertSame( array( 'claude-sonnet-5-5' ), $d['ai.models.strong'] );
 		$this->assertSame( 0.4, $d['ai.temperature'] );
-		$this->assertSame( 1200, $d['ai.max_tokens'] );
+		$this->assertSame(
+			array(
+				'ideas'           => 1200,
+				'outline'         => 1200,
+				'share_copy'      => 1200,
+				'series_proposal' => 4000,
+				'default'         => 1200,
+			),
+			$d['ai.max_tokens']
+		);
 		$this->assertSame( 60, $d['ai.context_max_posts'] );
 	}
 
