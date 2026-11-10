@@ -48,7 +48,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P3-03 Spike — Jetpack Social routes, payloads and plan gating
 - [x] P3-04 JetpackStats and wp masthead stats:probe
 - [x] P3-05 masthead/stats-summary ability and the e2e stats switch
-- [ ] P3-06 Tune stats.cache_ttl
+- [x] P3-06 Tune stats.cache_ttl
 - [ ] P3-07 Social adapters and wp masthead social:probe
 - [ ] P3-08 masthead/share-connections and masthead/share-post abilities
 - [ ] P3-09 SharePanel without AI copy
@@ -266,3 +266,7 @@ Tests: JetpackStatsTest(7 unit), FactoryTest(+1), StatsProbeCommandTest(2), inte
 ### P3-05 — 56e7a48
 
 Tests: integration StatsSummaryTest(6), e2e stats.spec.js(2 x2); full npm run test:e2e = 58 passed, 2 skipped (3.6 min). Abilities\StatsSummary( StatsSource ) added to Registrar args; Plugin builds $stats = StatsFactory::make() at boot (works; Jetpack usable() false when unconnected). e2e: mu/fixture-stats.php defines MASTHEAD_STATS_FIXTURE when option masthead_e2e_stats=1; helpers/wp.mjs setFixtureStats(on) and seedFixture() turns it off. IMPORTANT codebase note for later abilities: a read-only ability whose input is all optional MUST set 'default' => array() on its input_schema, otherwise a GET with no input param fails with 400 "input is not of type object" (client addQueryArgs drops an empty input). Output is {available:false, reason} when the source or any of the three values is null; source label 'Jetpack Stats'.
+
+### P3-06 — cc05af6
+
+Tuning stats.cache_ttl (docs/tuning/P3-06.md). Measurement: before ttl=21600 -> 12 upstream calls/day, greatest age 5.50 h (rule: not more than 12 calls and 6 h -> passes); alternatives 3600 -> 54 calls / 0.50 h; 86400 -> 3 calls / 19.00 h; after ttl=21600 unchanged. Config unchanged. Harness: tests/unit/Tuning/StatsCacheBench.php (group tuning); phpunit.xml.dist now excludes group tuning and collects tests/unit/Tuning/*Bench.php; run with --group tuning --filter StatsCacheBench. Real upstream latency NOT MEASURED (needs a connected Jetpack site; human).
