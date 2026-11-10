@@ -47,7 +47,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P3-02 Stats core: StatsSource, NullStats, Payloads, FixtureStats, Cache, Factory
 - [x] P3-03 Spike — Jetpack Social routes, payloads and plan gating
 - [x] P3-04 JetpackStats and wp masthead stats:probe
-- [ ] P3-05 masthead/stats-summary ability and the e2e stats switch
+- [x] P3-05 masthead/stats-summary ability and the e2e stats switch
 - [ ] P3-06 Tune stats.cache_ttl
 - [ ] P3-07 Social adapters and wp masthead social:probe
 - [ ] P3-08 masthead/share-connections and masthead/share-post abilities
@@ -262,3 +262,7 @@ Spike docs/spikes/P3-03-jetpack-social.md. Decision: share-and-schedule. Routes 
 ### P3-04 — f970be2
 
 Tests: JetpackStatsTest(7 unit), FactoryTest(+1), StatsProbeCommandTest(2), integration JetpackStatsTest(1). JetpackStats( Cache, primary_of, ?object client ): static usable() (class WPCOM_Stats exists + class Jetpack + is_connection_ready + is_module_active('stats')), available() (client injected or usable), views_by_category via top posts, views_by_weekday via get_visits{unit:day,quantity:days}, top_posts via get_top_posts{period:day,num:days,max:desk.candidate_pool} summed by Payloads, post_views = sum of last N rows of get_post_views data (null if absent), fetched_at() oldest cache time used, probe(days), static scrub(). Factory::make(?env,?path,?bool jetpack) order: fixture(local) -> JetpackStats when usable -> NullStats. Cli\StatsProbeCommand(StatsSource) prints probe JSON or 'Jetpack Stats is not available on this site.'; registered as 'stats:probe' in Plugin's WP_CLI branch only (StatsFactory::make() is NOT called outside CLI yet - P3-05 must construct the source lazily, Jetpack functions may not be ready at plugins_loaded). Verified in wp-env: unconnected Jetpack => usable() false. Codebase note: VIP escape sniff applies to exception messages in tests (use esc_html).
+
+### P3-05 — 56e7a48
+
+Tests: integration StatsSummaryTest(6), e2e stats.spec.js(2 x2); full npm run test:e2e = 58 passed, 2 skipped (3.6 min). Abilities\StatsSummary( StatsSource ) added to Registrar args; Plugin builds $stats = StatsFactory::make() at boot (works; Jetpack usable() false when unconnected). e2e: mu/fixture-stats.php defines MASTHEAD_STATS_FIXTURE when option masthead_e2e_stats=1; helpers/wp.mjs setFixtureStats(on) and seedFixture() turns it off. IMPORTANT codebase note for later abilities: a read-only ability whose input is all optional MUST set 'default' => array() on its input_schema, otherwise a GET with no input param fails with 400 "input is not of type object" (client addQueryArgs drops an empty input). Output is {available:false, reason} when the source or any of the three values is null; source label 'Jetpack Stats'.
