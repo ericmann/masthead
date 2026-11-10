@@ -10,7 +10,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P0-03 Structural checks script and module boundaries test
 - [x] P0-04 Posts › Calendar page and asset loading
 - [x] P0-05 wp-env and the integration test harness
-- [ ] P0-06 Playwright and axe smoke harness, e2e mu-plugin loader
+- [x] P0-06 Playwright and axe smoke harness, e2e mu-plugin loader
 - [ ] P0-07 Release packer and LICENSE
 - [ ] P0-08 CI and release workflows
 - [ ] P0-09 Phase 0 push and manual checks
@@ -114,3 +114,7 @@ Tests: CalendarPageTest(2), AssetsTest(4), NoticesTest(1). Assets(Clock, plugin_
 ### P0-05 — f01cf61
 
 Tests: PluginLoadsTest(5), AdminPagesTest(3), all pass in wp-env (WP 7.1.4, PHP 8.5.12, Jetpack 16.4; WP_TESTS_DIR=/wordpress-phpunit). PHPUnit stays 9.6.38 (accepted by WP test lib). Integration run takes ~30s warm. Integration base: Masthead\Tests\Integration\TestCase (pins masthead_now to 2026-11-09 14:00:00 and timezone LA; uses set_up()). tests/integration/bootstrap.php loads jetpack then masthead on muplugins_loaded. wp-env warns DISABLE_WP_CRON already defined (harmless). Integration tests that call do_action('admin_enqueue_scripts') need set_current_screen() first. phpcs: GlobalVariablesOverride excluded in tests/. @wordpress/env added as devDependency.
+
+### P0-06 — 90fda47
+
+Tests: shell.spec.js 3 specs x 2 projects (desktop 1280x800, mobile 390x844) pass. Harness: tests/e2e/playwright.config.mjs (exports STORAGE_STATE), global-setup logs in admin/password, helpers/wp.mjs (wpCli, seedFixture), helpers/axe.mjs (expectNoSeriousViolations(page, selector)), mu-loader.php + mu/pin-now.php (option masthead_seed_now pins masthead_now). .wp-env.json mappings added for mu-plugins. wp-scripts test-playwright downloaded browsers itself. npm scripts test:e2e:smoke and test:e2e added (test:e2e needs `wp masthead seed`, first run P1-14). Wall time ~20s warm.
