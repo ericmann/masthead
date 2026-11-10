@@ -60,7 +60,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P4-05 Ranker and Dismissals
 - [x] P4-06 Reasons templates and the Suggester
 - [x] P4-07 suggest-for-date and dismiss-suggestion abilities, wp masthead suggest
-- [ ] P4-08 Ghost cards and "Fill open days"
+- [x] P4-08 Ghost cards and "Fill open days"
 - [ ] P4-09 Desk rail
 - [ ] P4-10 Day plan
 - [ ] P4-11 Tune the Desk assumptions
@@ -314,3 +314,7 @@ Tests: ReasonsTest(5), SuggesterTest(8). Desk\Reasons( Clock )->for_candidate( c
 ### P4-07 — b3b3720
 
 Tests: integration SuggestForDateTest(7), DismissSuggestionTest(5), unit SuggestCommandTest(1). Abilities\SuggestForDate( Suggester ) (readonly; permission edit_posts, plus prompt_ai when include_ideas) and Abilities\DismissSuggestion( Dismissals ) (idempotent, POST; dismisses for get_current_user_id()); Cli\SuggestCommand( Ability ) prints "kind<TAB>title<TAB>why". Plugin now builds the Desk: $dismissals, $suggester (DraftMatch, SeriesNext, Reshare( stats, share, clock ), CategoryGap, Ranker, Reasons, Dismissals, PlanReader, Clock) and registers both abilities + `suggest` command. Verified in wp-env on the fixture: `wp masthead suggest 2026-11-18` prints the draft (10178) with the SPEC sentence, then gaps Business and Journal (never published); no reshare (stats unavailable). tests/unit/stubs/WP_CLI.php gained warning() / $warnings.
+
+### P4-08 — 0ce887a
+
+Tests: GhostCard.test.js(3), useSuggestions.test.js(4), e2e desk.spec.js(3 x2); full npm run test:e2e = 68 passed, 2 skipped (4.2 min). Client: GhostCard({suggestion,color,onSelect}) [data-kind], useSuggestions()->{get,load,loadMany (sequential),invalidate,isRunning,progress} (never sends include_ideas), DayCell gained ghost prop ({suggestion,color}) and shows it instead of OpenSlot (aria-label "<day>: suggested <kind>, <title>"), MonthGrid/WeekGrid take ghosts map, Toolbar gained "Fill open days" button + aria-live status. App loads suggestions for open days today..today+config.ghostDays whenever the plan changes, and Fill loads open days up to today+config.horizonDays (boot config.ghostDays/horizonDays required; unit-test boots now include them). Neutral lane colour #646970 (axe contrast). e2e axe helper now lists offending selectors. Note: a run log can be stale if I read it before the new run overwrote it - always wait for the DONE marker of the new run.
