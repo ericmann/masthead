@@ -42,7 +42,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P2-09 Settings › Calendar page and registered settings
 - [x] P2-10 Settings app and RhythmTable
 - [x] P2-11 Settings: SeriesCadence, Exposure and AI provider status
-- [ ] P2-12 Phase 2 push and manual checks
+- [x] P2-12 Phase 2 push and manual checks
 - [ ] P3-01 Spike — Jetpack Stats methods, payloads and probe design
 - [ ] P3-02 Stats core: StatsSource, NullStats, Payloads, FixtureStats, Cache, Factory
 - [ ] P3-03 Spike — Jetpack Social routes, payloads and plan gating
@@ -242,3 +242,7 @@ Tests: RhythmTable.test.js(5), useSettings.test.js(2), e2e settings.spec.js (3 x
 ### P2-11 — 4a42b76
 
 Tests: SeriesCadence.test.js(5), Exposure.test.js(1), AiSettings.test.js(2), AssetsTest exposure assertion, e2e settings.spec.js(+3); full npm run test:e2e = 54 passed, 2 skipped. Client: settings/SeriesCadence (presentational {terms,onChange}) + exported hook useSeries() (core-data taxonomy entity with meta, per_page 100 context edit); Exposure({values,setSetting}); AiSettings({supported,connectorsUrl}); App wires all and Save runs site save then series.saveAll. Interpretation: PHP boot data `exposure` {exposeMcp, exposeShare} added in Assets::add_planning_boot_data because the settings entity only holds overrides. Codebase note: this eslint config (jsx-a11y label-has-associated-control) needs BOTH htmlFor/id and nesting on labels whose text is an expression.
+
+### P2-12 — b585581
+
+Docs only: Phase 2 section appended to docs/manual-checks.md. kukulu_verify (full, no files): green (105 PHP unit, 81 JS unit). composer audit: no advisories. npm audit --audit-level=high: still the transitive dev advisories (5 high; see P0-02). Push: pushed build/2026-11-10 to origin. Manual check: NOT VERIFIED (human).
