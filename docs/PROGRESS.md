@@ -83,7 +83,7 @@ Started: 2026-11-10T00:40:38.244Z
 - [x] P5-10 masthead/accept-series
 - [x] P5-11 Ask the Desk
 - [x] P5-12 Settings: Desk and AI fields, and wp masthead ai:status
-- [ ] P5-13 Tune the AI assumptions
+- [x] P5-13 Tune the AI assumptions
 - [ ] P5-14 Phase 5 push and manual checks
 - [ ] P6-01 Synthetic fixture titles
 - [ ] P6-02 readme.txt, CHANGELOG.md and version 0.1.0
@@ -406,3 +406,7 @@ client/calendar/AskDesk.js: text input "Ask the Desk" + Ask button + line naming
 ### P5-12 — f2c608d
 
 Settings: new DeskSettings (11 integer day/count keys, swap.min_score_delta, 3 swap weights; exports NumberField) and AiSettings now has model-id lists (comma-separated, help text), monthly cap (help "0 turns the Desk's AI off." + "N requests left this month"), context days, "Draft titles and excerpts" toggle, Last model used per tier (boot ai.models) or "The AI Client does not report which model was used." Assets gained boot settingsDefaults (Config::all restricted to settable); Plugin's ai boot provider adds models (Budget::models()); settings App overlays saved settings on settingsDefaults and only edited keys are saved (verified: only ai.monthly_request_cap stored). wp masthead ai:status prints supported, remaining, cap, models per tier. Tests: unit 295, jest 148, e2e settings.spec 9/9 desktop. Lessons: controlled number inputs need local text state or users cannot clear and retype; e2e mu fake-ai now honours option masthead_e2e_ai=0 for the no-provider state.
+
+### P5-13 — 9fb3cf9
+
+Tuning: tests/unit/Tuning/AiBench.php + docs/tuning/P5-13.md. ai.context_max_posts before 60 = 7120 est tokens (30 = 3587, 120 = 14185 > 8000), after 60 (kept). ai.max_tokens before 1200, after 1200: ideas 279 tokens fits; worst-case series (12 parts x 6 lines x 120 chars) = 2565 tokens fits none of 800/1200/2000, so the rule has no measured value to pick and the default stays; typical series (4 x 4 x 60) = 393 fits. RISK for reviewer: a near-worst-case series reply can be truncated -> invalid JSON -> masthead_ai_invalid, nothing created; max_tokens is not settable (masthead_config filter only). ai.monthly_request_cap before 300 = 95 days (150 = 47, 600 = 190), kept. NOT MEASURED (needs a configured AI provider; human): ai.temperature, ai.models.fast, ai.models.strong. src/Config.php unchanged. Harness uses chars/4 token estimate.
