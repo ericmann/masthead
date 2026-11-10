@@ -6,7 +6,7 @@ Started: 2026-11-10T00:40:38.244Z
 ## Tasks
 
 - [x] P0-01 PHP toolchain, plugin bootstrap, Config, Clock and Plugin
-- [ ] P0-02 JS toolchain and client shell
+- [x] P0-02 JS toolchain and client shell
 - [ ] P0-03 Structural checks script and module boundaries test
 - [ ] P0-04 Posts › Calendar page and asset loading
 - [ ] P0-05 wp-env and the integration test harness
@@ -98,3 +98,7 @@ Started: 2026-11-10T00:40:38.244Z
 ### P0-01 — fc0800b
 
 Tests: ConfigTest (8), ClockTest (6). Interpretation: autoload-dev also maps Masthead\Tests\Unit\ -> tests/unit/ and Tests\Integration\ -> tests/integration/ (dirs are lowercase; PSR-4 needs it). Planner keys (calendar.max_range_days etc.) are not settable. Config::get() reads option masthead_settings nested by dotted path. Test base class: Masthead\Tests\Unit\TestCase stubs wp_timezone (America/Los_Angeles), translation and escape functions. phpcs: first `composer install` may fail to set installed_paths on PHP 8.4; rerun composer install. phpcs.xml.dist silences warnings.
+
+### P0-02 — 2d2a6a9
+
+Tests: index.test.js (2), App.test.js (1). index.js exports ROUTES and mountAll(doc); domReady calls mountAll. Build emits build/index.js, index.asset.php and build/style-index.css (+rtl) -- NOT index.css: wp-scripts names files called style.* "style-index". Later Assets task must enqueue style-index.css. Testing-library (react, dom, user-event, jest-dom) added as devDeps. npm audit: overrides fixed serialize-javascript, linkify-it, uuid; remaining high advisories in transitive dev packages with no non-breaking fix: minimatch (GHSA-3ppc-4f35-3m26, GHSA-7r86-cg39-jmmj, GHSA-23c5-xmqv-rm74, GHSA-g3hv-75wg-m249), markdown-it/deepmerge (via eslint/stylelint tooling). eslint prints legacy eslintrc warning only.
