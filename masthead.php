@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Masthead
  * Description:       Editorial calendar, Desk suggestions, nightly swap check and Jetpack Social re-sharing.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Requires at least: 7.1
  * Requires PHP:      8.3
  * License:           GPL-2.0-or-later
