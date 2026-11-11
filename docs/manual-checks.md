@@ -25,11 +25,13 @@ Nothing here blocks a later task. Each item is `NOT VERIFIED (human)` until some
 
 To be done on eric.mann.blog after deploying a pre-release build.
 
-- [ ] Run `wp masthead stats:probe` and compare the printed shapes with `docs/fixtures/stats-sample.json` and `docs/spikes/P3-01-jetpack-stats.md`.
-- [ ] Run `wp masthead social:probe` and compare with `docs/spikes/P3-03-jetpack-social.md`.
+- [x] Run `wp masthead stats:probe` and compare the printed shapes with `docs/fixtures/stats-sample.json` and `docs/spikes/P3-01-jetpack-stats.md`. Done on 2026-11-11 on eric.mann.blog. The fields Masthead reads match, and `masthead/stats-summary` returned Jetpack Stats data. `get_tags` had a different shape, and the fixture was updated (see the live check in P3-01).
+- [x] Run `wp masthead social:probe` and compare with `docs/spikes/P3-03-jetpack-social.md`. Done on 2026-11-11 on eric.mann.blog: available, four connections, and all three routes registered (see the live check in P3-03).
 - [ ] Share one post to one connection from the Share panel and confirm it arrives and `masthead_last_shared` is set.
 - [ ] Try "Queue for this date" and confirm it either queues or reports the plan reason.
-- [ ] Read both spike files and list every fact still marked `UNCONFIRMED`.
+- [x] Read both spike files and list every fact still marked `UNCONFIRMED`. As of 2026-11-11:
+  - P3-01: the `get_post_views` fields other than `views` (fact 4), and which terms `get_tags` covers (fact 5).
+  - P3-03: the success bodies of share-now and scheduling (facts 3 and 4), and the plan-gating error codes (fact 6). Sharing a post from the Share panel, the item above, would settle facts 3 and 4.
 
 ## Phase 4
 

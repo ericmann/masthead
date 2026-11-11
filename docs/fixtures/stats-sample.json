@@ -1,6 +1,6 @@
 {
   "_synthetic": true,
-  "_note": "Shape-true synthetic payloads for the Jetpack Stats methods Masthead reads. The shapes are UNCONFIRMED (see docs/spikes/P3-01-jetpack-stats.md) and every number is invented. No real traffic number.",
+  "_note": "Synthetic payloads for the Jetpack Stats methods Masthead reads. The shapes of get_visits, get_top_posts and get_tags match wp masthead stats:probe on a connected Jetpack 16.4 site (2026-11-11, see docs/spikes/P3-01-jetpack-stats.md); get_post_views beyond views is UNCONFIRMED. Every number is invented. No real traffic number.",
   "fetched_at": "2026-11-09T13:00:00-08:00",
   "payloads": {
     "get_visits": {
@@ -22,16 +22,18 @@
     },
     "get_top_posts": {
       "date": "2026-11-09",
+      "period": "day",
       "days": {
         "2026-11-09": {
           "postviews": [
-            { "id": 12155, "href": "https://example.test/the-mantle-part-1-of-4/", "date": "2026-11-09 06:23:15", "title": "The Mantle - Part 1 of 4", "type": "post", "views": 210 },
-            { "id": 10193, "href": "https://example.test/atlas-ledger/", "date": "2026-11-09 05:47:05", "title": "Atlas Ledger", "type": "post", "views": 160 },
-            { "id": 10192, "href": "https://example.test/from-notes-to-indexes/", "date": "2026-10-01 07:57:00", "title": "From Notes to Indexes", "type": "post", "views": 95 },
-            { "id": 10191, "href": "https://example.test/search-over-plain-text/", "date": "2026-09-29 07:57:00", "title": "Search Over Plain Text", "type": "post", "views": 70 }
+            { "id": 12155, "href": "https://example.test/the-mantle-part-1-of-4/", "date": "2026-11-09 06:23:15", "title": "The Mantle - Part 1 of 4", "type": "post", "public": true, "video_play": false, "views": 210 },
+            { "id": 10193, "href": "https://example.test/atlas-ledger/", "date": "2026-11-09 05:47:05", "title": "Atlas Ledger", "type": "post", "public": true, "video_play": false, "views": 160 },
+            { "id": 10192, "href": "https://example.test/from-notes-to-indexes/", "date": "2026-10-01 07:57:00", "title": "From Notes to Indexes", "type": "post", "public": true, "video_play": false, "views": 95 },
+            { "id": 10191, "href": "https://example.test/search-over-plain-text/", "date": "2026-09-29 07:57:00", "title": "Search Over Plain Text", "type": "post", "public": true, "video_play": false, "views": 70 }
           ],
           "total_views": 535,
-          "other_views": 0
+          "other_views": 0,
+          "dropped_ids": []
         }
       }
     },
@@ -49,10 +51,11 @@
     },
     "get_tags": {
       "date": "2026-11-09",
+      "num": 10,
       "tags": [
-        { "type": "category", "value": "technology", "views": 330 },
-        { "type": "category", "value": "writing", "views": 210 },
-        { "type": "category", "value": "faith", "views": 160 }
+        { "tags": [{ "type": "category", "name": "Technology", "link": "https://example.test/category/technology/" }], "views": 330 },
+        { "tags": [{ "type": "category", "name": "Writing", "link": "https://example.test/category/writing/" }], "views": 210 },
+        { "tags": [{ "type": "category", "name": "Faith", "link": "https://example.test/category/faith/" }], "views": 160 }
       ]
     }
   }

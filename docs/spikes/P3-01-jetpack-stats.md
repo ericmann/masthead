@@ -36,8 +36,20 @@ Reason: no method returns views per primary category; `get_tags()` counts a post
 
 Scrubbing rule, applied recursively to each payload and to the nested keys of `data` arrays: every number becomes `0`, every string value becomes `""`, every boolean and null is kept, arrays keep their length, object keys are kept (date keys such as `"2026-11-08"` are kept because they are keys). A `WP_Error` is printed as `{ "error": "<code>" }`. The output therefore holds shapes only, never traffic numbers or titles, and can be pasted into a spike fixture.
 
+## Live check (2026-11-11)
+
+The owner ran `wp masthead stats:probe` on eric.mann.blog (Jetpack 16.4, connected, Stats active), then the `masthead/stats-summary` ability, which returned `available: true` from Jetpack Stats with all seven weekdays, ten top posts and five categories. The probe blanks every string, so the names in `get_visits.fields` were not visible. The summary shows that `period` and `views` are among them, because `Payloads::by_weekday()` returns null without them.
+
+- Fact 2 (`get_visits`) is confirmed: `{ date, unit, fields: [ 7 strings ], data: [ [ date string, 6 integers ] × 30 ], utc_offset }`. There are seven fields, not the fixture's three; Masthead finds `period` and `views` by name.
+- Fact 3 (`get_top_posts`) is confirmed for the fields Masthead reads: `{ cached_at, date, period, days: { '<date>': { postviews, total_views, other_views, dropped_ids } } }`. Each `postviews` entry has an integer `id` and `views`, plus `href`, `title`, `type`, `public` and `video_play`; Every day had exactly one entry whose `date` and `status` were null. On one day of thirty `total_views` was a string, and two days had no `other_views`. Masthead reads none of these. `cached_at` is Jetpack's own cache marker (fact 7).
+- Fact 4 (`get_post_views`) is confirmed for `views`, an integer. The probe asks only for `views`, while Masthead asks for `views,data` and reads only `views`, so the rest of fact 4's shape is still UNCONFIRMED.
+- Fact 5 (`get_tags`) has a different shape: `{ date, num, tags: [ { tags: [ { link, name, type } ], views } × 10 ] }`. Each of the ten groups held one term. Because strings are blanked, whether `type` names categories, tags or both is still UNCONFIRMED. Masthead does not read `get_tags`, and `docs/fixtures/stats-sample.json` now uses this shape.
+
+The decision stays `categories-from-top-posts`. `get_tags()` reports views per term by display name, not per post's primary category, and each group holds a list of terms.
+
 ## Open risk
 
-- All payload shapes (facts 2 to 5) are UNCONFIRMED until `stats:probe` runs on a connected site. `JetpackStats` (P3-02) must validate every field it reads and return unavailable on any mismatch.
-- `get_tags()` might return per-category views directly; if the probe shows that, a later change could switch to `categories-native`.
+- Facts 2 to 4 are confirmed for the fields Masthead reads (see the live check). `JetpackStats` (P3-02) still validates every field it reads and returns unavailable on any mismatch. That covers the string `total_views` and the null `date` and `status`, which it does not read.
+- `get_tags()` reports views per term name, not per primary category, so switching to `categories-native` would mean mapping names back to slugs. Nothing in the live check calls for that.
+- The one entry a day with a null `date` and `status` may be WordPress.com's home page entry, which has `id` 0. The probe blanks ids, so this is UNCONFIRMED. If it is, `Payloads::top_posts()` counts post 0: `masthead/stats-summary` would list it among the top posts and use up one slot. `Reshare` skips it unless `get_post( 0 )` falls back to a global post. Skipping ids below 1 would close this.
 - WordPress.com Simple sites take a different code path in `get_total_post_views()` (line ~350); this plugin targets self-hosted Jetpack only.
