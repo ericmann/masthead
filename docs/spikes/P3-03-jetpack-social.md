@@ -29,12 +29,16 @@ Both (b) and (c) have routes in the 16.4 source. Availability on a given site an
 `wp masthead social:probe` prints one JSON object and no names, ids, handles or message text:
 
 - `available`: the value of `JetpackSocial::available()`;
-- `connections`: the number of connections returned;
-- `routes`: `{ "connections": bool, "share_post": bool, "scheduled_actions": bool }`, each true when `rest_get_server()->get_routes()` holds a route whose path starts with `/wpcom/v2/publicize/connections`, `/wpcom/v2/publicize/share-post` and `/wpcom/v2/publicize/scheduled-actions` respectively.
+- `connection_count`: the number of connections returned;
+- `routes`: `{ "connections": bool, "share": bool, "schedule": bool }`, each true when `rest_get_server()->get_routes()` holds a route whose path starts with `/wpcom/v2/publicize/connections`, `/wpcom/v2/publicize/share-post` and `/wpcom/v2/publicize/scheduled-actions` respectively.
+
+## Live check (2026-11-11)
+
+The owner ran `wp masthead social:probe` on eric.mann.blog (Jetpack 16.4, connected) and got `{ "available": true, "connection_count": 4, "routes": { "connections": true, "share": true, "schedule": true } }`. On a connected site all three routes are registered and the site's plan does not hide them. This answers fact 1's question for a connected site: the routes were missing in wp-env because it was not connected. Still UNCONFIRMED until a post is shared from the Share panel: the success bodies of share-now and scheduling (facts 3 and 4) and the plan-gating error codes (fact 6).
 
 ## Open risk
 
-- Route registration on an unconnected site is UNCONFIRMED (fact 1); a connected site may register more or different routes.
+- On a connected site the share, schedule and connection-list routes are registered (see the live check). On an unconnected site only `connection-test-results` is, and the adapter reports unavailable (fact 1).
 - Success payloads for share-now and scheduling (facts 3 and 4) are UNCONFIRMED; the adapter must not read fields it has not validated.
 - Plan-gating error codes are UNCONFIRMED (fact 6); every `WP_Error` is treated as unavailable with its message.
 - `share-post` proxies to WordPress.com on self-hosted sites, so a share is an outbound call made by Jetpack, never by Masthead (SPEC section 3.1).
