@@ -376,7 +376,7 @@ In the mockups, `[Jetpack]` marks a number the plugin must read from Jetpack Sta
 The site repository builds an immutable WordPress image and pins ttm-core/ttm-theme release zips by tag. Masthead follows the same path: no submodule, no subtree.
 
 ```dockerfile
-ARG MASTHEAD_VERSION=1.0.1
+ARG MASTHEAD_VERSION=1.0.2
 ARG MASTHEAD_SHA256=<from dist/masthead.zip.sha256>
 RUN curl -fsSL -o /tmp/masthead.zip \
       "https://github.com/<owner>/masthead/releases/download/v${MASTHEAD_VERSION}/masthead.zip" \

@@ -2,6 +2,13 @@
 
 All notable changes to Masthead are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.0.2] - 2026-11-11
+
+### Security
+
+- Development dependencies only; nothing in the release zip changes. `qs` is pinned to `~6.16.2` (GHSA-6pq8-jhm2-2vcw), and every `minimatch` from 7.0.0 up to 11.0.0 resolves to 11.x (GHSA-g3hv-75wg-m249), both through `overrides` in `package.json`.
+- Not fixed, and accepted as dev-only risks: `deepmerge` 4.3.1 (GHSA-gcqx-w48m-w2h4), which has no patched release and reaches the plugin's scripts only through WordPress core's own `wp-data` and `wp-components`, and `glob` 10 and 13 (GHSA-3g3m-2fjr-6pw4), patched only in 14.0.2. Nothing in the toolchain cancels a glob walk with an `AbortSignal`, which is the only case that bug affects.
+
 ## [1.0.1] - 2026-11-10
 
 ### Fixed

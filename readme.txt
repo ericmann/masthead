@@ -3,7 +3,7 @@ Tags: editorial calendar, content planning, scheduling, jetpack, ai
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,9 @@ In your own database: the weekly rhythm and settings as options, plans and outli
 Calendar abilities can be exposed to MCP clients from Settings > Calendar. Sharing is a separate switch and is off by default.
 
 == Changelog ==
+
+= 1.0.2 =
+* Development dependency updates for security advisories. The plugin itself is unchanged.
 
 = 1.0.1 =
 * AI requests work with the Anthropic provider. Masthead no longer sends a temperature, which Claude 5 models reject, and it leaves out the schema keywords that the provider's API rejects. Every reply is still validated against the full schema.
